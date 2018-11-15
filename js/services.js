@@ -41,22 +41,29 @@ var xiboServices = {
         client_id: xiboServices.client_id,
         client_secret: xiboServices.client_secret
       },
-    }).done(function(value){
+    }).done(function(value, callback){
       console.log("Authorized");
-      xiboServices.accessToken = value;
-      callback & callback();
+      xiboServices.accessToken = value.access_token;
+      callback & callback(value);
     });
   },
 
-  whatTimeIsIt: function (){
+  _doRequest: function (endpoint, method, params, callback){
     $.ajax({
-      url: xiboServices.url_base+'clock',
-      method: 'get',
-      data: {
-        Authorization: 'Bearer ' + xiboServices.accessToken.access_token
+      url: xiboServices.url_base + endpoint,
+      method: method,
+      data: params,
+      beforeSend: function (xhr){
+        xhr.setRequestHeader('Authorization', 'Bearer iEVNVVaYeRgDUEawEFWIZLN1IIJ9qm4TpJ4ylVfo' /*+ xiboServices.accessToken*/);
       }
-    }).done(function(data){
-      $('#test').append('<p>' + JSON.stringify(data.time) + '</p>');
+    }).done(function(data, callback){
+      callback && callback(data);
+    }).fail(function(data){
+      if (data.code == 401){
+        //Expired accessToken
+        //Generate new accessToken
+        xiboServices.authorize();
+      }
     });
   },
 

@@ -1,11 +1,11 @@
 $(document).ready(main);
 
-// Esto es una prueba
-
 function main(){
   //xiboServices.addLayout("MyLayout");
-  xiboServices.authorize(onSucces);
-
+  //xiboServices.authorize(onSucces);
+  xiboServices._doRequest("layout", 'GET', '' ,function (){
+    alert("SE HA CREADO DEBUTI");
+  });
 }
 
 function onProccesButton (){
@@ -17,7 +17,6 @@ function onProccesButton (){
 }
 
 function onSucces (data){
-  //callback for getJson succes
   //$('#test').append('<p>' + JSON.stringify(data.playlist[2]) + '</p>');
   //Call Xibo Services
   xiboServices.whatTimeIsIt();
