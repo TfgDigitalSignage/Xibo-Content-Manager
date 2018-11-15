@@ -1,5 +1,7 @@
 $(document).ready(main);
 
+// Esto es una prueba
+
 function main(){
   //xiboServices.addLayout("MyLayout");
   xiboServices.authorize(onSucces);
