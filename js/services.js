@@ -41,7 +41,7 @@ var xiboServices = {
         client_id: xiboServices.client_id,
         client_secret: xiboServices.client_secret
       },
-    }).done(function(value, callback){
+    }).done(function(value){
       console.log("Authorized");
       xiboServices.accessToken = value.access_token;
       callback & callback(value);
@@ -53,34 +53,23 @@ var xiboServices = {
       url: xiboServices.url_base + endpoint,
       method: method,
       data: params,
+      crossDomain: true,
+      // headers: {
+      //   'Authorization': 'Bearer ' + xiboServices.accessToken
+      // }
       beforeSend: function (xhr){
-        xhr.setRequestHeader('Authorization', 'Bearer iEVNVVaYeRgDUEawEFWIZLN1IIJ9qm4TpJ4ylVfo' /*+ xiboServices.accessToken*/);
+        xhr.setRequestHeader('Authorization', 'Bearer ' + xiboServices.accessToken);
+        // xhr.setRequestHeader('ContentType', );
       }
-    }).done(function(data, callback){
+    }).done(function(data){
       callback && callback(data);
     }).fail(function(data){
+      console.log(data);
       if (data.code == 401){
         //Expired accessToken
         //Generate new accessToken
         xiboServices.authorize();
       }
-    });
-  },
-
-  //This method add a new Layout
-  addLayout: function (name){
-    var formData = {"name":name};
-    $.ajax({
-      url: xiboServices.url_base,
-      method: 'post',
-      dataType : 'json',
-      data: formData
-    })
-    .done(function (data){
-      console.log('Layout created!');
-    })
-    .error(function(data){
-      console.log('Error: ' + data);
     });
   }
 }
