@@ -1,23 +1,12 @@
-$(document).ready(main);
+$(document).ready(function(){
+  $('#proccesButton').click(main.onProccesButton);
+});
 
-/*
-var variables = {
+var main = {
 
-  idLayout : 0,
-  idPlaylist : 0
-  access_token : ''
-}
-*/
-
-function main(){
- // xiboServices.authorize(function(ret){
-  //  console.log(ret.access_token);
-  //  xiboServices._doRequest("layout", 'post', 'name=layuot1' ,function (){
-  //    alert("SE HA CREADO DEBUTI");
-  //   });
-  // });
-
- 
+  dataSource: '', //JSON with data
+  idLayout : '',
+  idPlaylist : '',
 
 
   //Add Layout (POST) (/LAYOUT)
@@ -33,10 +22,10 @@ function main(){
   .fail(function(response){
       if (response.status == 409){
          console.log("ERROR: nombre de layout ya existente");
-       } 
+       }
    });
    */
-   
+
 
 //Add Widget WebPage (POST) (/PLAYLIST/WIDGET/WEBPAGE/{ṔLAYLISTID})
 /*
@@ -53,61 +42,107 @@ function main(){
 
 
   //Get Time (GET) (/CLOCK)
-  /*
-  $.ajax(settings).done(function (response) {
-    console.log(response);
-   });
-   */
-}
+  // $.ajax(settings).done(function (response) {
+  //   console.log(response);
+  //  });
 
-function onProccesButton (){
+onProccesButton: function (){
   var url = $('#urlField').val();
   if (url){
-    localServices._init(url, 'json', 'get');
-    localServices._doRequest (onSucces);
+    localServices._getJSON(url,function(data){
+      //Call Xibo Service
+      main.dataSource = data; //Save json instance
+      xiboServices.authorize(function(ret){
+        var layoutParams = {
+          name: 'TestLayout',
+          access_token: xiboServices.accessToken
+        }
+        xiboServices._doRequest('layout', 'POST', layoutParams, function(data){
+          main.idLayout = data.layoutId;
+          main.idPlaylist = data.regions[0].playlists[0].playlistId;
+          main.mainFlow();
+        }, function(data){
+          if (data.status === 409){
+            //If Layout already exists
+            var layoutParams = {
+              layout: 'TestLayout',
+              access_token: xiboServices.accessToken
+            }
+            //Get layout by name
+            xiboServices._doRequest('layout', 'GET', layoutParams, function(data){
+              main.idLayout = data.layoutId;
+              main.mainFlow();
+            }, null, null);
+          }
+        }, null);
+      });
+    });
+  }
+},
+
+mainFlow: function(){
+  var baseUri = this.dataSource.baseUrl;
+  var playList = this.dataSource.playlist;
+  for (i in playList){
+      var addWidgetParams = {
+        access_token: xiboServices.accessToken,
+        uri: baseUri + playList[i].url,
+        modeId: 3,  //1- Open Natively, 2- Manual Position, 3- Best Ft
+        useDuration: function(){
+          if (playList[i].duration)
+            return 1;
+          else
+            return 0;
+        }, //1 or 0
+        duration: function(){
+          if (playList[i])
+            return parseInt(playList[i].duration)
+          else
+            return  undefined;
+          }
+      };
+      xiboServices._doRequest('playlist/widget/webpage/'+this.idPlaylist, 'POST', addWidgetParams, function(data){
+        console.log("Element added succesfully " + data);
+      }, function(data){
+        console.log("Error on add widget, data: " + data);
+      }, null);
   }
 }
 
-function onSucces (data){
-  //$('#test').append('<p>' + JSON.stringify(data.playlist[2]) + '</p>');
-  //Call Xibo Services
-  xiboServices.whatTimeIsIt();
-}
+// var settings = {
+//   //"async": true,
+//   //"crossDomain": true,
+//  "url": "http://localhost/xibo/api/clock",
+//   "method": "GET",
+//   "data": {
+//         access_token: xiboServices.access_token,
+//       }
+//  // "headers": {
+//   // "cache-control": "no-cache",
+//   // "Authorization": "Bearer lTWEwjxQ1jSEnLkka8HjCauyVnGgwH6TGAkV6x9p"
+// //  }
+// }
 
-
-var settings = {
-  //"async": true,
-  //"crossDomain": true,
- "url": "http://localhost/api/clock",
-  "method": "GET",
-  "data": {
-        access_token: 'PfUjuEytwo5hteqWHGzlAC04VmIfUGIt9SfUOEur',
-      }
- // "headers": {
-  // "cache-control": "no-cache",
-  // "Authorization": "Bearer lTWEwjxQ1jSEnLkka8HjCauyVnGgwH6TGAkV6x9p"
-//  }
-}
-
-var settingsAddLayout = {
- "url": "http://localhost/api/layout",
-  "method": "POST",
-  "data": {
-        access_token: 'PfUjuEytwo5hteqWHGzlAC04VmIfUGIt9SfUOEur',
-        name: 'prueba'
-      }
-}
-
-
-var settingsAddWidgetWebPage = {
-  ///api/playlist/widget/webpage/{idPlaylist}
- "url": "http://localhost/api/playlist/widget/webpage/" + variables.idPlaylist,
-  "method": "POST",
-  "data": {
-        access_token: 'PfUjuEytwo5hteqWHGzlAC04VmIfUGIt9SfUOEur',
-        uri: 'http://javy.fdi.ucm.es/marco/pantallas/cartel1.jpg',
-        modeId: 3,  //1- Open Natively, 2- Manual Position, 3- Best Ft
-        useDuration: 1, //1 or 0
-        duration: 20
-      }
+// var settingsAddLayout = {
+//  "url": "http://localhost/api/layout",
+//   "method": "POST",
+//   "data": {
+//         access_token: 'PfUjuEytwo5hteqWHGzlAC04VmIfUGIt9SfUOEur',
+//         name: 'prueba'
+//       }
+// }
+//
+//
+// var settingsAddWidgetWebPage = {
+//   ///api/playlist/widget/webpage/{idPlaylist}
+//  "url": "http://localhost/api/playlist/widget/webpage/" + variables.idPlaylist,
+//   "method": "POST",
+//   "data": {
+//         access_token: 'PfUjuEytwo5hteqWHGzlAC04VmIfUGIt9SfUOEur',
+//         uri: 'http://javy.fdi.ucm.es/marco/pantallas/cartel1.jpg',
+//         modeId: 3,  //1- Open Natively, 2- Manual Position, 3- Best Ft
+//         useDuration: 1, //1 or 0
+//         duration: 20
+//       }
+// }
 }
