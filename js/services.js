@@ -21,8 +21,8 @@ var localServices = {
 
 var xiboServices = {
   //Client implemntation for Xibo Cms Services
-  url_base: 'http://localhost/xibo/api/',
-  // url_base: 'http://localhost/api/',
+  //url_base: 'http://localhost/xibo/api/',
+  url_base: 'http://localhost/api/',
   accessToken: '',
   //client_id_gabri: 'G9QF9y7gbSfnmhfoFsfc2zZD2nBJeeKIHUXpLYEj',
   //client_secret_gabri: 'vWTTgO33E1Hpgw0gM8DUkqF7lTlLGPJNBkznS9O2tUatjPewEQwYpePGJW8gvVgGpniF4fAmMCJRuUKfePKdy9uF2Pe2iJmksNm6dHosoaj9vCzVYG5omkucvWOAqchchcX1kSeLaZA8IkBAb6xdS4Qol3flE73guxgoqXiiiq3WlDuAuUwgAW3iKt6bWDaWnRpFgr4oM1VjIfxd85yHH9v5POHubJwrYLul3Sex040UlEjrcfCpoc59or85DD',
