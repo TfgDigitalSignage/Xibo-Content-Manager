@@ -15,17 +15,24 @@ http.createServer(function(req,res){
   // if (fileName === "./") fileName = "./index.html";
   // fs.readFile(fileName, function(err, data){ //Read file
   //     if (err){ //If error
-  //       res.writeHead(404, {'Content-Type':'text/html'});
+  //       res.writeentials',
+      client_id: xiboOptions.client_id,
+      client_secret: xiboOptions.client_secret
+     }
+   };
+Head(404, {'Content-Type':'text/html'});
   //       return res.end('404 Not Found');
   //     } //If success
 
       httpXiboRequest.xiboAuthorize(function(data){
         //res.setEncoding('utf8');
-        res.writeHead(200, {'Content-Type':'text/html'}); //Server sends http header code 200 (success
-        res.write(data, function(err){
-          res.end(); //Close connection
-        });  //Server writes html content from the file
+        var token = data['access_token'];
+        httpXiboRequest.comoyoquiera(token, function(data){
+          res.writeHead(200, {'Content-Type':'text/html'}); //Server sends http header code 200 (success
+          res.write(data, function(err){
+            res.end(); //Close connection
+          });  //Server writes html content from the file
+        });
       });
-
   // });
 }).listen(PORT);

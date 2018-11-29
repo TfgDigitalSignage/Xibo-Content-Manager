@@ -38,9 +38,20 @@ function xiboAuthorize (callback){
       console.log("FATAL ERROR: " + error);
       throw new Error(error);
     }
-    else
-      callback & callback(body);
+    else{
+      callback & callback(JSON.parse(body));
+    }
   });
 }
 
+function getTime (token, callback){
+    // var headers = {
+    //   access_token: token
+    // }
+    request.get("http://localhost/xibo/api/clock?access_token="+token, function(error, response, body){
+      if (!error) callback & callback(body);
+    });
+}
+
 exports.xiboAuthorize =  xiboAuthorize
+exports.comoyoquiera = getTime
