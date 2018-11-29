@@ -35,15 +35,11 @@ function xiboAuthorize (callback){
 
   request(options, function (error, response, body) {
     if (error){
-
       console.log("FATAL ERROR: " + error);
       throw new Error(error);
     }
-    else{
-
-      console.log(body);
+    else
       callback & callback(body);
-    }
   });
 }
 

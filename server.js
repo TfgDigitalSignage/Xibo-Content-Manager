@@ -22,9 +22,10 @@ http.createServer(function(req,res){
       httpXiboRequest.xiboAuthorize(function(data){
         //res.setEncoding('utf8');
         res.writeHead(200, {'Content-Type':'text/html'}); //Server sends http header code 200 (success
-        res.write(data);  //Server writes html content from the file
+        res.write(data, function(err){
+          res.end(); //Close connection
+        });  //Server writes html content from the file
       });
 
-      return res.end(); //Close connection
   // });
 }).listen(PORT);
