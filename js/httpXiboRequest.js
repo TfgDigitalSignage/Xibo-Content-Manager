@@ -1,14 +1,7 @@
 //NodeJs request module
 var request = require ('request');
-var xiboOptions = {
-
-    url_base: 'http://localhost/xibo/api',
-    path: '',
-    method: '', //{GET,POST,PUT,DELETE}
-    headers: {},
-    params: {},
-    callback: '',
-
+var clientCredentials = {
+    //CLIENT INFO GABRI
     client_id: 'G9QF9y7gbSfnmhfoFsfc2zZD2nBJeeKIHUXpLYEj',
     client_secret: 'vWTTgO33E1Hpgw0gM8DUkqF7lTlLGPJNBkznS9O2tUatjPewEQwYpePGJW8gvVgGpniF4fAmMCJRuUKfePKdy9uF2Pe2iJmksNm6dHosoaj9vCzVYG5omkucvWOAqchchcX1kSeLaZA8IkBAb6xdS4Qol3flE73guxgoqXiiiq3WlDuAuUwgAW3iKt6bWDaWnRpFgr4oM1VjIfxd85yHH9v5POHubJwrYLul3Sex040UlEjrcfCpoc59or85DD'
     //CLIENT INFO ADRI
@@ -17,10 +10,9 @@ var xiboOptions = {
     //CLIENT INFO DANI
     // client_id: 'Aw8RNRb5AEqmS7B8C5ipq5XcV40LxagxnD41sCmg',
     // client_secret: '6gWsZef5ajJiTKmuPiQB56vCrlVQi86o0DqxTiKZyzu1XpzX4jzSug5BPRmnTFbjLDgcVVXTFsO0594mp1e07qAgvMxAjiEt1Yo83bYy4G6YgUD0EPKDJPGzIdhqUhc8iD7WyExfj9oDLauG2R4n0um5cMUEPVNI3ZvOOkJPoTXsV8K6xmA25Jscif3ZOncUQ5ivCfordmIlg0C5IHTVIjWGn9EyXGNECLsIZLBGAKwka3Eq01MqRKpPnR9u7F'
-
 }
 
-function xiboAuthorize (callback){
+function getAccessToken (callback){
   var options = {
     method: 'POST',
     url: "http://localhost/xibo/api/authorize/access_token",
@@ -28,14 +20,14 @@ function xiboAuthorize (callback){
     headers:{},
     form: {
       grant_type: 'client_credentials',
-      client_id: xiboOptions.client_id,
-      client_secret: xiboOptions.client_secret
+      client_id: clientCredentials.client_id,
+      client_secret: clientCredentials.client_secret
      }
    };
 
   request(options, function (error, response, body) {
     if (error){
-      console.log("FATAL ERROR: " + error);
+      console.log("AUTH ERROR: " + error);
       throw new Error(error);
     }
     else{
@@ -53,5 +45,14 @@ function getTime (token, callback){
     });
 }
 
-exports.xiboAuthorize =  xiboAuthorize
-exports.comoyoquiera = getTime
+function getJsonData (callback){
+    request.get ('http://javy.fdi.ucm.es/marco/pantallas/playlist.json', function(err, res, body){
+      if (err)
+        throw new Errror (err);
+      callback & callback (body);
+    });
+}
+
+exports.xibo_getAccessToken =  getAccessToken
+exports.xibo_getTime = getTime
+exports.getJsonData = getJsonData
