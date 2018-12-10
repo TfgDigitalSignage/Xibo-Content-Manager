@@ -22,6 +22,7 @@ function getIndex (response){
  */
 function remoteDataLoader (response){
   console.log('Remote Data loader called');
+  var fs = require('fs');
   fs.readFile('view/RemoteContent.html', function(err, content){
     if (err)
       throw err;
@@ -31,22 +32,99 @@ function remoteDataLoader (response){
   });
 }
 
-function getRemoteData (){
-  var queryString = require('querystring');
+function getRemoteData (req, res, formdata){
+  //IMPORTS
   var services = require('./httpXiboRequest');
+  var formParser = require('./formDataParser');
 
   var accessToken = '';
   var content = {};
+  console.log('GETTING Remote Data.............');
+  var dataSource = formdata.DataUri;
+  var layoutName = formdata.LayoutName;
+  if (dataSource && layoutName){
+    //Gets data from dataSource
+    console.log("FORM PARSED!");
+    services.getJsonData (dataSource, function(body){
+      content = JSON.parse(body);
+      console.log('GOT DATA from ' + dataSource);
+      //Authenticates
+      services.xibo_getAccessToken(function(data){
+        accessToken = data['access_token'];
+        console.log('AUTHENTICATED ---> ' + accessToken);
+        console.log('LayoutName ---> ' + layoutName);
+        //Tries to add a new layout
+        services.postLayout (accessToken, layoutName, function(response){
+          if (response.statusCode === 409)
+          {
+            console.log('LAYOUT EXISTS');
+            res.writeHeader(200, {'Content-Type':'text/html'});
+            res.write('<h1>Ya existe un layout con ese nombre; Por favor, escoja otro<h1>');
+            res.end();
+          }
+          else if (response.statusCode === 201){
+            var _data = JSON.parse(response.body);
+            var idPlaylist = _data.regions[0].playlists[0].playlistId;
+            var dataToAdd = content.playlist;
 
-  services.xibo_getAccessToken(function(data){
-    accessToken = data['access_token'];
-    services.getJsonData (function(body){
-      content = body;
+            function insertWidgets (content, idPlaylist, dataToAdd, callback){
+              var final = true;
+              for (i in dataToAdd){
+                console.log('Entro aqui');
+                var url = content.baseUrl + dataToAdd[i].url;
+                //Tries to add content from dataSource into layout's playlist
+                services.postWidgetWebContent(idPlaylist, accessToken, url, 3, function(){
+                  if (dataToAdd[i].duration) return 1;
+                  else return 0;
+                }, function(){
+                  if (dataToAdd[i].duration) return parseInt(dataToAdd[i].duration);
+                  else return undefined;
+                }, function(response){
+                  if (response.statusCode !== 201){
+                    console.log("Cannot add " + dataToAdd[i].url + " to playlist");
+                    final = false;
+                  }
+                });
+              }
+              callback & callback(final);
+            }
 
+            function showResult (final){
+                //Final Result
+                if (final){
+                  res.writeHeader(200, {'Content-Type':'text/html'});
+                  res.write('<h1>Layout creado satisfactoriamente<h1>');
+                  res.end();
+                }
+                else{
+                  res.writeHeader(200, {'Content-Type':'text/html'});
+                  res.write('<h1>Algunos contenidos no se han podido añadir al Layout. Por favor, reviselos manualmente<h1>');
+                  res.end();
+                }
+              }
+
+              insertWidgets(content, idPlaylist, dataToAdd, function (res){
+                showResult(res);
+              });
+          }
+          else {
+            res.writeHeader(200, {'Content-Type':'text/html'});
+            res.write('<h1>No se ha podido crear el layout ' + layoutName + '<h1>');
+            res.end();
+          }
+        });
+      });
     });
-  });
+  }
+}
+
+function prueba(req, res, data){
+  res.writeHeader(200, {'Content-Type':'text/html'});
+  res.write(data.dataUri + " " +data.layoutName);
+  res.end();
 }
 
 exports.index = getIndex
 exports.remoteDataLoader = remoteDataLoader
 exports.getRemoteData = getRemoteData
+exports.prueba = prueba

@@ -5,9 +5,21 @@
  * @param  {string} path    url pathname to route (request)
  * @param  {Object} res     server's response object
  */
-function route (handler, path, res){
-  if (typeof handler[path] === 'function')
-    handler[path](res);
+function route (handler, path, req, res){
+  if (typeof handler[path] === 'function'){
+    switch (req.method) {
+      case 'GET':
+        handler[path](res);
+        break;
+      case 'POST':
+        dataparser = require ('./formDataParser');
+        dataparser.parsePostData (req, function(data){
+          handler[path](req, res, data);
+        });
+        break;
+      default:
+    }
+  }
   else{
     if (path !== '/favicon.ico')
       console.log("There is no defined handler for request to " + path);
