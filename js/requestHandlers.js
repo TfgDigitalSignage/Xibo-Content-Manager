@@ -39,25 +39,19 @@ function getRemoteData (req, res, formdata){
 
   var accessToken = '';
   var content = {};
-  console.log('GETTING Remote Data.............');
   var dataSource = formdata.DataUri;
   var layoutName = formdata.LayoutName;
   if (dataSource && layoutName){
     //Gets data from dataSource
-    console.log("FORM PARSED!");
     services.getJsonData (dataSource, function(body){
       content = JSON.parse(body);
-      console.log('GOT DATA from ' + dataSource);
       //Authenticates
       services.xibo_getAccessToken(function(data){
         accessToken = data['access_token'];
-        console.log('AUTHENTICATED ---> ' + accessToken);
-        console.log('LayoutName ---> ' + layoutName);
         //Tries to add a new layout
         services.postLayout (accessToken, layoutName, function(response){
           if (response.statusCode === 409)
           {
-            console.log('LAYOUT EXISTS');
             res.writeHeader(200, {'Content-Type':'text/html'});
             res.write('<h1>Ya existe un layout con ese nombre; Por favor, escoja otro<h1>');
             res.end();
@@ -67,15 +61,18 @@ function getRemoteData (req, res, formdata){
             var idPlaylist = _data.regions[0].playlists[0].playlistId;
             var dataToAdd = content.playlist;
 
+            insertWidgets(content, idPlaylist, dataToAdd, function (res){
+              showResult(res);
+            });
+
             function insertWidgets (content, idPlaylist, dataToAdd, callback){
               var final = true;
               for (i in dataToAdd){
-                console.log('Entro aqui');
                 var url = content.baseUrl + dataToAdd[i].url;
                 //Tries to add content from dataSource into layout's playlist
                 services.postWidgetWebContent(idPlaylist, accessToken, url, 3, function(){
-                  if (dataToAdd[i].duration) return 1;
-                  else return 0;
+                  if (dataToAdd[i].duration) return true;
+                  else return false;
                 }, function(){
                   if (dataToAdd[i].duration) return parseInt(dataToAdd[i].duration);
                   else return undefined;
@@ -101,11 +98,7 @@ function getRemoteData (req, res, formdata){
                   res.write('<h1>Algunos contenidos no se han podido añadir al Layout. Por favor, reviselos manualmente<h1>');
                   res.end();
                 }
-              }
-
-              insertWidgets(content, idPlaylist, dataToAdd, function (res){
-                showResult(res);
-              });
+            }
           }
           else {
             res.writeHeader(200, {'Content-Type':'text/html'});

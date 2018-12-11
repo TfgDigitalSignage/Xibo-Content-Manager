@@ -93,7 +93,6 @@ function postWidgetWebContent (playlistId, token, uri, modeId, useDuration, dura
   request.post(options, function(err, response, data){
     if (err)
       throw new Error(err);
-    console.log(response);
     callback & callback (response);
   });
 }
