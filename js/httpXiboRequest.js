@@ -1,5 +1,6 @@
 //NodeJs request module
 var request = require ('request');
+var qs = require('querystring');
 var constant = {
     //CLIENT INFO GABRI
     client_id: 'JV9ca7Too1JHvMD6YJexc9YfCLJeYXp4VguTJVwK',
@@ -85,15 +86,38 @@ function postWidgetWebContent (playlistId, token, uri, modeId, useDuration, dura
       access_token: token,
       uri: uri,
       modeId: modeId,
-      useDuration: useDuration,
-      duration: duration
+      useDuration: useDuration(),
+      duration: duration()
     }
   };
 
   request.post(options, function(err, response, data){
     if (err)
       throw new Error(err);
-    callback & callback (response);
+    callback & callback (response, JSON.parse(data));
+  });
+}
+
+function postOrderWidget (token, playlistId, widget_pos, callback){
+  const widgetsFormData = qs.stringify(widget_pos,',\n',':');
+
+  var options = {
+    url: constant.baseUrl + "playlist/order/" + playlistId,
+    headers: {
+      'content-type'  : 'application/x-www-form-urlencoded'
+    },
+    formData: {
+      //widgets: widgetsFormData,
+      access_token: token
+    }
+  };
+  options.formData.append(widgetsFormData);
+console.log(options.formData);
+  request.post(options, function(err, response, data){
+    if (err)
+      throw new Error(err);
+
+    callback & callback (response, data);
   });
 }
 
@@ -102,3 +126,4 @@ exports.xibo_getTime = getTime
 exports.getJsonData = getJsonData
 exports.postLayout = postLayout
 exports.postWidgetWebContent = postWidgetWebContent
+exports.postOrderWidget = postOrderWidget

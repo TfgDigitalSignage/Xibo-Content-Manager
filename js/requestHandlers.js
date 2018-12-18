@@ -61,29 +61,63 @@ function getRemoteData (req, res, formdata){
             var idPlaylist = _data.regions[0].playlists[0].playlistId;
             var dataToAdd = content.playlist;
 
-            insertWidgets(content, idPlaylist, dataToAdd, function (res){
-              showResult(res);
+            insertWidgets(content, idPlaylist, dataToAdd, (res, list) => {
+              services.postOrderWidget(accessToken, idPlaylist, list, (response, data) => {
+                if (response.statusCode !== 200)
+                  res = false;
+                else {
+                  console.log('SERVER RESPONSE ' + data);
+                }
+                showResult(res);
+              });
             });
 
             function insertWidgets (content, idPlaylist, dataToAdd, callback){
               var final = true;
-              for (i in dataToAdd){
-                var url = content.baseUrl + dataToAdd[i].url;
+              let idList = {};
+              let cont = 0;
+              // for (i in dataToAdd){
+              dataToAdd.forEach((item, index, array) => {
+                var url = content.baseUrl + item.url;
+                console.log('Startig ' + url);
                 //Tries to add content from dataSource into layout's playlist
-                services.postWidgetWebContent(idPlaylist, accessToken, url, 3, function(){
-                  if (dataToAdd[i].duration) return true;
-                  else return false;
-                }, function(){
-                  if (dataToAdd[i].duration) return parseInt(dataToAdd[i].duration);
-                  else return undefined;
-                }, function(response){
+                services.postWidgetWebContent(idPlaylist, accessToken, url, 3, () => {
+                  //Asignar valor a 'useDuration'
+                  if (item.duration) return 1;
+                  else return 0;
+                }, () => {
+                  //Asignar valor a 'duratib'
+                  if (item.duration) return parseInt(item.duration);
+                  else return 0;
+                }, (response, data) => {
+                  //Evaluar Response code
                   if (response.statusCode !== 201){
-                    console.log("Cannot add " + dataToAdd[i].url + " to playlist");
+                    console.log("Cannot add " + item.url + " to playlist");
                     final = false;
                   }
+                  else{
+                    console.log("Added " + item.url + " to playlist "+ idPlaylist + "-> widgetId: " + data.widgetId,);
+                    // const tmp = {
+                    //   'widgetId': data.widgetId,
+                    //   'position': index
+                    // }
+                    const key = "widgets["+data.widgetId+"]";
+                    idList[key]=index;
+                    if (cont === array.length-1){
+                      callback & callback(final, orderByValue(idList));
+                    }
+                    cont++;
+                  }
                 });
-              }
-              callback & callback(final);
+              });
+              // }
+            }
+
+            function orderByValue (obj){
+                 const list = Object.keys(obj).sort(function(a,b){return obj[a]-obj[b]});
+                 const ret = {}
+                 list.forEach((val, key) => ret[val] = key);
+                return ret;
             }
 
             function showResult (final){
