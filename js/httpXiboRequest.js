@@ -99,21 +99,20 @@ function postWidgetWebContent (playlistId, token, uri, modeId, useDuration, dura
 }
 
 function postOrderWidget (token, playlistId, widget_pos, callback){
-  const widgetsFormData = qs.stringify(widget_pos,',\n',':');
+  const widgetsFormData = qs.stringify(widget_pos/*,',\n',':'*/);
 
   var options = {
-    url: constant.baseUrl + "playlist/order/" + playlistId,
+    url: constant.baseUrl + "playlist/order/" + playlistId + "&access_token=" + token,
     headers: {
       'content-type'  : 'application/x-www-form-urlencoded'
     },
-    formData: {
-      //widgets: widgetsFormData,
-      access_token: token
-    }
+    // form: {
+    //   widgets: widgetsFormData,
+    // }
   };
-  options.formData.append(widgetsFormData);
-console.log(options.formData);
-  request.post(options, function(err, response, data){
+
+
+  request.post(options,widgetsFormData, function(err, response, data){
     if (err)
       throw new Error(err);
 

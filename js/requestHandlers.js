@@ -63,8 +63,9 @@ function getRemoteData (req, res, formdata){
 
             insertWidgets(content, idPlaylist, dataToAdd, (res, list) => {
               services.postOrderWidget(accessToken, idPlaylist, list, (response, data) => {
-                if (response.statusCode !== 200)
+                if (response.statusCode !== 200){
                   res = false;
+                }
                 else {
                   console.log('SERVER RESPONSE ' + data);
                 }
