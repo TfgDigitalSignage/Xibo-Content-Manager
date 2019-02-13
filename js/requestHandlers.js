@@ -61,16 +61,14 @@ function getRemoteData (req, res, formdata){
             var idPlaylist = _data.regions[0].playlists[0].playlistId;
             var dataToAdd = content.playlist;
 
-            insertWidgets(content, idPlaylist, dataToAdd, (res, list) => {
-              services.postOrderWidget(accessToken, idPlaylist, list, (response, data) => {
-                if (response.statusCode !== 200){
-                  res = false;
-                }
-                else {
-                  console.log('SERVER RESPONSE ' + data);
-                }
-                showResult(res);
-              });
+            insertWidgets(content, idPlaylist, dataToAdd, (res) => {
+              if (response.statusCode !== 200){
+                res = false;
+              }
+              else {
+                console.log('SERVER RESPONSE ' + data);
+              }
+              showResult(res);
             });
 
             function insertWidgets (content, idPlaylist, dataToAdd, callback){
@@ -98,16 +96,13 @@ function getRemoteData (req, res, formdata){
                   }
                   else{
                     console.log("Added " + item.url + " to playlist "+ idPlaylist + "-> widgetId: " + data.widgetId,);
-                    // const tmp = {
-                    //   'widgetId': data.widgetId,
-                    //   'position': index
-                    // }
-                    const key = "widgets["+data.widgetId+"]";
-                    idList[key]=index;
-                    if (cont === array.length-1){
-                      callback & callback(final, orderByValue(idList));
-                    }
-                    cont++;
+                    services.postOrderWidget(accessToken, idPlaylist, data.widgetId, index, (response, data)=>{
+                      console.log(data);
+                      if (cont === array.length-1){
+                        callback && callback(final);
+                      }
+                      cont++;
+                    });
                   }
                 });
               });
@@ -152,7 +147,28 @@ function prueba(req, res, data){
   res.end();
 }
 
+function scheduleLayout (response){
+  const pug = require('pug');
+  const path = require('path');
+
+  const templatePath = path.join(__dirname, '..', 'view', 'LayoutScheduler.pug');
+  //Fetch data from xibo
+  const services = require('./httpXiboRequest');
+  services.xibo_getAccessToken((body) => {
+    const access_token = body['access_token'];
+    services.getLibraryMedia(access_token, (resp, body) => {
+      const items = JSON.parse(body);
+      console.log(pug.renderFile(templatePath, {
+        items: items
+      }));
+
+      
+    });
+  })
+}
+
 exports.index = getIndex
 exports.remoteDataLoader = remoteDataLoader
 exports.getRemoteData = getRemoteData
 exports.prueba = prueba
+exports.scheduleLayout = scheduleLayout

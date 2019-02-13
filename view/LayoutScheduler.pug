@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title Layout Scheduler
+    body
+        form(action="ScheduleNewEvent/",method="POST")
+            div.media-selector
+                div(id="media")
+                    each item in items
+                        | #{item.fileName}
+                        input(type="checkbox",name=item['mediaId'] ,value=item['mediaId'])
+                        br
+                    else
+                        p Biblioteca vacia
+            br
+            input(type="text", placeholder="Layout name")
+
+        

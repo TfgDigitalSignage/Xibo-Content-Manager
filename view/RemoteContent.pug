@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(http-equiv="X-UA-Compatible", content="ie=edge")
+    title Remote Content Loader
+  body
+    .header
+      h1 Xibo Content Manager v0.3
+    .wrapper
+      form(class='prettyForm', method='POST', action='/getRemoteData')
+        label(for='url') Data source URL
+        input(type='url', name="DataUri", value="", placeholder="http://example.com", required)
+        br
+        label(for="layoutName") Layout Name
+        input(type="text", name="LayoutName", value="testLayout", required)
+        br
+        input(type="submit", name="submitBtn", value="Create")

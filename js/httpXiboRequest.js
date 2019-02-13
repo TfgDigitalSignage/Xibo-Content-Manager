@@ -3,9 +3,9 @@ var request = require ('request');
 var qs = require('querystring');
 var constant = {
     //CLIENT INFO GABRI
-    client_id: 'JV9ca7Too1JHvMD6YJexc9YfCLJeYXp4VguTJVwK',
-    client_secret: 'L0Uohh4GzBMBKzbIhjKeH0s7X9ZASMAXBR4M5YB7jB9ReoULGDXJNUHiGMKp8jo8zVWxIF9Y6MKb2KdAScQVxDXUGE4sTzIgnjGA9n1Xm3izOdtKpV8MzshWq0mDTZVaQQ5AZWFYo3EXYePpG8tTcwLUETA8NaQqPWSpdm5PYwcK9DKnLxMpxwzt4CcNDzjddb1vVSaeIfTsNeeYXMTS0Q7X86loGdL95k3dizEgtloXigV7vy2yxhfi7EIlsI',
-    baseUrl: 'http://localhost:8080/api/'
+    client_id: 'Qen6esvNNsZrf3z8dU1BB0J8gakFr1IE8VDZV3hS',
+    client_secret: 'WCVlzSecKzLXV6J8UJehZv7VjKRPj6mxmJJeIdWHnG1aKPsm4kSsgy1g8s5l3E4duXXq1Qlo0ERuAesRVrS7vzoKUMtABFnDWj48PQSCXaXCJ7eXlCTBiEeOUxXnbVSmjtodFjwZgNvbMNjUCAwPrOebAm9yaqVkCIjYY3mmHeuUyaBOFf10lzmR1gslmbTHzBau0YAKRenhXtMV4AUj3oG9RS1h5dkxR0tfxwHeJTDTDYfWCi7tkVaTgifiKY',
+    baseUrl: 'http://localhost/api/'
     //CLIENT INFO ADRI
     // client_id: 'CE2KNI8jSH1AZD7JumvUJhZwC52Zh9Oqq7nScP94',
     // client_secret: 'F55zivjCEvTuz0Iuempkd43OMlojHq51B8PhvuyS6rm1wmPwSajQfFbHAgyLVvgh5AnZ479ywQmyRPPbWj02P1HaCBHExPFR9vKGHe1k6QIpZClJgJFwbbmJ7gIwFDhWQBE0arYqFjkfDdeKzMah9O1I9gXZZklXdVvHYgXYnqDmflVgb0GuxBolfFMTIiHdjqHBsTt9ctbmryG33PJIhEfGL8hmuO0gVlWe0meRHNrzPpqe0k7CU01g4eRXbG',
@@ -35,7 +35,7 @@ function getAccessToken (callback){
       throw new Error(error);
     }
     else{
-      callback & callback(JSON.parse(body));
+      callback && callback(JSON.parse(body));
     }
   });
 }
@@ -45,15 +45,15 @@ function getTime (token, callback){
     //   access_token: token
     // }
     request.get(constant.baseUrl + "clock?access_token="+token, function(error, response, body){
-      if (!error) callback & callback(body);
+      if (!error) callback && callback(body);
     });
 }
 
 function getJsonData (url, callback){
     request.get (url, function(err, res, body){
       if (err)
-        throw new Errror (err);
-      callback & callback (body);
+        throw new Error (err);
+      callback && callback (body);
     });
 }
 
@@ -72,7 +72,7 @@ function postLayout (token, name, callback){
   request.post(options, function(err, response, body){
     if (err)
       throw new Error(err);
-    callback & callback (response);
+    callback && callback (response);
   });
 }
 
@@ -94,29 +94,48 @@ function postWidgetWebContent (playlistId, token, uri, modeId, useDuration, dura
   request.post(options, function(err, response, data){
     if (err)
       throw new Error(err);
-    callback & callback (response, JSON.parse(data));
-  });
+    callback && callback (response, JSON.parse(data));
+    });
 }
 
-function postOrderWidget (token, playlistId, widget_pos, callback){
-  const widgetsFormData = qs.stringify(widget_pos/*,',\n',':'*/);
-
+function postOrderWidget (token, playlistId, widgedId, order, callback){
+  //const widgetsFormData = qs.stringify(widget_pos/*,',\n',':'*/);
+  const key = "widgets["+widgedId+"]";
+  
   var options = {
-    url: constant.baseUrl + "playlist/order/" + playlistId + "&access_token=" + token,
+    url: constant.baseUrl + "playlist/order/" + playlistId,
     headers: {
       'content-type'  : 'application/x-www-form-urlencoded'
     },
     // form: {
-    //   widgets: widgetsFormData,
+    //   access_token: token,
+    //   key: order
     // }
   };
 
 
-  request.post(options,widgetsFormData, function(err, response, data){
+  const req = request.post(options, function(err, response, data){
     if (err)
       throw new Error(err);
 
-    callback & callback (response, data);
+    callback && callback (response, data);
+  });
+  const form = req.form();
+  form.append(key, order);
+  form.append("access_token", token);
+}
+
+function getLibraryMedia(token, callback){
+  var options = {
+    url: constant.baseUrl + 'library' + '?access_token=' + token,
+    headers: {
+      'content-type'  : 'application/x-www-form-urlencoded'
+    }
+  }
+  request.get(options, (error, response, body) => {
+    if (!error){
+      callback && callback (response, body);
+    }
   });
 }
 
@@ -126,3 +145,4 @@ exports.getJsonData = getJsonData
 exports.postLayout = postLayout
 exports.postWidgetWebContent = postWidgetWebContent
 exports.postOrderWidget = postOrderWidget
+exports.getLibraryMedia = getLibraryMedia
