@@ -6,16 +6,21 @@ html(lang="en")
         meta(http-equiv="X-UA-Compatible", content="ie=edge")
         title Layout Scheduler
     body
-        form(action="ScheduleNewEvent/",method="POST")
+        form(action="createLayout/",method="POST")
             div.media-selector
                 div(id="media")
                     each item in items
                         | #{item.fileName}
-                        input(type="checkbox",name=item['mediaId'] ,value=item['mediaId'])
+                        input(type="checkbox",name='id',value=item['mediaId'])
+                        input(type="number",name='order_'+item.mediaId,value='0', min=0)
                         br
                     else
                         p Biblioteca vacia
             br
-            input(type="text", placeholder="Layout name")
+            label(for="layoutName") Layout Name
+            input(id="layoutName",type="text", placeholder="Layout name")
+            br
+            br
+            input(type="submit", value="Create Layout")
 
         

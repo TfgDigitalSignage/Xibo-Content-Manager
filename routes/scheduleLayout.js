@@ -13,8 +13,19 @@ router.get('/LayoutScheduler', (req,res,next) => {
     });
 });
 
-router.post('/getRemoteData', (req,res,next) => {
-    res.redirect('/');
+router.post('/LayoutScheduler/createLayout/', (req,res,next) => {
+    const body = req.body;
+    const params = [];
+    for (const i in body.id){
+        const key = 'order_' + body.id[i];
+        params.push({
+            id: body.id[i],
+            order: body[key]
+        });
+    }
+    createLayoutInitialized(params, ()=>{
+
+    })
 });
 
 /**
@@ -30,6 +41,10 @@ function getMediaItems(callback){
         callback && callback(items);      
       });
     });
+}
+
+function createLayoutInitialized(params, callback){
+    //Create and fill Xibo Layout
 }
 
 module.exports = router;
