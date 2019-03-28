@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title Polling
+    body
+        .header
+          h1 Xibo Content Manager v0.3
+        .wrapper
+            ul
+                li
+                  h3 
+                        a(href="/pollingLocalFile") Polling a local file
+                        p Get a reaction when a local file changes his content
+                li
+                  h3
+                        form(action = "/pollingRemoteFile", method = "POST")
+                            a Polling a remote file
+                            p Get a reaction when a remote file changes his content
+                            input(type = "url" name = "urlName" placeholder = "URL del fichero")
+                            input(type = "submit")                

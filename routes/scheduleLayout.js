@@ -32,6 +32,7 @@ router.post('/LayoutScheduler/createLayout/', (req,res,next) => {
  * Fetch Media data from Xibo Cms Library to show every avaliable item on schedule form
  */
 function getMediaItems(callback){
+
     //Fetch data from xibo
     const services = require('../js/httpXiboRequest');
     services.xibo_getAccessToken((body) => {

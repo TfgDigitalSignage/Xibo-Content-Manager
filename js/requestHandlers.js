@@ -151,6 +151,8 @@ function scheduleLayout (response){
   const pug = require('pug');
   const path = require('path');
 
+
+
   const templatePath = path.join(__dirname, '..', 'view', 'LayoutScheduler.pug');
   //Fetch data from xibo
   const services = require('./httpXiboRequest');
@@ -167,8 +169,90 @@ function scheduleLayout (response){
   })
 }
 
+
+function pollingFile(response)
+{
+  console.log('Polling a file');
+
+  let fileContent;
+  let fs = require('fs');
+ 
+  fs.readFile('../resources/file.txt', 'utf-8', (err, data) => 
+  {
+    if(err) 
+    {
+      console.log('error: ', err);
+      fileContent = data;
+      fs.writeFile("../resources/changed.txt", "Error", function (err) 
+        {
+          if (err) 
+          {
+            return console.log(err);
+          }
+        });
+    } else 
+    {
+      console.log(data);
+      fileContent = data;
+      fs.writeFile("../resources/changed.txt", "Event Changed", function (err) 
+        {
+          if (err) 
+          {
+            return console.log(err);
+          }
+        });
+    }
+  });
+   /*
+  if (fileContent)
+  {
+    var events = require('events').EventEmitter;
+    var emitter = new events.EventEmitter();
+
+    emitter.on('fileChanged', function(user){
+        console.log(user);
+    });
+
+    emitter.emit('fileChanged', "Krunal");
+  }
+
+  fs.watch('../resources/file.txt', { encoding: 'buffer' }, (eventType, filename) => 
+  {
+    if (filename) 
+    {
+      fs.writeFile("../resources/changed.txt", "Event Changed"+filename, function (err) 
+        {
+          if (err) 
+          {
+            return console.log(err);
+          }
+        });
+      console.log(filename);
+      if (eventType == 'change')
+      {
+        fs.writeFile("../resources/changed.txt", "Event Changed"+eventType, function (err) 
+        {
+          if (err) 
+          {
+            return console.log(err);
+          }
+        });
+        fileContent = encoding;
+        console.log('File changed: prev = ' + fileContent + ' & now = ' + data);
+      }
+       
+    }
+  });
+    */
+      // Prints: <Buffer ...>
+}
+
+
+
 exports.index = getIndex
 exports.remoteDataLoader = remoteDataLoader
 exports.getRemoteData = getRemoteData
 exports.prueba = prueba
 exports.scheduleLayout = scheduleLayout
+exports.polling = polling
+exports.pollingFile = pollingFile
