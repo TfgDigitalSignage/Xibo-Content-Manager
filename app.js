@@ -10,6 +10,7 @@ const index_route = require('./routes/index');
 const remoteContent_route = require('./routes/remoteDataLoader'); 
 const scheduleLayout_route = require('./routes/scheduleLayout');
 const polling_route = require('./routes/polling');
+const competition_route = require('./routes/competition')
 
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({extended: true}));
@@ -18,6 +19,7 @@ app.use(index_route);
 app.use(remoteContent_route);
 app.use(scheduleLayout_route);
 app.use(polling_route);
+app.use('/competition', competition_route)
 
 //Not Found page
 app.use((req,res,next) => {

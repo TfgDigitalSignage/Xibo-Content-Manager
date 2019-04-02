@@ -1,0 +1,32 @@
+{
+  "name": "xibo-content-manager",
+  "version": "1.0.0",
+  "description": "Content Manager on NodeJS using Xibo CMS web API",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "form-data": "^2.3.3",
+    "pug": "^2.0.3",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/TfgDigitalSignage/Xibo-Content-Manager.git"
+  },
+  "author": "Tfg-DigitalSignage",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TfgDigitalSignage/Xibo-Content-Manager/issues"
+  },
+  "homepage": "https://github.com/TfgDigitalSignage/Xibo-Content-Manager#readme"
+}
