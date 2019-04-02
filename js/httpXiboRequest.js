@@ -157,7 +157,7 @@ function getLibraryMedia(token, callback){
   });
 }
 
-function postSchedule(token, layoutId, displayGroupIds, fromDt, toDt,priority,priority, callback) {
+function postSchedule(token, layoutId, displayGroupIds, fromDt, toDt,priority, callback) {
   const options = {
     url: constant.baseUrl + 'schedule',
     headers: 
