@@ -57,6 +57,24 @@ function getJsonData (url, callback){
     });
 }
 
+function getLayout (token, idLayout, callback){
+  const options = {
+    url: constant.baseUrl + 'layout',
+    qs: {
+      layoutId: idLayout, 
+      embed: 'regions,playlists' 
+    },
+    headers:{ 
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'application/x-www-form-urlencoded' 
+      } 
+  }
+  request.get(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    callback && callback(body)
+  })
+}
+
 function postLayout (token, name, callback){
   var options = {
     url: constant.baseUrl + "layout",
@@ -209,6 +227,7 @@ function deleteSchedule (token, scheduleId, callback) {
 exports.xibo_getAccessToken =  getAccessToken
 exports.xibo_getTime = getTime
 exports.getJsonData = getJsonData
+exports.getLayout = getLayout
 exports.postLayout = postLayout
 exports.postWidgetWebContent = postWidgetWebContent
 exports.postOrderWidget = postOrderWidget
