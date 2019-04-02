@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title Polling
+    body
+        .header
+          h1 Layout Manager v0.1
+        .wrapper
+            ul
+                li
+                  h3
+                        form(action = "/createLayout", method = "POST")
+                            a Create layout
+                            p Create a new layout
+                            input(type = "text" name = "layoutName" placeholder = "Layout name")
+                            input(type = "submit") 
