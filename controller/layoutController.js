@@ -17,15 +17,15 @@ module.exports = {
                 }
                 else
                 {
-                    console.log('Layout created: ' + params.layoutName)
-                    params.layoutId = JSON.parse(body).layoutId
-                    params.layoutBackgroundColor = JSON.parse(body).layoutBackgroundColor
-                    params.layoutBackgroundzIndex = JSON.parse(body).layoutBackgroundzIndex 
+                    //console.log("Layout creado: " + params.layoutName)
+                    params.layoutId = rb.layoutId
+                    params.layoutBackgroundColor = rb.layoutBackgroundColor
+                    params.layoutBackgroundzIndex = rb.layoutBackgroundzIndex 
                 }
                 callback()
             })
         })
-    }//,
+    },
 /*    editEvent: (params, layoutId, callback) => {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
@@ -35,15 +35,30 @@ module.exports = {
             })
         })
     },
-    deleteEvent: (params, callback) => {
+*/
+    deleteLayout: (params, callback) => {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
-            xiboServices.deleteSchedule(token, params.eventId, (body)=>{
-                console.log('Schedule removed: ' + body)
-                params.eventId = ''
+            xiboServices.deleteLayout(token, params.layoutId, (response)=>{
+                let rb = JSON.parse(response.body)
+                if(rb.error)
+                {
+                    console.log("ERROR")
+                    if (rb.error.code == 404)
+                        console.log("Error al borrar el layout: no existe")
+                }
+                else
+                {
+                    //console.log("Layout eliminado")
+                    params.layoutId = ""
+                    params.layoutBackgroundColor = ""
+                    params.layoutBackgroundzIndex = ""
+                    params.layoutName = ""
+                }
+                
                 callback()
             })
         })
     }
-*/
+
 }
