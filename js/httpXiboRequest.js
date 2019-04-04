@@ -139,7 +139,7 @@ function getLibraryMedia(token, callback){
   });
 }
 
-function postSchedule(token, layoutId, displayGroupIds, fromDt, toDt,priority,priority, callback) {
+function postSchedule(token, layoutId, displayGroupIds, fromDt, toDt,priority, callback) {
   const options = {
     url: constant.baseUrl + 'schedule',
     headers: 
@@ -166,6 +166,7 @@ request.post(options, (error, response, body) => {
 });
 
 }
+
 
 function putSchedule(token, idLayout,idEvent,displayGroupIds,fromDt, toDt,priority, callback){
   var options = {
@@ -206,6 +207,44 @@ function deleteSchedule (token, scheduleId, callback) {
   });
 }
 
+function createNameCampaign(token,name, callback){
+  var request = require("request");
+
+var options = { method: 'POST',
+  url: 'http://localhost/api/campaign',
+  headers: 
+   { 
+     
+     Authorization: token,
+     'content-type': 'multipart/form-data' },
+  formData: { name: name } };
+
+request(options, function (error, response, body) {
+  if (error) throw new Error(error);
+
+  callback(body)
+});
+}
+
+function createCampaign(token,campaignId,layoutId,layoutOrder,allback){
+  var request = require("request");
+  var options = { method: 'POST',
+    url: 'http://localhost/api/campaign/layout/assign/' + campaignId  
+    headers: 
+     { 
+       Authorization: token,
+       'content-type': 'multipart/form-data' },
+    formData: 
+     { 'layoutId[0][layoutId]': layoutId,
+       'layoutId[0][displayOrder]': layoutOrder } };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    callback(body)
+  });
+}
+
 exports.xibo_getAccessToken =  getAccessToken
 exports.xibo_getTime = getTime
 exports.getJsonData = getJsonData
@@ -216,3 +255,4 @@ exports.getLibraryMedia = getLibraryMedia
 exports.postSchedule = postSchedule
 exports.putSchedule = putSchedule
 exports.deleteSchedule = deleteSchedule
+exports.createNameCampaign = createNameCampaign
