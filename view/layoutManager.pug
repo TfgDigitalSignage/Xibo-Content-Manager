@@ -17,3 +17,10 @@ html(lang="en")
                             p Create a new layout
                             input(type = "text" name = "layoutName" placeholder = "Layout name")
                             input(type = "submit") 
+                li
+                  h3
+                        form(action = "/deleteLayout", method = "POST")
+                            a Delete layout
+                            p Delete a existing layout by Id
+                            input(type = "text" name = "layoutId" placeholder = "Layout id")
+                            input(type = "submit") 
