@@ -245,20 +245,20 @@ function deleteSchedule (token, scheduleId, callback) {
 }
 
 function createNameCampaign(token,name, callback){
-  var request = require("request");
+  
 
 var options = { method: 'POST',
   url: 'http://localhost/api/campaign',
   headers: 
    { 
      
-     Authorization: token,
+     Authorization: 'Bearer ' + token,
      'content-type': 'multipart/form-data' },
   formData: { name: name } };
 
 request(options, function (error, response, body) {
   if (error) throw new Error(error);
-
+  console.log(response)
   callback(body)
 });
 }
@@ -266,10 +266,10 @@ request(options, function (error, response, body) {
 function createCampaign(token,campaignId,layoutId,layoutOrder,callback){
   var request = require("request");
   var options = { method: 'POST',
-    url: 'http://localhost/api/campaign/layout/assign/' + campaignId  
+    url: 'http://localhost/api/campaign/layout/assign/' + campaignId , 
     headers: 
      { 
-       Authorization: token,
+       Authorization: 'Bearer ' + token,
        'content-type': 'multipart/form-data' },
     formData: 
      { 'layoutId[0][layoutId]': layoutId,

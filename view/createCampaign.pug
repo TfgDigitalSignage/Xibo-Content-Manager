@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title Campaign
+    body
+        .header
+          h1 campaign Manager v0.1
+        .wrapper
+            ul
+                li
+                  h3
+                        form(action = "/createCampaign", method = "POST")
+                            a Create campaign
+                            p Create a new campaign
+                            input(type = "text" name = "CampaignName" placeholder = "campaign name")
+                            input(type = "submit") 
