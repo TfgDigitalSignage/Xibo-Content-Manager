@@ -26,16 +26,25 @@ module.exports = {
             })
         })
     },
-/*    editEvent: (params, layoutId, callback) => {
+    getLayout: (params, callback) => {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
-            xiboServices.putSchedule(token, layoutId, params.eventId, params.displaysId, params.startDate, params.endDate, (body)=>{
-                console.log('Schedule modified: ' + body)
-                callback()
+            xiboServices.getLayout(token, "", (response)=>{
+                let rb = JSON.parse(response.body)
+                if(rb.error)
+                {
+                    console.log("ERROR")
+                    //if (rb.error.code == 409)
+                        //console.log("Error al crear el layout: nombre ya existente")
+                }
+                else
+                {
+                    //console.log("Layout creado: " + params.layoutName)
+                }
+                callback(rb)
             })
         })
     },
-*/
     deleteLayout: (params, callback) => {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
