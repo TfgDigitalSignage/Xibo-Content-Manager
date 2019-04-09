@@ -71,7 +71,7 @@ function getLayout (token, idLayout, callback){
   }
   request.get(options, function (error, response, body) {
     if (error) throw new Error(error);
-    callback && callback(body)
+    callback && callback(response)
   })
 }
 

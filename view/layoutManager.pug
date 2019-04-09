@@ -4,23 +4,49 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         meta(http-equiv="X-UA-Compatible", content="ie=edge")
-        title Polling
+        title LayoutManager
+
     body
         .header
           h1 Layout Manager v0.1
         .wrapper
-            ul
-                li
-                  h3
-                        form(action = "/createLayout", method = "POST")
-                            a Create layout
-                            p Create a new layout
-                            input(type = "text" name = "layoutName" placeholder = "Layout name")
-                            input(type = "submit") 
-                li
-                  h3
-                        form(action = "/deleteLayout", method = "POST")
-                            a Delete layout
-                            p Delete a existing layout by Id
-                            input(type = "text" name = "layoutId" placeholder = "Layout id")
-                            input(type = "submit") 
+           
+                table(style='width:100%', border='1')
+                    tr
+                        th Create and Delete
+                        th Get
+                    tr
+                        td 
+                            h3
+                                form(action = "/createLayout", method = "POST")
+                                    a Create layout
+                                    p Create a new layout
+                                    input(type = "text" name = "layoutName" placeholder = "Layout name")
+                                    input(type = "submit") 
+                        td 
+                            h3
+                                form(action="/LayoutManager",method="GET")
+                                    div.getAllLayouts
+                                        div(id="layouts")
+                                        <!--form(action="editLayout/",method="POST")-->
+                                            each layout in layouts
+                                                | #{layout.layoutId}.- #{layout.layout}
+                                                input(type="checkbox",name='layoutId',value=layout['layoutId'])
+                                                br
+                                            else
+                                                p No hay layouts
+                                       
+                    tr
+                        td                 
+                            h3
+                                form(action = "/deleteLayout", method = "POST")
+                                    a Delete layout
+                                    p Delete a existing layout by Id
+                                    input(type = "text" name = "layoutId" placeholder = "Layout id")
+                                    input(type = "submit") 
+                        td rahul
+
+                
+
+
+
