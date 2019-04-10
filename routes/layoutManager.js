@@ -12,7 +12,11 @@ let params = {
 
 
 router.get('/LayoutManager', (req,res,next) => {
-    res.render('layoutManager.pug');
+    layoutController.getLayout(params, (layouts)=>{
+            //console.log(layouts);
+            res.render('layoutManager.pug', {
+                layouts: layouts});
+        });
 });
 
 router.post('/createLayout', (req,res,next) => {
