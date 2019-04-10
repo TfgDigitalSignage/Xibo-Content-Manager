@@ -23,11 +23,11 @@ module.exports = {
     },
     insertHlsWidget: (sourceUrl, layoutId, callback)=>{
         xiboServices.xibo_getAccessToken((body)=>{
-            const token = JSON.parse(body)
+            const token = body.access_token
             xiboServices.getLayout(token, layoutId, (body)=>{
-                const playlistId = JSON.parse(body).regions[0].playlists[0].playlistId
-                xiboServices.postHlsWidget(token, playlistId, sourceUrl, undefined, (body)=>{
-                    console.log(body)
+                const playlistId = JSON.parse(body)[0].regions[0].playlists[0].playlistId
+                xiboServices.postHlsWidget(token, playlistId, sourceUrl, 0, 0, (body)=>{
+                    callback(body)
                 })
             })
         })
