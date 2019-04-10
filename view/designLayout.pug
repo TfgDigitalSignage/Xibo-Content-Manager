@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title LayoutDesigner
+    body
+        .header
+            h1 Layout Designer v0.1
+        .wrapper
+            ul
+                h3 Widgets
+                p Widgets list in layout
+                    div.getWidgets
+                        div(id="widgets")
+                            if length > 0
+                                ul
+                                each widget in widgets
+                                    li
+                                        | #{widget.widgetId}.- #{widget.name}, Tipo: #{widget.type}
+                                        br
+                            else
+                                p Este layout no tiene widgets
+                                  
+                                       
+

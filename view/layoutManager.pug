@@ -25,16 +25,19 @@ html(lang="en")
                                     input(type = "submit") 
                         td 
                             h3
-                                form(action="/LayoutManager",method="GET")
-                                    div.getAllLayouts
-                                        div(id="layouts")
-                                        <!--form(action="editLayout/",method="POST")-->
+                                div.getAllLayouts
+                                    div(id="layouts")
+                                    form(action="/designLayout",method="POST")
+                                        if layouts
+                                            ul
                                             each layout in layouts
-                                                | #{layout.layoutId}.- #{layout.layout}
-                                                input(type="checkbox",name='layoutId',value=layout['layoutId'])
-                                                br
-                                            else
-                                                p No hay layouts
+                                                li 
+                                                    | #{layout.layoutId}.- #{layout.layout}
+                                                    input(type='radio', name=`layoutChecked`, value=layout)
+                                                    br
+                                            input(type = "submit" value = "Diseñar")    
+                                        else
+                                            p No hay layouts
                                        
                     tr
                         td                 
@@ -45,8 +48,3 @@ html(lang="en")
                                     input(type = "text" name = "layoutId" placeholder = "Layout id")
                                     input(type = "submit") 
                         td rahul
-
-                
-
-
-
