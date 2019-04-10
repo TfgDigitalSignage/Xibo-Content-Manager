@@ -36,10 +36,22 @@ router.post('/start', (req,res,next)=>{
            for (const key in content){
                if (content.hasOwnProperty(key)){
                     //Provisional: Solo un layout con valor a 1 en el json
-                    if (content[key] === 1){
-                        eventController.editEvent(initLayoutId,eventId,displaysId,startDate,endDate,priority, key, ()=>{
-                            console.log('Evento cambiado con exito(IdLayout = ' + key + ')')
-                        })
+                    const item = content[key]
+                    if (item.active === 1){
+                        const newPrior = item.priority ? item.priority : 0
+                        if (item.type === 'video/hls'){
+                            const videoController = require('../controller/VideoController')
+                            videoController.startStopVideoServer(item.host, 'start-server', (body)=>{
+                                videoController.insertHlsWidget(item.host + 'live/playlist.m3u8', key, (body)=>{
+                                    console.log(body)
+                                })
+                            })
+                        }
+                        else {
+                            eventController.editEvent(initLayoutId,eventId,displaysId,startDate,endDate,newPrior, key, ()=>{
+                                console.log('Evento cambiado con exito(IdLayout = ' + key + ')')
+                            })
+                        }
                     }
                }
            }
