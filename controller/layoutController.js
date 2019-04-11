@@ -8,7 +8,7 @@ module.exports = {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.postLayout(token, params.layoutName, (response)=>{
-                let rb = JSON.parse(response.body)
+                const rb = JSON.parse(response.body)
                 if(rb.error)
                 {
                     console.log("ERROR")
@@ -30,7 +30,7 @@ module.exports = {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.getLayout(token, "", (response)=>{
-                let rb = JSON.parse(response.body)
+                const rb = JSON.parse(response.body)
                 if(rb.error)
                 {
                     console.log("ERROR")
@@ -49,7 +49,7 @@ module.exports = {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.deleteLayout(token, params.layoutId, (response)=>{
-                let rb = JSON.parse(response.body)
+                const rb = JSON.parse(response.body)
                 if(rb.error)
                 {
                     console.log("ERROR")
@@ -66,6 +66,19 @@ module.exports = {
                 }
                 
                 callback()
+            })
+        })
+    },
+    getWidgets: (params, callback) => {
+        xiboServices.xibo_getAccessToken((body)=>{
+            const token = body['access_token'];
+            xiboServices.getWidgetsOfPlaylist(params.layoutPlaylist.playlistId, token, (response) =>{
+                const rb = JSON.parse(response.body)
+                if(rb.error)
+                {
+                    console.log("ERROR")
+                }
+                callback(rb)
             })
         })
     }

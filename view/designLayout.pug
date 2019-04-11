@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title LayoutDesigner
+    body
+        .header
+            h1 Layout Designer v0.1
+        .wrapper
+            ul
+                h3 Widgets
+                p Widgets list in layout
+                    div.getWidgets
+                        div(id="widgets")
+                            if length > 0
+                                ul
+                                each widget in widgets
+                                    li
+                                        | #{widget.widgetId}.- #{widget.name}, Tipo: #{widget.type}
+                                        br
+                            else
+                                p Este layout no tiene widgets
+
+                li
+                    h3 Add widget
+                    p Add a widget to this layout
+                    form(action="/addWidget",method="POST")
+                        select.input(name='selectWidget')
+                            option(value='0') -- Widget type --
+                            option(value='text') Text
+                            option(value='clock') Clock
+                            option(value='embed') Embedded
+                            option(value='hls') HLS Video
+                            option(value='localVideo') Local Video
+                            option(value='twitter') Twitter
+                            option(value='webpage') Webpage
+                        input(type = "submit" value = "Add") 
+
+                                  
+                                       
+

@@ -1,13 +1,12 @@
 const xiboServices = require('../js/httpXiboRequest')
 
 module.exports = {
-    createEvent: (eventId,layoutId, displayGroupIds, fromDt, toDt,priority, callback) => {
+    createEvent: (layoutId, displayGroupIds, fromDt, toDt,priority, callback) => {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.postSchedule(token,layoutId, displayGroupIds, fromDt, toDt,priority, (body)=>{
-                console.log('Schedule created: ' + body)
-                eventId = JSON.parse(body).eventId
-                callback()
+                const eventId = JSON.parse(body).eventId
+                callback(eventId)
             })
         })
     },
@@ -16,7 +15,7 @@ module.exports = {
             const token = body['access_token'];
             xiboServices.putSchedule(token, idLayout,idEvent,displayGroupIds,fromDt, toDt,priority, (body)=>{
                 console.log('Schedule modified: ' + body)
-                callback()
+                callback(body)
             })
         })
     },
