@@ -9,11 +9,20 @@ html(lang="en")
         .header
           h1 campaign Manager v0.1
         .wrapper
-            ul
-                li
-                  h3
-                        form(action = "/createCampaign", method = "POST")
-                            a Create campaign
-                            p Create a new campaign
-                            input(type = "text" name = "CampaignName" placeholder = "campaign name")
-                            input(type = "submit") 
+            
+            h3
+                form(action = "/createCampaign", method = "POST")
+                    div.getAllLayouts
+                        div(id="layouts")
+                            each layout in layouts
+                                | #{layout.layoutId}.- #{layout.layout}
+                                input(type="checkbox",name='layoutId',value=layout['layoutId'])
+                                br
+                                input(type="number",name='order_'+layout.layoutId,value='0', min=0)
+                                br
+                            else
+                                p No hay layouts
+                    br
+                    a Create campaign
+                    input(type = "text" name = "CampaignName" placeholder = "campaign name")
+                    input(type = "submit") 

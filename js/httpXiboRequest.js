@@ -322,22 +322,24 @@ var options = { method: 'POST',
 
 request(options, function (error, response, body) {
   if (error) throw new Error(error);
-  console.log(response)
   callback(body)
 });
 }
 
-function createCampaign(token,campaignId,layoutId,layoutOrder,callback){
+function createCampaign(token,campaignId,layoutId,layoutOrder,i,callback){
+  var string1 = 'layoutId[' + i + '][layoutId]';
+  var string2 = 'layoutId[' + i + '][displayOrder]'
+  console.log(string1 + ' ' + layoutId)
   var request = require("request");
   var options = { method: 'POST',
     url: 'http://localhost/api/campaign/layout/assign/' + campaignId,
     headers: 
      { 
        Authorization: 'Bearer ' + token,
-       'content-type': 'multipart/form-data' },
+       'content-type': 'application/x-www-form-urlencoded' },
     formData: 
-     { 'layoutId[0][layoutId]': layoutId,
-       'layoutId[0][displayOrder]': layoutOrder } };
+     { string1: layoutId,
+       string2: layoutOrder } };
 
   request(options, function (error, response, body) {
     if (error) throw new Error(error);
@@ -362,3 +364,4 @@ exports.postSchedule = postSchedule
 exports.putSchedule = putSchedule
 exports.deleteSchedule = deleteSchedule
 exports.createNameCampaign = createNameCampaign
+exports.createCampaign = createCampaign
