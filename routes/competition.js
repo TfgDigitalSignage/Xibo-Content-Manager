@@ -28,28 +28,30 @@ router.post('/start', (req,res,next)=>{
     const pollFeature = require('../util/pollingFeature')
 
     //Initialised main event/schedule
-    eventController.createEvent(eventId,initLayoutId,displaysId,startDate,endDate,priority, ()=>{
+    eventController.createEvent(initLayoutId,displaysId,startDate,endDate,priority, (eventId)=>{
         started = 1
         res.end('<h1>Competicion Iniciada. Escuchando cambios en el servidor</h1>')
         pollFeature.pollingRemoteFile(req.body.urlName, (fileChanged)=>{
            const content = JSON.parse(fileChanged)
-           for (const key in content){
-               if (content.hasOwnProperty(key)){
+           for (const layoutId in content){
+               if (content.hasOwnProperty(layoutId)){
                     //Provisional: Solo un layout con valor a 1 en el json
-                    const item = content[key]
+                    const item = content[layoutId]
                     if (item.active === 1){
                         const newPrior = item.priority ? item.priority : 0
                         if (item.type === 'video/hls'){
                             const videoController = require('../controller/VideoController')
                             videoController.startStopVideoServer(item.host, 'start-server', (body)=>{
-                                videoController.insertHlsWidget(item.host + 'live/playlist.m3u8', key, (body)=>{
-                                    console.log(body)
+                                videoController.insertHlsWidget(item.host + 'live/playlist.m3u8', layoutId, (body)=>{
+                                    eventController.editEvent(layoutId, eventId, displaysId, startDate, endDate, newPrior, ()=>{
+                                        console.log("HLS widget update succesfull")
+                                    })
                                 })
                             })
                         }
                         else {
-                            eventController.editEvent(initLayoutId,eventId,displaysId,startDate,endDate,newPrior, key, ()=>{
-                                console.log('Evento cambiado con exito(IdLayout = ' + key + ')')
+                            eventController.editEvent(layoutId,eventId,displaysId,startDate,endDate,newPrior, ()=>{
+                                console.log('Evento cambiado con exito(IdLayout = ' + layoutId + ')')
                             })
                         }
                     }

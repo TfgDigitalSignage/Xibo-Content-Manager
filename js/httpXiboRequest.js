@@ -7,15 +7,13 @@ var constant = {
     client_secret: '5GJrGW6RGMHeTkowBSTdsypdnWJaXG1uVWf9NnCPru74UOSjvlTMAk6FH5wi1eMm5rpzZbIuhV39oMoM1SQYD7f64FSQzMX2fZaQv3hcc8bYpncfplQhTy7fHIVWojUWvbd0BXmEXiZsagmyxRCcCy3Xcv8DHD2q2N6aNK1H1HfrWwTnZGTMkTkJMupaRP6L0Z1vrmeMCJ4sTmIb8srZeDRNAgYAId2r9uE2fnwvWeUYWJNonUB0exs2iQhWYj',
     baseUrl: 'http://localhost/api/'
     //CLIENT INFO ADRI
-<<<<<<< HEAD
-    client_id: 'Tv7PRCwXCi3n6po1WcuhXzIsVZv0gb0gXE6kl7if',
-    client_secret: 'ndTS6bNNxQ4S9qnT8akJrEoeOBHCO4RLmAYcrNlTMCPIxjfCL5Oc9HeEUv6Oi8Bq0OXQ2LQKCBUh7DUvqOKLY3L1aLyi1ngwcgByFi5YQ0nYfiJeOspmsFbBruT0GitdIp4AsFyRoMdytjVgqXiUvxQ20VtJ7iHmdozO4Hj5pO1F0lMWX9WBocBCoIrBBFS51P7sqjxu2QIh8ywOeEG3MhqvqIyTYod45NCopwpYfwJxWSp5kGswvweHWWZKIr',
-    baseUrl: 'http://localhost/api/'
+    // client_id: 'Tv7PRCwXCi3n6po1WcuhXzIsVZv0gb0gXE6kl7if',
+    // client_secret: 'ndTS6bNNxQ4S9qnT8akJrEoeOBHCO4RLmAYcrNlTMCPIxjfCL5Oc9HeEUv6Oi8Bq0OXQ2LQKCBUh7DUvqOKLY3L1aLyi1ngwcgByFi5YQ0nYfiJeOspmsFbBruT0GitdIp4AsFyRoMdytjVgqXiUvxQ20VtJ7iHmdozO4Hj5pO1F0lMWX9WBocBCoIrBBFS51P7sqjxu2QIh8ywOeEG3MhqvqIyTYod45NCopwpYfwJxWSp5kGswvweHWWZKIr',
+    // baseUrl: 'http://localhost/api/'
     //CLIENT INFO DANI
     //client_id: 'Aw8RNRb5AEqmS7B8C5ipq5XcV40LxagxnD41sCmg',
     //client_secret: '6gWsZef5ajJiTKmuPiQB56vCrlVQi86o0DqxTiKZyzu1XpzX4jzSug5BPRmnTFbjLDgcVVXTFsO0594mp1e07qAgvMxAjiEt1Yo83bYy4G6YgUD0EPKDJPGzIdhqUhc8iD7WyExfj9oDLauG2R4n0um5cMUEPVNI3ZvOOkJPoTXsV8K6xmA25Jscif3ZOncUQ5ivCfordmIlg0C5IHTVIjWGn9EyXGNECLsIZLBGAKwka3Eq01MqRKpPnR9u7F',
     //baseUrl: 'http://localhost/api/'
-=======
     //client_id: 'Tv7PRCwXCi3n6po1WcuhXzIsVZv0gb0gXE6kl7if',
     //client_secret: 'ndTS6bNNxQ4S9qnT8akJrEoeOBHCO4RLmAYcrNlTMCPIxjfCL5Oc9HeEUv6Oi8Bq0OXQ2LQKCBUh7DUvqOKLY3L1aLyi1ngwcgByFi5YQ0nYfiJeOspmsFbBruT0GitdIp4AsFyRoMdytjVgqXiUvxQ20VtJ7iHmdozO4Hj5pO1F0lMWX9WBocBCoIrBBFS51P7sqjxu2QIh8ywOeEG3MhqvqIyTYod45NCopwpYfwJxWSp5kGswvweHWWZKIr',
     //baseUrl: 'http://localhost/api/'
@@ -23,7 +21,6 @@ var constant = {
     // client_id: 'Aw8RNRb5AEqmS7B8C5ipq5XcV40LxagxnD41sCmg',
     // client_secret: '6gWsZef5ajJiTKmuPiQB56vCrlVQi86o0DqxTiKZyzu1XpzX4jzSug5BPRmnTFbjLDgcVVXTFsO0594mp1e07qAgvMxAjiEt1Yo83bYy4G6YgUD0EPKDJPGzIdhqUhc8iD7WyExfj9oDLauG2R4n0um5cMUEPVNI3ZvOOkJPoTXsV8K6xmA25Jscif3ZOncUQ5ivCfordmIlg0C5IHTVIjWGn9EyXGNECLsIZLBGAKwka3Eq01MqRKpPnR9u7F',
     // baseUrl: 'http://localhost/api/'
->>>>>>> 12c9a5b938e56ead6aa87b7ef93b60f120632703
 }
 
 function getAccessToken (callback){
@@ -182,6 +179,26 @@ function postHlsWidget(token, playlistId, uri, useDuration, duration, callback){
   });
 }
 
+function editWidget(token, widgetId, uri, useDuration, duration, callback){
+  var options = {
+    url: constant.baseUrl + 'playlist/widget/' + widgetId,
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'content-type': 'application/x-www-form-urlencoded' 
+    },
+    formData: { 
+      uri: uri,
+      useDuration: useDuration,
+      duration: duration
+    }
+  };
+
+  request.put(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    callback(body)
+  });
+} 
+
 function postOrderWidget (token, playlistId, widgedId, order, callback){
   //const widgetsFormData = qs.stringify(widget_pos/*,',\n',':'*/);
   const key = "widgets["+widgedId+"]";
@@ -337,6 +354,7 @@ exports.postLayout = postLayout
 exports.deleteLayout = deleteLayout
 exports.getWidgetsOfPlaylist = getWidgetsOfPlaylist
 exports.postHlsWidget = postHlsWidget
+exports.editWidget = editWidget
 exports.postWidgetWebContent = postWidgetWebContent
 exports.postOrderWidget = postOrderWidget
 exports.getLibraryMedia = getLibraryMedia
