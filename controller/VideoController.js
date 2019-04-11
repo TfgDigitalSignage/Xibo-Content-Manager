@@ -34,7 +34,7 @@ module.exports = {
                         })
                     }
                     else {
-                        xiboServices.editWidget(token, widgets[0].widgetId, sourceUrl, 0, 0, body=> {
+                        xiboServices.editHlsWidget(token, widgets[0].widgetId, sourceUrl, 0, 0, body=> {
                             callback(body)
                         })
                     }

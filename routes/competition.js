@@ -3,7 +3,7 @@ const router = express.Router()
 
 let started = 0
 
-
+let videoServer = ""
 
 //cogemos del archivo de config.
 let initLayoutId = 1
@@ -39,10 +39,11 @@ router.post('/start', (req,res,next)=>{
                     const item = content[layoutId]
                     if (item.active === 1){
                         const newPrior = item.priority ? item.priority : 0
+                        const videoController = require('../controller/VideoController')
                         if (item.type === 'video/hls'){
-                            const videoController = require('../controller/VideoController')
-                            videoController.startStopVideoServer(item.host, 'start-server', (body)=>{
-                                videoController.insertHlsWidget(item.host + 'live/playlist.m3u8', layoutId, (body)=>{
+                            videoServer = item.host
+                            videoController.startStopVideoServer(videoServer, 'start-server', (body)=>{
+                                videoController.insertHlsWidget(videoServer + 'live/playlist.m3u8', layoutId, (body)=>{
                                     eventController.editEvent(layoutId, eventId, displaysId, startDate, endDate, newPrior, ()=>{
                                         console.log("HLS widget update succesfull")
                                     })
@@ -50,6 +51,10 @@ router.post('/start', (req,res,next)=>{
                             })
                         }
                         else {
+                            if (videoServer)
+                                videoController.startStopVideoServer(videoServer, "stop-server", body => {
+                                    console.log(body)
+                                })
                             eventController.editEvent(layoutId,eventId,displaysId,startDate,endDate,newPrior, ()=>{
                                 console.log('Evento cambiado con exito(IdLayout = ' + layoutId + ')')
                             })
