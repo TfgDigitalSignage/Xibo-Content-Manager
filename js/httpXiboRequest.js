@@ -179,7 +179,7 @@ function postHlsWidget(token, playlistId, uri, useDuration, duration, callback){
   });
 }
 
-function editWidget(token, widgetId, uri, useDuration, duration, callback){
+function editHlsWidget(token, widgetId, uri, useDuration, duration, callback){
   var options = {
     url: constant.baseUrl + 'playlist/widget/' + widgetId,
     headers: {
@@ -354,7 +354,7 @@ exports.postLayout = postLayout
 exports.deleteLayout = deleteLayout
 exports.getWidgetsOfPlaylist = getWidgetsOfPlaylist
 exports.postHlsWidget = postHlsWidget
-exports.editWidget = editWidget
+exports.editHlsWidget = editHlsWidget
 exports.postWidgetWebContent = postWidgetWebContent
 exports.postOrderWidget = postOrderWidget
 exports.getLibraryMedia = getLibraryMedia
