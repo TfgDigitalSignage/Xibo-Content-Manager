@@ -57,31 +57,53 @@ router.post('/designLayout', (req,res,next) =>{
 
 router.post('/addWidget', (req,res,next) =>{
     selectedWidget = req.body
+    let requiredParams = []
     if (selectedWidget.selectWidget != 0){
         widgetParams.widgetType = selectedWidget.selectWidget
         switch(widgetParams.widgetType) {
             case 'text':
-                let requiredParams =[
+                requiredParams =[
                     text = "text"
                 ];
-                res.render('addWidget.pug', {
-                    type: widgetParams.widgetType,
-                    params: requiredParams,
-                    length: requiredParams.length
-                });
                 break;
             case 'hls':
+                requiredParams =[
+                    uri = "uri"
+                ];
                 break;
             case 'localVideo':
+                requiredParams =[
+                    uri = "uri"
+                ];
                 break;
             case 'clock':
+                requiredParams =[
+                ];
                 break;
-            case 'embed':
+            case 'embedded':
+                requiredParams =[
+                ];
                 break;
             case 'webpage':
+                requiredParams =[
+                    uri = "uri",
+                    //The mode option for Web page, 1- Open Natively, 2- Manual Position, 3- Best Ft
+                    modeId = "modeId"
+                ];
+                break;
+            case 'twitter':
+                requiredParams =[
+                    searchTerm = "searchTerm"
+                ];
+
                 break;
             default:
         } 
+        res.render('addWidget.pug', {
+            type: widgetParams.widgetType,
+            params: requiredParams,
+            length: requiredParams.length
+        });
     }
     else
         console.log("Widget not selected")

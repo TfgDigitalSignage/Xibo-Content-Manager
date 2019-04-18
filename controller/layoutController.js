@@ -102,14 +102,94 @@ module.exports = {
                     });
                     break;
                 case 'hls':
+                    xiboServices.addHlsWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, requiredParams[0].value, (body) =>{
+                        const rb = JSON.parse(body)
+                        if(rb.error)
+                        {
+                            console.log("ERROR")
+                        }
+                        else{
+                            //console.log("Widget creado: " )
+                            //widgetParams.widgetName = rb.layoutId
+                            //widgetParams.widgetId = rb.layoutBackgroundColor 
+                        }
+                        callback(rb)
+                    });
                     break;
                 case 'localVideo':
+                        xiboServices.addLocalVideoWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, requiredParams[0].value, (body) =>{
+                        const rb = JSON.parse(body)
+                        if(rb.error)
+                        {
+                            console.log("ERROR")
+                        }
+                        else{
+                            //console.log("Widget creado: " )
+                            //widgetParams.widgetName = rb.layoutId
+                            //widgetParams.widgetId = rb.layoutBackgroundColor 
+                        }
+                        callback(rb)
+                    });
                     break;
                 case 'clock':
+                    xiboServices.addLocalVideoWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, (body) =>{
+                        const rb = JSON.parse(body)
+                        if(rb.error)
+                        {
+                            console.log("ERROR")
+                        }
+                        else{
+                            //console.log("Widget creado: " )
+                            //widgetParams.widgetName = rb.layoutId
+                            //widgetParams.widgetId = rb.layoutBackgroundColor 
+                        }
+                        callback(rb)
+                    });
                     break;
-                case 'embed':
+                case 'embedded':
+                    xiboServices.addLocalVideoWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, (body) =>{
+                        const rb = JSON.parse(body)
+                        if(rb.error)
+                        {
+                            console.log("ERROR")
+                        }
+                        else{
+                            //console.log("Widget creado: " )
+                            //widgetParams.widgetName = rb.layoutId
+                            //widgetParams.widgetId = rb.layoutBackgroundColor 
+                        }
+                        callback(rb)
+                    });
                     break;
                 case 'webpage':
+                    xiboServices.addWebpageWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, requiredParams[0].value, requiredParams[1].value, (body) =>{
+                        const rb = JSON.parse(body)
+                        if(rb.error)
+                        {
+                            console.log("ERROR")
+                        }
+                        else{
+                            //console.log("Widget creado: " )
+                            //widgetParams.widgetName = rb.layoutId
+                            //widgetParams.widgetId = rb.layoutBackgroundColor 
+                        }
+                        callback(rb)
+                    });
+                    break;
+                case 'twitter':
+                    xiboServices.addTwitterWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, requiredParams[0].value, (body) =>{
+                        const rb = JSON.parse(body)
+                        if(rb.error)
+                        {
+                            console.log("ERROR")
+                        }
+                        else{
+                            //console.log("Widget creado: " )
+                            //widgetParams.widgetName = rb.layoutId
+                            //widgetParams.widgetId = rb.layoutBackgroundColor 
+                        }
+                        callback(rb)
+                    });
                     break;
                 default:
             } 

@@ -235,6 +235,113 @@ function addTextWidget(token, widgetType, playlistId, textParam, callback){
     });
   }
 
+function addHlsWidget(token, widgetType, playlistId, uriParam, callback){
+    var options = {
+      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'content-type': 'application/x-www-form-urlencoded' 
+      },
+      form: { 
+        uri: uriParam
+      }
+    };
+
+    request.post(options, function (error, response, body) {
+      if (error) throw new Error(error);
+      callback(body)
+    });
+  }
+
+function addLocalVideoWidget(token, widgetType, playlistId, uriParam, callback){
+    var options = {
+      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'content-type': 'application/x-www-form-urlencoded' 
+      },
+      form: { 
+        uri: uriParam
+      }
+    };
+
+    request.post(options, function (error, response, body) {
+      if (error) throw new Error(error);
+      callback(body)
+    });
+  }
+
+function addWebpageWidget(token, widgetType, playlistId, uriParam, modeIdParam, callback){
+    var options = {
+      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'content-type': 'application/x-www-form-urlencoded' 
+      },
+      form: { 
+        uri: uriParam,
+        modeId: modeIdParam
+      }
+    };
+
+    request.post(options, function (error, response, body) {
+      if (error) throw new Error(error);
+      callback(body)
+    });
+  }
+
+function addTwitterWidget(token, widgetType, playlistId, searchTermParam, callback){
+    var options = {
+      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'content-type': 'application/x-www-form-urlencoded' 
+      },
+      form: { 
+        searchTerm: searchTermParam
+      }
+    };
+
+    request.post(options, function (error, response, body) {
+      if (error) throw new Error(error);
+      callback(body)
+    });
+  }
+
+function addClockWidget(token, widgetType, playlistId, callback){
+    var options = {
+      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'content-type': 'application/x-www-form-urlencoded' 
+      },
+      form: { 
+      }
+    };
+
+    request.post(options, function (error, response, body) {
+      if (error) throw new Error(error);
+      callback(body)
+    });
+  }
+
+function addEmbeddedWidget(token, widgetType, playlistId, callback){
+    var options = {
+      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'content-type': 'application/x-www-form-urlencoded' 
+      },
+      form: { 
+      }
+    };
+
+    request.post(options, function (error, response, body) {
+      if (error) throw new Error(error);
+      callback(body)
+    });
+  }
+
 
 
 function getLibraryMedia(token, callback){
@@ -386,6 +493,12 @@ exports.editHlsWidget = editHlsWidget
 exports.postWidgetWebContent = postWidgetWebContent
 exports.postOrderWidget = postOrderWidget
 exports.addTextWidget = addTextWidget
+exports.addHlsWidget = addHlsWidget //Duplicada: LayoutManager y HLS Streaming Server
+exports.addLocalVideoWidget = addLocalVideoWidget
+exports.addWebpageWidget = addWebpageWidget
+exports.addTwitterWidget = addTwitterWidget
+exports.addClockWidget = addClockWidget
+exports.addEmbeddedWidget = addEmbeddedWidget
 exports.getLibraryMedia = getLibraryMedia
 exports.postSchedule = postSchedule
 exports.putSchedule = putSchedule

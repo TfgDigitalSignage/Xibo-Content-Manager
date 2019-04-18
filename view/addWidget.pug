@@ -20,7 +20,10 @@ html(lang="en")
                                 each param in params
                                     li
                                         | #{param}.- 
-                                        input(type = "text" name = param placeholder = "Insert a Text")
+                                        if param == "modeId"
+                                            input(type = "text" name = param placeholder = "1-Nativ 2-Man 3-BestFt")
+                                        else
+                                            input(type = "text" name = param)
                                         br
                                 input(type = "submit" value = "Send")
                         else
