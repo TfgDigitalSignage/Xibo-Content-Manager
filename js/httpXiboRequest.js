@@ -11,9 +11,15 @@ var constant = {
     client_secret: 'ndTS6bNNxQ4S9qnT8akJrEoeOBHCO4RLmAYcrNlTMCPIxjfCL5Oc9HeEUv6Oi8Bq0OXQ2LQKCBUh7DUvqOKLY3L1aLyi1ngwcgByFi5YQ0nYfiJeOspmsFbBruT0GitdIp4AsFyRoMdytjVgqXiUvxQ20VtJ7iHmdozO4Hj5pO1F0lMWX9WBocBCoIrBBFS51P7sqjxu2QIh8ywOeEG3MhqvqIyTYod45NCopwpYfwJxWSp5kGswvweHWWZKIr',
     baseUrl: 'http://localhost/api/'
     //CLIENT INFO DANI
+<<<<<<< HEAD
     //client_id: 'Aw8RNRb5AEqmS7B8C5ipq5XcV40LxagxnD41sCmg',
     //client_secret: '6gWsZef5ajJiTKmuPiQB56vCrlVQi86o0DqxTiKZyzu1XpzX4jzSug5BPRmnTFbjLDgcVVXTFsO0594mp1e07qAgvMxAjiEt1Yo83bYy4G6YgUD0EPKDJPGzIdhqUhc8iD7WyExfj9oDLauG2R4n0um5cMUEPVNI3ZvOOkJPoTXsV8K6xmA25Jscif3ZOncUQ5ivCfordmIlg0C5IHTVIjWGn9EyXGNECLsIZLBGAKwka3Eq01MqRKpPnR9u7F',
     //baseUrl: 'http://localhost/api/'
+=======
+    client_id: 'Aw8RNRb5AEqmS7B8C5ipq5XcV40LxagxnD41sCmg',
+    client_secret: '6gWsZef5ajJiTKmuPiQB56vCrlVQi86o0DqxTiKZyzu1XpzX4jzSug5BPRmnTFbjLDgcVVXTFsO0594mp1e07qAgvMxAjiEt1Yo83bYy4G6YgUD0EPKDJPGzIdhqUhc8iD7WyExfj9oDLauG2R4n0um5cMUEPVNI3ZvOOkJPoTXsV8K6xmA25Jscif3ZOncUQ5ivCfordmIlg0C5IHTVIjWGn9EyXGNECLsIZLBGAKwka3Eq01MqRKpPnR9u7F',
+    baseUrl: 'http://localhost/api/'
+>>>>>>> 231ee3f11afcc72a712956fdad96254fab6ff542
 }
 
 function getAccessToken (callback){
@@ -360,6 +366,22 @@ function createCampaign(token,campaignId,layoutId,layoutOrder,i,callback){
   });
 }
 
+function deleteWidget(widgetId,token,callback){
+  var request = require("request");
+  var options = { method: 'DELETE',
+    url: 'http://localhost/api//playlist/widget/' + widgetId,
+    headers: 
+     {
+       'content-type': 'application/x-www-form-urlencoded',
+       Authorization: 'Bearer ' + token } };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    callback(body)
+  });
+}
+
 exports.xibo_getAccessToken =  getAccessToken
 exports.xibo_getTime = getTime
 exports.getJsonData = getJsonData
@@ -378,3 +400,4 @@ exports.putSchedule = putSchedule
 exports.deleteSchedule = deleteSchedule
 exports.createNameCampaign = createNameCampaign
 exports.createCampaign = createCampaign
+exports.deleteWidget = deleteWidget
