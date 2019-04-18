@@ -20,7 +20,6 @@ let widgetParams = {
 
 router.get('/LayoutManager', (req,res,next) => {
     layoutController.getLayout(layoutParams, (layouts)=>{
-        //console.log(layouts);
         res.render('layoutManager.pug', {
             layouts: layouts});
         });
@@ -37,7 +36,7 @@ router.post('/deleteLayout', (req,res,next) => {
     layoutParams.layoutId = req.body.layoutId;
     layoutController.deleteLayout(layoutParams, ()=>{
         });
-    res.redirect('/');
+    res.redirect('/LayoutManager');
 });
 
 router.post('/designLayout', (req,res,next) =>{
@@ -58,13 +57,18 @@ router.post('/designLayout', (req,res,next) =>{
 
 router.post('/addWidget', (req,res,next) =>{
     selectedWidget = req.body
-
     if (selectedWidget.selectWidget != 0){
         widgetParams.widgetType = selectedWidget.selectWidget
-
         switch(widgetParams.widgetType) {
             case 'text':
-                
+                let requiredParams =[
+                    text = "text"
+                ];
+                res.render('addWidget.pug', {
+                    type: widgetParams.widgetType,
+                    params: requiredParams,
+                    length: requiredParams.length
+                });
                 break;
             case 'hls':
                 break;
@@ -81,6 +85,35 @@ router.post('/addWidget', (req,res,next) =>{
     }
     else
         console.log("Widget not selected")
+});
+
+router.post('/postWidget', (req,res,next) =>{
+    const preParams = req.body
+    keys = Object.keys(preParams) 
+    values = Object.values(preParams)
+    let requiredParams = []
+    for(let i=0; i<keys.length; i++){
+        requiredParams.push({
+            key: keys[i],
+            value: values[i]
+        });
+    }
+    layoutController.addWidget(widgetParams, layoutParams, requiredParams, ()=>{
+        layoutController.getWidgets(layoutParams, (widgets)=>{
+        res.render('designLayout.pug', {
+            widgets: widgets,
+            length: widgets.length});
+            });
+        });
+});
+
+
+router.post('/deleteWidget', (req,res,next) => {
+    rb = JSON.parse(req.body.widgetChecked)
+    widgetParams.widgetId = rb.widgetId;
+    layoutController.deleteWidget(widgetParams, ()=>{
+        });
+    res.redirect('/designLayout');
 });
 
 module.exports = router;

@@ -3,24 +3,17 @@ var request = require ('request');
 var qs = require('querystring');
 var constant = {
     //CLIENT INFO GABRI
-    client_id: '6Ca5RWWPXR6Jq1kpYV9BV7z0nP6G9WAx7yacSnhs',
-    client_secret: '5GJrGW6RGMHeTkowBSTdsypdnWJaXG1uVWf9NnCPru74UOSjvlTMAk6FH5wi1eMm5rpzZbIuhV39oMoM1SQYD7f64FSQzMX2fZaQv3hcc8bYpncfplQhTy7fHIVWojUWvbd0BXmEXiZsagmyxRCcCy3Xcv8DHD2q2N6aNK1H1HfrWwTnZGTMkTkJMupaRP6L0Z1vrmeMCJ4sTmIb8srZeDRNAgYAId2r9uE2fnwvWeUYWJNonUB0exs2iQhWYj',
-    baseUrl: 'http://localhost/api/'
+    //client_id: '6Ca5RWWPXR6Jq1kpYV9BV7z0nP6G9WAx7yacSnhs',
+    //client_secret: '5GJrGW6RGMHeTkowBSTdsypdnWJaXG1uVWf9NnCPru74UOSjvlTMAk6FH5wi1eMm5rpzZbIuhV39oMoM1SQYD7f64FSQzMX2fZaQv3hcc8bYpncfplQhTy7fHIVWojUWvbd0BXmEXiZsagmyxRCcCy3Xcv8DHD2q2N6aNK1H1HfrWwTnZGTMkTkJMupaRP6L0Z1vrmeMCJ4sTmIb8srZeDRNAgYAId2r9uE2fnwvWeUYWJNonUB0exs2iQhWYj',
+    //baseUrl: 'http://localhost/api/'
     //CLIENT INFO ADRI
-    // client_id: 'Tv7PRCwXCi3n6po1WcuhXzIsVZv0gb0gXE6kl7if',
-    // client_secret: 'ndTS6bNNxQ4S9qnT8akJrEoeOBHCO4RLmAYcrNlTMCPIxjfCL5Oc9HeEUv6Oi8Bq0OXQ2LQKCBUh7DUvqOKLY3L1aLyi1ngwcgByFi5YQ0nYfiJeOspmsFbBruT0GitdIp4AsFyRoMdytjVgqXiUvxQ20VtJ7iHmdozO4Hj5pO1F0lMWX9WBocBCoIrBBFS51P7sqjxu2QIh8ywOeEG3MhqvqIyTYod45NCopwpYfwJxWSp5kGswvweHWWZKIr',
-    // baseUrl: 'http://localhost/api/'
+    client_id: 'Tv7PRCwXCi3n6po1WcuhXzIsVZv0gb0gXE6kl7if',
+    client_secret: 'ndTS6bNNxQ4S9qnT8akJrEoeOBHCO4RLmAYcrNlTMCPIxjfCL5Oc9HeEUv6Oi8Bq0OXQ2LQKCBUh7DUvqOKLY3L1aLyi1ngwcgByFi5YQ0nYfiJeOspmsFbBruT0GitdIp4AsFyRoMdytjVgqXiUvxQ20VtJ7iHmdozO4Hj5pO1F0lMWX9WBocBCoIrBBFS51P7sqjxu2QIh8ywOeEG3MhqvqIyTYod45NCopwpYfwJxWSp5kGswvweHWWZKIr',
+    baseUrl: 'http://localhost/api/'
     //CLIENT INFO DANI
     //client_id: 'Aw8RNRb5AEqmS7B8C5ipq5XcV40LxagxnD41sCmg',
     //client_secret: '6gWsZef5ajJiTKmuPiQB56vCrlVQi86o0DqxTiKZyzu1XpzX4jzSug5BPRmnTFbjLDgcVVXTFsO0594mp1e07qAgvMxAjiEt1Yo83bYy4G6YgUD0EPKDJPGzIdhqUhc8iD7WyExfj9oDLauG2R4n0um5cMUEPVNI3ZvOOkJPoTXsV8K6xmA25Jscif3ZOncUQ5ivCfordmIlg0C5IHTVIjWGn9EyXGNECLsIZLBGAKwka3Eq01MqRKpPnR9u7F',
     //baseUrl: 'http://localhost/api/'
-    //client_id: 'Tv7PRCwXCi3n6po1WcuhXzIsVZv0gb0gXE6kl7if',
-    //client_secret: 'ndTS6bNNxQ4S9qnT8akJrEoeOBHCO4RLmAYcrNlTMCPIxjfCL5Oc9HeEUv6Oi8Bq0OXQ2LQKCBUh7DUvqOKLY3L1aLyi1ngwcgByFi5YQ0nYfiJeOspmsFbBruT0GitdIp4AsFyRoMdytjVgqXiUvxQ20VtJ7iHmdozO4Hj5pO1F0lMWX9WBocBCoIrBBFS51P7sqjxu2QIh8ywOeEG3MhqvqIyTYod45NCopwpYfwJxWSp5kGswvweHWWZKIr',
-    //baseUrl: 'http://localhost/api/'
-    //CLIENT INFO DANI
-    // client_id: 'Aw8RNRb5AEqmS7B8C5ipq5XcV40LxagxnD41sCmg',
-    // client_secret: '6gWsZef5ajJiTKmuPiQB56vCrlVQi86o0DqxTiKZyzu1XpzX4jzSug5BPRmnTFbjLDgcVVXTFsO0594mp1e07qAgvMxAjiEt1Yo83bYy4G6YgUD0EPKDJPGzIdhqUhc8iD7WyExfj9oDLauG2R4n0um5cMUEPVNI3ZvOOkJPoTXsV8K6xmA25Jscif3ZOncUQ5ivCfordmIlg0C5IHTVIjWGn9EyXGNECLsIZLBGAKwka3Eq01MqRKpPnR9u7F',
-    // baseUrl: 'http://localhost/api/'
 }
 
 function getAccessToken (callback){
@@ -121,7 +114,7 @@ function deleteLayout(token, idLayout, callback){
   });
 }
 
-function getWidgetsOfPlaylist(playlistId, token, callback){
+function getWidgetsOfPlaylist(token, playlistId, callback){
   var options = {
     url: constant.baseUrl + "playlist/widget?playlistId=" + playlistId,
     headers:{
@@ -214,7 +207,6 @@ function postOrderWidget (token, playlistId, widgedId, order, callback){
     // }
   };
 
-
   const req = request.post(options, function(err, response, data){
     if (err)
       throw new Error(err);
@@ -225,6 +217,26 @@ function postOrderWidget (token, playlistId, widgedId, order, callback){
   form.append(key, order);
   form.append("access_token", token);
 }
+
+function addTextWidget(token, widgetType, playlistId, textParam, callback){
+    var options = {
+      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'content-type': 'application/x-www-form-urlencoded' 
+      },
+      form: { 
+        text: textParam
+      }
+    };
+
+    request.post(options, function (error, response, body) {
+      if (error) throw new Error(error);
+      callback(body)
+    });
+  }
+
+
 
 function getLibraryMedia(token, callback){
   var options = {
@@ -359,6 +371,7 @@ exports.postHlsWidget = postHlsWidget
 exports.editHlsWidget = editHlsWidget
 exports.postWidgetWebContent = postWidgetWebContent
 exports.postOrderWidget = postOrderWidget
+exports.addTextWidget = addTextWidget
 exports.getLibraryMedia = getLibraryMedia
 exports.postSchedule = postSchedule
 exports.putSchedule = putSchedule

@@ -1,0 +1,27 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title AddWidget
+    body
+        .header
+            h1 Widget Adder v0.1
+        .wrapper
+            h2 Widget type: #{type}
+            ul
+                h3 Required parameters
+                p Required parameters list in order to add this widget
+                    div(id="params")
+                        if length > 0
+                            form(action = "/postWidget", method = "POST")
+                                ul
+                                each param in params
+                                    li
+                                        | #{param}.- 
+                                        input(type = "text" name = param placeholder = "Insert a Text")
+                                        br
+                                input(type = "submit" value = "Send")
+                        else
+                            p Este widget no tiene parametros obligatorios

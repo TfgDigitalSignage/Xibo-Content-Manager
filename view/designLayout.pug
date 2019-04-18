@@ -14,12 +14,15 @@ html(lang="en")
                 p Widgets list in layout
                     div.getWidgets
                         div(id="widgets")
+                        form(action="/deleteWidget",method="POST")
                             if length > 0
                                 ul
                                 each widget in widgets
                                     li
                                         | #{widget.widgetId}.- #{widget.name}, Tipo: #{widget.type}
+                                        input(type='radio', name=`widgetChecked`, value=widget)
                                         br
+                                input(type = "submit" value = "Delete")
                             else
                                 p Este layout no tiene widgets
 
@@ -35,8 +38,6 @@ html(lang="en")
                             option(value='hls') HLS Video
                             option(value='localVideo') Local Video
                             option(value='twitter') Twitter
-                            option(value='webpage') Webpage
-                        input(type = "submit" value = "Add" onclick = "helloWorld") 
-                        script (type="text/javascript").
-                            function helloWorld(){alert("Hello")}
-                    p Hola
+                            option(value='webpage') Webpage  
+                        input(type = "submit" value = "Add") 
+                        

@@ -72,7 +72,7 @@ module.exports = {
     getWidgets: (params, callback) => {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
-            xiboServices.getWidgetsOfPlaylist(params.layoutPlaylist.playlistId, token, (response) =>{
+            xiboServices.getWidgetsOfPlaylist(token, params.layoutPlaylist.playlistId, (response) =>{
                 const rb = JSON.parse(response.body)
                 if(rb.error)
                 {
@@ -81,6 +81,62 @@ module.exports = {
                 callback(rb)
             })
         })
-    }
+    },
+    addWidget: (widgetParams, layoutParams, requiredParams, callback) => {
+        xiboServices.xibo_getAccessToken((body)=>{
+            const token = body['access_token'];
+            switch(widgetParams.widgetType) {
+                case 'text':
+                    xiboServices.addTextWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, requiredParams[0].value, (body) =>{
+                        const rb = JSON.parse(body)
+                        if(rb.error)
+                        {
+                            console.log("ERROR")
+                        }
+                        else{
+                            //console.log("Widget creado: " )
+                            //widgetParams.widgetName = rb.layoutId
+                            //widgetParams.widgetId = rb.layoutBackgroundColor 
+                        }
+                        callback(rb)
+                    });
+                    break;
+                case 'hls':
+                    break;
+                case 'localVideo':
+                    break;
+                case 'clock':
+                    break;
+                case 'embed':
+                    break;
+                case 'webpage':
+                    break;
+                default:
+            } 
+        })
+    },
+    deleteWidget: (params, callback) => {
+        xiboServices.xibo_getAccessToken((body)=>{
+            const token = body['access_token'];
+            xiboServices.deleteWidget(token, params.layoutId, (response)=>{
+                const rb = JSON.parse(response.body)
+                if(rb.error)
+                {
+                    console.log("ERROR")
+                    if (rb.error.code == 404)
+                        console.log("Error al borrar el widget: no existe")
+                }
+                else
+                {
+                    console.log("Widget eliminado")
+                    params.widgetId = ""
+                    params.widgetName = ""
+                    params.widgetType = ""
+                }
+                
+                callback()
+            })
+        })
+    },
 
 }
