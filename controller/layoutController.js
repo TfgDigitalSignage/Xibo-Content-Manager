@@ -118,8 +118,8 @@ module.exports = {
     deleteWidget: (params, callback) => {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
-            xiboServices.deleteWidget(token, params.layoutId, (response)=>{
-                const rb = JSON.parse(response.body)
+            xiboServices.deleteWidget(token, params.widgetId, (body)=>{
+                const rb = JSON.parse(body)
                 if(rb.error)
                 {
                     console.log("ERROR")
@@ -128,7 +128,7 @@ module.exports = {
                 }
                 else
                 {
-                    console.log("Widget eliminado")
+                    //console.log("Widget eliminado")
                     params.widgetId = ""
                     params.widgetName = ""
                     params.widgetType = ""

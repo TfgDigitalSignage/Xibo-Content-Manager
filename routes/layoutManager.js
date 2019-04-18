@@ -112,8 +112,13 @@ router.post('/deleteWidget', (req,res,next) => {
     rb = JSON.parse(req.body.widgetChecked)
     widgetParams.widgetId = rb.widgetId;
     layoutController.deleteWidget(widgetParams, ()=>{
+        layoutController.getWidgets(layoutParams, (widgets)=>{
+        res.render('designLayout.pug', {
+            widgets: widgets,
+            length: widgets.length});
         });
-    res.redirect('/designLayout');
+    });
+
 });
 
 module.exports = router;
