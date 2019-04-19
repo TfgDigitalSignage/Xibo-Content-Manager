@@ -290,7 +290,7 @@ function addWebpageWidget(token, widgetType, playlistId, uriParam, modeIdParam, 
     });
   }
 
-function addTwitterWidget(token, widgetType, playlistId, searchTermParam, callback){
+function addTwitterWidget(token, widgetType, playlistId, searchTermParam, templateIdParam, callback){
     var options = {
       url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
       headers: {
@@ -298,7 +298,8 @@ function addTwitterWidget(token, widgetType, playlistId, searchTermParam, callba
         'content-type': 'application/x-www-form-urlencoded' 
       },
       form: { 
-        searchTerm: searchTermParam
+        searchTerm: searchTermParam,
+        templateId: templateIdParam
       }
     };
 
@@ -308,14 +309,15 @@ function addTwitterWidget(token, widgetType, playlistId, searchTermParam, callba
     });
   }
 
-function addClockWidget(token, widgetType, playlistId, callback){
+function addClockWidget(token, widgetType, playlistId, clockTypeIdParam, callback){
     var options = {
       url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
       headers: {
         Authorization: 'Bearer ' + token,
         'content-type': 'application/x-www-form-urlencoded' 
       },
-      form: { 
+      form: {
+        clockTypeId: clockTypeIdParam 
       }
     };
 
@@ -325,7 +327,7 @@ function addClockWidget(token, widgetType, playlistId, callback){
     });
   }
 
-function addEmbeddedWidget(token, widgetType, playlistId, callback){
+function addEmbeddedWidget(token, widgetType, playlistId, embedHtmlParam, callback){
     var options = {
       url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
       headers: {
@@ -333,6 +335,7 @@ function addEmbeddedWidget(token, widgetType, playlistId, callback){
         'content-type': 'application/x-www-form-urlencoded' 
       },
       form: { 
+        embedHtml: embedHtmlParam
       }
     };
 

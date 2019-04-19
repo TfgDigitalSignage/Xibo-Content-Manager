@@ -22,6 +22,12 @@ html(lang="en")
                                         | #{param}.- 
                                         if param == "modeId"
                                             input(type = "text" name = param placeholder = "1-Nativ 2-Man 3-BestFt")
+                                        else if param == "clockTypeId"
+                                            input(type = "text" name = param placeholder = "1-Analog 2-Digital 3-Flip")
+                                        else if param == "embedHtml"
+                                            textarea(name=param cols="30" rows="10" placeholder="HTML a Incrustar")
+                                        else if param == "templateId"
+                                            input(type = "number" name = param placeholder = "12" min = "1" max = "12")
                                         else
                                             input(type = "text" name = param)
                                         br

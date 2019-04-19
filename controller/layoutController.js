@@ -132,7 +132,7 @@ module.exports = {
                     });
                     break;
                 case 'clock':
-                    xiboServices.addLocalVideoWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, (body) =>{
+                    xiboServices.addLocalVideoWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, requiredParams[0].value, (body) =>{
                         const rb = JSON.parse(body)
                         if(rb.error)
                         {
@@ -147,7 +147,7 @@ module.exports = {
                     });
                     break;
                 case 'embedded':
-                    xiboServices.addLocalVideoWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, (body) =>{
+                    xiboServices.addLocalVideoWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, requiredParams[0].value, (body) =>{
                         const rb = JSON.parse(body)
                         if(rb.error)
                         {
@@ -177,7 +177,7 @@ module.exports = {
                     });
                     break;
                 case 'twitter':
-                    xiboServices.addTwitterWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, requiredParams[0].value, (body) =>{
+                    xiboServices.addTwitterWidget(token, widgetParams.widgetType, layoutParams.layoutPlaylist.playlistId, requiredParams[0].value, requiredParams[1].value, (body) =>{
                         const rb = JSON.parse(body)
                         if(rb.error)
                         {

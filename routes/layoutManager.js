@@ -78,10 +78,12 @@ router.post('/addWidget', (req,res,next) =>{
                 break;
             case 'clock':
                 requiredParams =[
+                    clockTypeId = "clockTypeId"
                 ];
                 break;
             case 'embedded':
                 requiredParams =[
+                    embedHtml = "embedHtml"
                 ];
                 break;
             case 'webpage':
@@ -93,7 +95,8 @@ router.post('/addWidget', (req,res,next) =>{
                 break;
             case 'twitter':
                 requiredParams =[
-                    searchTerm = "searchTerm"
+                    searchTerm = "searchTerm",
+                    templateId = "templateId"
                 ];
 
                 break;
