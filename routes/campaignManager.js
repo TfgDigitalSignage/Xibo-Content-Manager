@@ -1,30 +1,43 @@
 const path = require('path');
 const express = require('express');
 const router = express.Router();
+const campaignController = require ('../controller/CampaignController')
 const layoutController = require("../controller/layoutController")
 
 
 let params = {
-    CampaignName : "",
-    CampaignId : "",
-    layoutId : [],
+    campaignName : "",
+    campaignId : "",
+    layoutsId : [],
     orderLayout : []
 }
 
 
 
-router.get('/createCampaign', (req,res,next) => {
-    layoutController.getLayout(layoutController.params, (layouts)=>{
-            //console.log(layouts);
-            res.render('createCampaign.pug', {
-                layouts: layouts});
+router.get('/CampaignManager', (req,res,next) => {
+    campaignController.getCampaign(params, (campaigns)=>{
+            res.render('campaignManager.pug', {
+                campaigns: campaigns,
+                length: campaigns.length});
         });
    
 });
 
-
 router.post('/createCampaign', (req,res,next) => {
-	const campaignController = require ('../controller/CampaignController')
+    params.campaignName = req.body.campaignName;
+    campaignController.createCampaign(params, ()=>{
+            res.redirect('/CampaignManager');
+        });
+});
+
+router.post('/deleteCampaign', (req, res, next) =>{
+    params.campaignId = req.body.campaignId;
+    campaignController.deleteCampaign(params, ()=>{
+            res.redirect('/CampaignManager');
+        });
+})
+/*
+router.post('/createCampaign', (req,res,next) => {
 	params.CampaignName = req.body.CampaignName;
 	campaignController.createNameCampaign(params.CampaignName, (body)=>{
             params.layoutId = req.body.layoutId
@@ -49,6 +62,7 @@ router.post('/createCampaign', (req,res,next) => {
 
     res.redirect('/');
 });
+*/
 
 
 module.exports = router;

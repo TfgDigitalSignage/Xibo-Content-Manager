@@ -22,13 +22,13 @@ html(lang="en")
                                     a Create layout
                                     p Create a new layout
                                     input(type = "text" name = "layoutName" placeholder = "Layout name")
-                                    input(type = "submit") 
+                                    input(type = "submit" value = "Create") 
                         td 
                             h3
                                 div.getAllLayouts
                                     div(id="layouts")
                                     form(action="/designLayout",method="POST")
-                                        if layouts
+                                        if length > 0
                                             ul
                                             each layout in layouts
                                                 li 
@@ -46,5 +46,5 @@ html(lang="en")
                                     a Delete layout
                                     p Delete a existing layout by Id
                                     input(type = "text" name = "layoutId" placeholder = "Layout id")
-                                    input(type = "submit") 
-                        td rahul
+                                    input(type = "submit" value = "Delete") 
+                        td 

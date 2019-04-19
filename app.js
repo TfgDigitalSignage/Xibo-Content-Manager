@@ -12,7 +12,7 @@ const scheduleLayout_route = require('./routes/scheduleLayout');
 const polling_route = require('./routes/polling');
 const competition_route = require('./routes/competition')
 const layoutManager_route = require('./routes/layoutManager')
-const createCampaign_route = require('./routes/campaignManager')
+const campaignManager_route = require('./routes/campaignManager')
 
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({extended: true}));
@@ -23,7 +23,7 @@ app.use(scheduleLayout_route);
 app.use(polling_route);
 app.use('/competition', competition_route)
 app.use(layoutManager_route)
-app.use(createCampaign_route)
+app.use(campaignManager_route)
 
 //Not Found page
 app.use((req,res,next) => {

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title CampaignManager
+    body
+        .header
+          h1 Campaign Manager v0.1
+        .wrapper
+            
+            table(style='width:100%', border='1')
+                    tr
+                        th Create and Delete
+                        th Get
+                    tr
+                        td 
+                            h3
+                                form(action = "/createCampaign", method = "POST")
+                                    a Create campaign
+                                    p Create a new campaign
+                                    input(type = "text" name = "campaignName" placeholder = "Campaign name")
+                                    input(type = "submit" value = "Create") 
+                        td 
+                            h3
+                                div.getAllCampaigns
+                                    div(id="campaigns")
+                                    
+                                        if length > 0
+                                            ul
+                                            each campaign in campaigns
+                                                li 
+                                                    | #{campaign.campaignId}.- #{campaign.campaign}
+                                                    input(type='radio', name=`campaignChecked`, value=campaign)
+                                                    br
+                                                
+                                        else
+                                            p No hay campañas
+                                       
+                    tr
+                        td                 
+                            h3
+                                form(action = "/deleteCampaign", method = "POST")
+                                    a Delete campaign
+                                    p Delete a existing campaign by Id
+                                    input(type = "text" name = "campaignId" placeholder = "Campaign id")
+                                    input(type = "submit" value = "Delete") 
+                        td 

@@ -429,24 +429,60 @@ function deleteSchedule (token, scheduleId, callback) {
   });
 }
 
-function createNameCampaign(token,name, callback){
-  
 
-var options = { method: 'POST',
-  url: 'http://localhost/api/campaign',
-  headers: 
-   { 
-     
-     Authorization: 'Bearer ' + token,
-     'content-type': 'multipart/form-data' },
-  formData: { name: name } };
 
-request(options, function (error, response, body) {
-  if (error) throw new Error(error);
-  callback(body)
-});
+function createCampaign(token, name, callback){
+  const options = {
+    url: 'http://localhost/api/campaign',
+    headers: 
+     { 
+       Authorization: 'Bearer ' + token,
+       'content-type': 'multipart/form-data' 
+     },
+    form: { 
+      name: name 
+    } 
+  };
+  request.post(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    callback(body)
+  });
 }
 
+function deleteCampaign(token, idCampaign, callback){
+  const options = {
+    url: 'http://localhost/api/campaign/' + idCampaign,
+    headers: 
+     { 
+       Authorization: 'Bearer ' + token,
+       'content-type': 'multipart/form-data' 
+     },
+    form: { 
+    } 
+  };
+  request.del(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    callback(body)
+  });
+}
+function getCampaign (token, idCampaign, callback){
+  const options = {
+    url: constant.baseUrl + 'campaign',
+    qs: {
+      campaignId: idCampaign, 
+      embed: 'regions,playlists' 
+    },
+    headers:{ 
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'application/x-www-form-urlencoded' 
+      } 
+  }
+  request.get(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    callback && callback(response)
+  })
+}
+/*
 function createCampaign(token,campaignId,layoutId,layoutOrder,i,callback){
   var string1 = 'layoutId[' + i + '][layoutId]';
   var string2 = 'layoutId[' + i + '][displayOrder]'
@@ -467,7 +503,7 @@ function createCampaign(token,campaignId,layoutId,layoutOrder,i,callback){
 
     callback(body)
   });
-}
+}*/
 
 function deleteWidget(token, widgetId, callback){
   var options = { 
@@ -506,6 +542,8 @@ exports.getLibraryMedia = getLibraryMedia
 exports.postSchedule = postSchedule
 exports.putSchedule = putSchedule
 exports.deleteSchedule = deleteSchedule
-exports.createNameCampaign = createNameCampaign
+//exports.createNameCampaign = createNameCampaign
 exports.createCampaign = createCampaign
+exports.deleteCampaign = deleteCampaign
+exports.getCampaign = getCampaign
 exports.deleteWidget = deleteWidget

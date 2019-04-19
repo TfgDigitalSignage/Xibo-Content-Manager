@@ -21,22 +21,23 @@ let widgetParams = {
 router.get('/LayoutManager', (req,res,next) => {
     layoutController.getLayout(layoutParams, (layouts)=>{
         res.render('layoutManager.pug', {
-            layouts: layouts});
+            layouts: layouts,
+            length: layouts.length});
         });
 });
 
 router.post('/createLayout', (req,res,next) => {
 	layoutParams.layoutName = req.body.layoutName;
 	layoutController.createLayout(layoutParams, ()=>{
+            res.redirect('/LayoutManager');
         });
-    res.redirect('/');
 });
 
 router.post('/deleteLayout', (req,res,next) => {
     layoutParams.layoutId = req.body.layoutId;
     layoutController.deleteLayout(layoutParams, ()=>{
+            res.redirect('/LayoutManager');
         });
-    res.redirect('/LayoutManager');
 });
 
 router.post('/designLayout', (req,res,next) =>{

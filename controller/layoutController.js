@@ -14,6 +14,8 @@ module.exports = {
                     console.log("ERROR")
                     if (rb.error.code == 409)
                         console.log("Error al crear el layout: nombre ya existente")
+                    else if (rb.error.code == 422)
+                        console.log("Error al crear el layout: inserta un nombre")
                 }
                 else
                 {
@@ -22,7 +24,7 @@ module.exports = {
                     params.layoutBackgroundColor = rb.layoutBackgroundColor
                     params.layoutBackgroundzIndex = rb.layoutBackgroundzIndex 
                 }
-                callback()
+                callback(rb)
             })
         })
     },
@@ -34,12 +36,10 @@ module.exports = {
                 if(rb.error)
                 {
                     console.log("ERROR")
-                    //if (rb.error.code == 409)
-                        //console.log("Error al crear el layout: nombre ya existente")
                 }
                 else
                 {
-                    //console.log("Layout creado: " + params.layoutName)
+                    
                 }
                 callback(rb)
             })
@@ -65,7 +65,7 @@ module.exports = {
                     params.layoutName = ""
                 }
                 
-                callback()
+                callback(rb)
             })
         })
     },
