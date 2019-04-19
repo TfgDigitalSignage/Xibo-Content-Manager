@@ -26,7 +26,7 @@ html(lang="en")
                             h3
                                 div.getAllCampaigns
                                     div(id="campaigns")
-                                    
+                                    form(action="/designCampaign",method="POST")
                                         if length > 0
                                             ul
                                             each campaign in campaigns
@@ -34,7 +34,7 @@ html(lang="en")
                                                     | #{campaign.campaignId}.- #{campaign.campaign}
                                                     input(type='radio', name=`campaignChecked`, value=campaign)
                                                     br
-                                                
+                                            input(type = "submit" value = "Design")  
                                         else
                                             p No hay campañas
                                        

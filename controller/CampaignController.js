@@ -5,6 +5,7 @@ module.exports = {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.createCampaign(token, params.campaignName, (body)=>{
+                console.log(body)
                 const rb = JSON.parse(body)
                 if(rb.error)
                 {
@@ -23,8 +24,9 @@ module.exports = {
     getCampaign: (params, callback) => {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
-            xiboServices.getCampaign(token, "", (response)=>{
-                const rb = JSON.parse(response.body)
+            xiboServices.getCampaign(token, "", (body)=>{
+                console.log(body)
+                const rb = JSON.parse(body)
                 if(rb.error)
                 {
                     console.log("ERROR")

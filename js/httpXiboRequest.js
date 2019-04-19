@@ -479,7 +479,7 @@ function getCampaign (token, idCampaign, callback){
   }
   request.get(options, function (error, response, body) {
     if (error) throw new Error(error);
-    callback && callback(response)
+    callback && callback(body)
   })
 }
 /*

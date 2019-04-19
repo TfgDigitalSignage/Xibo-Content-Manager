@@ -1,0 +1,43 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title CampaignDesigner
+    body
+        .header
+            h1 Campaign Designer v0.1
+        .wrapper
+            ul
+                h3 Campaigns
+                p Assigned layouts list in campaign
+                    div.getCampaignLayouts
+                        div(id="campaignLayouts")
+                        
+                            if lengthCampaignLayouts > 0
+                                ul
+                                each campaignLayout in campaignLayouts
+                                    li
+                                        | #{campaignLayout.layoutId}.- #{campaignLayout.layout}
+                                        input(type='radio', name=`campaignLayoutChecked`, value=campaignLayout)
+                                        br
+
+                            else
+                                p Esta campaña no tiene layouts asignados
+                li
+                    h3 Add Layout
+                    p Add a layout to this campaign
+                    div.getAllLayouts
+                        div(id="layouts")
+                        form(action="/designLayout",method="POST")
+                        if lengthLayouts > 0
+                            ul
+                            each layout in layouts
+                                li 
+                                    | #{layout.layoutId}.- #{layout.layout}
+                                    input(type='radio', name=`layoutChecked`, value=layout)
+                                    br
+                            input(type = "submit" value = "Add")    
+                        else
+                            p No hay layouts
