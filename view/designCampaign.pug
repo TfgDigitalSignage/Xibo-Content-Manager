@@ -30,14 +30,14 @@ html(lang="en")
                     p Add a layout to this campaign
                     div.getAllLayouts
                         div(id="layouts")
-                        form(action="/designLayout",method="POST")
-                        if lengthLayouts > 0
-                            ul
-                            each layout in layouts
-                                li 
-                                    | #{layout.layoutId}.- #{layout.layout}
-                                    input(type='radio', name=`layoutChecked`, value=layout)
-                                    br
-                            input(type = "submit" value = "Add")    
-                        else
-                            p No hay layouts
+                        form(action="/addLayoutToCampaign",method="POST")
+                            if lengthLayouts > 0
+                                ul
+                                each layout in layouts
+                                    li 
+                                        | #{layout.layoutId}.- #{layout.layout}
+                                        input(type='radio', name=`layoutChecked`, value=layout)
+                                        br
+                                input(type = "submit" value = "Add")    
+                            else
+                                p No hay layouts

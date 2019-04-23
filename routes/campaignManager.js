@@ -55,6 +55,21 @@ router.post('/designCampaign', (req,res,next) =>{
         }
     });
 });
+
+router.post('/addLayoutToCampaign', (req,res,next) =>{
+    layoutSelected = req.body
+    console.log(layoutSelected)
+
+
+
+    /*
+        res.render('addWidget.pug', {
+            type: widgetParams.widgetType,
+            params: requiredParams,
+            length: requiredParams.length
+        });
+    */
+});
 /*
 router.post('/createCampaign', (req,res,next) => {
 	params.CampaignName = req.body.CampaignName;

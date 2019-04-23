@@ -25,7 +25,7 @@ module.exports = {
         xiboServices.xibo_getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.getCampaign(token, "", (body)=>{
-                console.log(body)
+                //console.log(body)
                 const rb = JSON.parse(body)
                 if(rb.error)
                 {
