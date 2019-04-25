@@ -414,6 +414,28 @@ module.exports = {
       callback(body)
     });
   },
+  
+  addLayoutToCampaign: (token, campaignId, layoutId, displayOrder, callback)=>{
+    let idLayout = 'layoutId[0][layoutId]'
+    let orderDisplay = 'layoutId[0][displayOrder]'
+    let options = {
+      url: constant.baseUrl + 'campaign/layout/assign/' + campaignId,
+      headers: 
+       { 
+         Authorization: 'Bearer ' + token,
+         'content-type': 'multipart/form-data' 
+       },
+      formData: {
+        idLayout: layoutId,
+        orderDisplay: displayOrder
+      } 
+    };
+      request.post(options, function (error, response, body) {
+        console.log(response)
+        if (error) throw new Error(error);
+        callback && callback(body)
+    })
+  },
 
   deleteCampaign: (token, idCampaign, callback)=>{
     const options = {

@@ -60,6 +60,15 @@ module.exports = {
                 callback()
             })
         })
+    },
+    addLayoutToCampaign: (params, callback) =>{
+        xiboServices.xibo_getAccessToken((body)=>{
+            const token = body['access_token'];
+            xiboServices.addLayoutToCampaign(token, params.campaignId, params.layoutsId[0], params.orderLayout[0], (body)=>{
+                console.log(body)
+                callback()
+            })
+        })
     }
     /*
     	// a veces solo mete uno, en el menor de los casos
