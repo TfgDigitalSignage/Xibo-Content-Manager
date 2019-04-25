@@ -17,7 +17,7 @@ module.exports = {
         })
     },
     insertHlsWidget: (sourceUrl, layoutId, callback)=>{
-        xiboServices.xibo_getAccessToken((body)=>{
+        xiboServices.getAccessToken((body)=>{
             const token = body.access_token
             xiboServices.getLayout(token, layoutId, (response)=>{
                 const playlistId = JSON.parse(response.body)[0].regions[0].playlists[0].playlistId

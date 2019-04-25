@@ -5,7 +5,7 @@ const xiboServices = require('../services/xiboServices')
 
 module.exports = {
     createLayout: (params, callback) => {
-        xiboServices.xibo_getAccessToken((body)=>{
+        xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.postLayout(token, params.layoutName, (response)=>{
                 const rb = JSON.parse(response.body)
@@ -29,7 +29,7 @@ module.exports = {
         })
     },
     getLayout: (params, callback) => {
-        xiboServices.xibo_getAccessToken((body)=>{
+        xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.getLayout(token, "", (response)=>{
                 const rb = JSON.parse(response.body)
@@ -46,15 +46,17 @@ module.exports = {
         })
     },
     deleteLayout: (params, callback) => {
-        xiboServices.xibo_getAccessToken((body)=>{
+        xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
-            xiboServices.deleteLayout(token, params.layoutId, (response)=>{
-                const rb = JSON.parse(response.body)
-                if(rb.error)
-                {
-                    console.log("ERROR")
-                    if (rb.error.code == 404)
-                        console.log("Error al borrar el layout: no existe")
+            xiboServices.deleteLayout(token, params.layoutId, (body)=>{
+                if(body){
+                    const rb = JSON.parse(body)
+                    if(rb.error)
+                    {
+                        console.log("ERROR")
+                        if (rb.error.code == 404)
+                            console.log("Error al borrar el layout: no existe")
+                    } 
                 }
                 else
                 {
@@ -64,13 +66,12 @@ module.exports = {
                     params.layoutBackgroundzIndex = ""
                     params.layoutName = ""
                 }
-                
-                callback(rb)
+                callback(body)
             })
         })
     },
     getWidgets: (params, callback) => {
-        xiboServices.xibo_getAccessToken((body)=>{
+        xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.getWidgetsOfPlaylist(token, params.layoutPlaylist.playlistId, (response) =>{
                 const rb = JSON.parse(response.body)
@@ -83,7 +84,7 @@ module.exports = {
         })
     },
     addWidget: (widgetParams, layoutParams, requiredParams, callback) => {
-        xiboServices.xibo_getAccessToken((body)=>{
+        xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
             switch(widgetParams.widgetType) {
                 case 'text':
@@ -196,7 +197,7 @@ module.exports = {
         })
     },
     deleteWidget: (params, callback) => {
-        xiboServices.xibo_getAccessToken((body)=>{
+        xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.deleteWidget(token, params.widgetId, (body)=>{
                 const rb = JSON.parse(body)
