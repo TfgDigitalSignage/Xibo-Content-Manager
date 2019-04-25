@@ -433,7 +433,7 @@ function deleteSchedule (token, scheduleId, callback) {
 
 function createCampaign(token, name, callback){
   const options = {
-    url: 'http://localhost/api/campaign',
+    url: constant.baseUrl + 'campaign',
     headers: 
      { 
        Authorization: 'Bearer ' + token,
@@ -451,7 +451,7 @@ function createCampaign(token, name, callback){
 
 function deleteCampaign(token, idCampaign, callback){
   const options = {
-    url: 'http://localhost/api/campaign/' + idCampaign,
+    url: constant.baseUrl + 'campaign/' + idCampaign,
     headers: 
      { 
        Authorization: 'Bearer ' + token,
@@ -480,6 +480,28 @@ function getCampaign (token, idCampaign, callback){
   request.get(options, function (error, response, body) {
     if (error) throw new Error(error);
     callback && callback(body)
+  })
+}
+function addLayoutToCampaign(token, campaignId, layoutId, displayOrder, callback){
+
+  let idLayout = 'layoutId[0][layoutId]'
+  let orderDisplay = 'layoutId[0][displayOrder]'
+  let options = {
+    url: constant.baseUrl + 'campaign/layout/assign/' + campaignId,
+    headers: 
+     { 
+       Authorization: 'Bearer ' + token,
+       'content-type': 'multipart/form-data' 
+     },
+    formData: {
+      idLayout: layoutId,
+      orderDisplay: displayOrder
+    } 
+  };
+    request.post(options, function (error, response, body) {
+      console.log(response)
+      if (error) throw new Error(error);
+      callback && callback(body)
   })
 }
 /*
@@ -546,4 +568,5 @@ exports.deleteSchedule = deleteSchedule
 exports.createCampaign = createCampaign
 exports.deleteCampaign = deleteCampaign
 exports.getCampaign = getCampaign
+exports.addLayoutToCampaign = addLayoutToCampaign
 exports.deleteWidget = deleteWidget

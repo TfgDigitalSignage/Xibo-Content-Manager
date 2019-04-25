@@ -39,7 +39,7 @@ router.post('/deleteCampaign', (req, res, next) =>{
 });
 
 router.post('/designCampaign', (req,res,next) =>{
-    selectedCampaign = JSON.parse(req.body.campaignChecked)
+    let selectedCampaign = JSON.parse(req.body.campaignChecked)
     params.campaignId = selectedCampaign.campaignId
     params.campaignName = selectedCampaign.campaign
     params.numberLayouts = selectedCampaign.numberLayouts
@@ -57,9 +57,12 @@ router.post('/designCampaign', (req,res,next) =>{
 });
 
 router.post('/addLayoutToCampaign', (req,res,next) =>{
-    layoutSelected = req.body
-    console.log(layoutSelected)
-
+    let layoutSelected = JSON.parse(req.body.layoutChecked)
+    params.layoutsId.push(layoutSelected.layoutId)
+    params.orderLayout.push(params.numberLayouts + 1) 
+    campaignController.addLayoutToCampaign(params,()=>{
+            res.redirect('/CampaignManager');
+        });
 
 
     /*
