@@ -34,7 +34,7 @@ function remoteDataLoader (response){
 
 function getRemoteData (req, res, formdata){
   //IMPORTS
-  var services = require('./httpXiboRequest');
+  var services = require('../services/httpXiboRequest');
   var formParser = require('./formDataParser');
 
   var accessToken = '';
@@ -155,7 +155,7 @@ function scheduleLayout (response){
 
   const templatePath = path.join(__dirname, '..', 'view', 'LayoutScheduler.pug');
   //Fetch data from xibo
-  const services = require('./httpXiboRequest');
+  const services = require('../services/httpXiboRequest');
   services.xibo_getAccessToken((body) => {
     const access_token = body['access_token'];
     services.getLibraryMedia(access_token, (resp, body) => {

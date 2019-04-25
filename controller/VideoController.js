@@ -1,5 +1,5 @@
 const request = require('request')
-const xiboServices = require('../js/httpXiboRequest')
+const xiboServices = require('../services/xiboServices')
 
 const basicAuth = {
     user: 'adrian',

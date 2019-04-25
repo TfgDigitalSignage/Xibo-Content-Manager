@@ -1,4 +1,4 @@
-const xiboServices = require('../js/httpXiboRequest')
+const xiboServices = require('../services/xiboServices')
 
 module.exports = {
     createCampaign: (params, callback) => {
