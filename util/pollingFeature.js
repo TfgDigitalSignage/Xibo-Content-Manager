@@ -53,7 +53,7 @@ module.exports = {
         setInterval(pollingFile,1000);
     },
 
-    getJsonData = (url, callback) =>{
+    getJsonData: (url, callback) =>{
         request.get (url, function(err, res, body){
           if (err)
             throw new Error (err);
