@@ -1,18 +1,13 @@
 const request = require('request')
 const xiboServices = require('../services/xiboServices')
-
-const basicAuth = {
-    user: 'adrian',
-    password: '1993'
-}
+const base64Encoder = require('../util/utils').getBase64Token
 
 module.exports = {
     startStopVideoServer: (url, command, callback) => {
-        const authToken = Buffer.from(basicAuth.user+':'+basicAuth.password).toString('base64')
         const options = {
             url: url+command,
             headers: {
-                'Authorization': 'Basic ' + authToken
+                'Authorization': 'Basic ' + base64Encoder('adrian', '1993')
             }
         }
         request.get(options, (err, res, body)=>{
