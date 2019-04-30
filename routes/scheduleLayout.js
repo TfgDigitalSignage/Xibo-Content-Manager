@@ -1,31 +1,31 @@
 const path = require('path');
 const express = require('express');
-
+const layoutController = require("../controller/layoutController")
 const router = express.Router();
-
+let layoutManager = require("./layoutManager")
 const root = path.dirname(require.main.filename);
 const remoteContent_path = path.join(root, 'view', 'LayoutScheduler.pug');
-
+const eventController = require("../controller/EventController")
 router.get('/LayoutScheduler', (req,res,next) => {
-    getMediaItems((items) => {
-        res.render(remoteContent_path, {
-            items: items});
+    layoutController.getLayout(layoutManager.layoutParams, (layouts)=>{
+
+           res.render('LayoutScheduler.pug', {
+                layouts: layouts,
+                lengthLayouts: layouts.length
+            });
     });
 });
 
-router.post('/LayoutScheduler/createLayout/', (req,res,next) => {
+router.post('/LayoutScheduler/createEvent', (req,res,next) => {
     const body = req.body;
-    const params = [];
-    for (const i in body.id){
-        const key = 'order_' + body.id[i];
-        params.push({
-            id: body.id[i],
-            order: body[key]
+    console.log(body)
+    const dateIni = body.fromDate.replace('T',' ') + ':00'
+    const dateFin = body.Totote.replace('T',' ') + ':00'
+    selectedCampaign = JSON.parse(req.body.layoutChecked)
+    console.log(dateIni)
+    eventController.createEvent(selectedCampaign.layoutId,"1",dateIni,dateFin,body.priority,(idEvent)=>{
+        console.log(idEvent)
         });
-    }
-    createLayoutInitialized(params, ()=>{
-
-    })
 });
 
 /**
