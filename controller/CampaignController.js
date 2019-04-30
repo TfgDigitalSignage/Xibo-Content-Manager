@@ -1,8 +1,8 @@
-const xiboServices = require('../js/httpXiboRequest')
+const xiboServices = require('../services/xiboServices')
 
 module.exports = {
     createCampaign: (params, callback) => {
-        xiboServices.xibo_getAccessToken((body)=>{
+        xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.createCampaign(token, params.campaignName, (body)=>{
                 console.log(body)
@@ -22,7 +22,7 @@ module.exports = {
         })
     },
     getCampaign: (params, callback) => {
-        xiboServices.xibo_getAccessToken((body)=>{
+        xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.getCampaign(token, "", (body)=>{
                 //console.log(body)
@@ -40,7 +40,7 @@ module.exports = {
         })
     },
     deleteCampaign: (params, callback) => {
-        xiboServices.xibo_getAccessToken((body)=>{
+        xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.deleteCampaign(token, params.campaignId, (body)=>{
                 if(body != ""){
@@ -57,6 +57,15 @@ module.exports = {
                     params.campaignId = ""
                     params.campaignName = ""
                 }
+                callback()
+            })
+        })
+    },
+    addLayoutToCampaign: (params, callback) =>{
+        xiboServices.getAccessToken((body)=>{
+            const token = body['access_token'];
+            xiboServices.addLayoutToCampaign(token, params.campaignId, params.layoutsId[0], params.orderLayout[0], (body)=>{
+                //console.log(body)
                 callback()
             })
         })

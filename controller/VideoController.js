@@ -1,18 +1,13 @@
 const request = require('request')
-const xiboServices = require('../js/httpXiboRequest')
-
-const basicAuth = {
-    user: 'adrian',
-    password: '1993'
-}
+const xiboServices = require('../services/xiboServices')
+const base64Encoder = require('../util/utils').getBase64Token
 
 module.exports = {
     startStopVideoServer: (url, command, callback) => {
-        const authToken = Buffer.from(basicAuth.user+':'+basicAuth.password).toString('base64')
         const options = {
             url: url+command,
             headers: {
-                'Authorization': 'Basic ' + authToken
+                'Authorization': 'Basic ' + base64Encoder('adrian', '1993')
             }
         }
         request.get(options, (err, res, body)=>{
@@ -22,7 +17,7 @@ module.exports = {
         })
     },
     insertHlsWidget: (sourceUrl, layoutId, callback)=>{
-        xiboServices.xibo_getAccessToken((body)=>{
+        xiboServices.getAccessToken((body)=>{
             const token = body.access_token
             xiboServices.getLayout(token, layoutId, (response)=>{
                 const playlistId = JSON.parse(response.body)[0].regions[0].playlists[0].playlistId
