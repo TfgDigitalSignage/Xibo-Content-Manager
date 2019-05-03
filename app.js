@@ -17,6 +17,8 @@ const campaignManager_route = require('./routes/campaignManager')
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({extended: true}));
 
+app.use(express.static('public'))
+
 app.use(index_route);
 app.use(remoteContent_route);
 app.use(scheduleLayout_route);

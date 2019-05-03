@@ -9,6 +9,7 @@ let videoServer = ""
 let initLayoutId = 1
 let displaysId = 1
 let priority = 0
+let competitionId = 5
 
 router.get('/', (req,res,next)=>{
     res.render('competition')
@@ -73,6 +74,25 @@ router.get('/stop', (req,res,next)=>{
     started = 0
     require('../controller/EventController').deleteEvent(eventId, ()=>{
         res.end('<h1>Competicion Cancelada</h1>')
+    })
+})
+
+router.get('/test', (req,res,next)=>{
+    const competitionController = require('../controller/CompetitionController')
+    competitionController.contestFeedListerner(competitionId, event => {
+        switch(event.type){
+            case 'submissions':
+            break;
+            case 'judgements':
+                if (event.data.judgement_type_id == "AC"){
+                    //Poner clasificacion actualizada
+                    competitionController.updateScoreboard(competitionId, res);
+                }
+                    
+            break;
+            default:
+            break;
+        }
     })
 })
 
