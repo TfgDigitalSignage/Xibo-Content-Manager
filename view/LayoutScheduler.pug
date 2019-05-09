@@ -26,7 +26,7 @@ html(lang="en")
                                         ul
                                         each layout in layouts
                                             li 
-                                                | Layout: #{layout.layoutId}.- #{layout.layout}
+                                                | Layout: #{layout.campaignId}.- #{layout.layout}
                                                 input(type='radio', name=`layoutChecked`, value=layout)
                                                 br 
                                         each campaign in campaigns
@@ -58,6 +58,7 @@ html(lang="en")
                                             ul
                                             each event in events
                                                 li 
+                                                    | idEvent: #{event.eventId}
                                                     | Prioridad: #{event.isPriority}   
                                                     | Orden: #{event.displayOrder}   
                                                     | IdContenido: #{event.layoutId}

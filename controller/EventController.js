@@ -2,6 +2,7 @@ const xiboServices = require('../services/xiboServices')
 
 module.exports = {
     createEvent: (params, callback) => {
+        
         xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.postSchedule(token,params.campaignId, params.displayGroupIds, params.fromDt, params.toDt, params.isPriority, params.displayOrder, params.eventTypeId, (body)=>{
@@ -47,7 +48,6 @@ module.exports = {
             var dt = dateTime.create();
             var nowTime = dt.format('Y-m-d H:M:S');
             xiboServices.getSchedule(token, params.displayGroupIds, nowTime, (body)=>{
-                console.log("BODY" + body)
                 const rb = JSON.parse(body).events
                 callback(rb)
             })
