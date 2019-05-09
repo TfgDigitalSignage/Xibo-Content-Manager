@@ -13,22 +13,29 @@ html(lang="en")
             table(style='width:100%', border='1')
                     tr
                         th Create
+                        th Get and Delete
                     tr
                         td 
                             h3
-                                form(action = "createEvent", method = "POST")
+                                form(action = "/createEvent", method = "POST")
                                     a Create event
-                                    p Create a new event
-                                    input(type = "text" name = "scheduleName" placeholder = "schedule name")
-                                    if lengthLayouts > 0
+                                    p Create a new event with layout/campaign
+
+                                    p Layouts/Campaigns list:
+                                    if lengthLayouts > 0 || lengthCampaigns > 0
                                         ul
                                         each layout in layouts
                                             li 
-                                                | #{layout.layoutId}.- #{layout.layout}
+                                                | Layout: #{layout.layoutId}.- #{layout.layout}
                                                 input(type='radio', name=`layoutChecked`, value=layout)
-                                                br   
+                                                br 
+                                        each campaign in campaigns
+                                            li 
+                                                | Campaign: #{campaign.campaignId}.- #{campaign.campaign}
+                                                input(type='radio', name=`campaignChecked`, value=campaign)
+                                                br    
                                     else
-                                        p No hay layouts
+                                        p No hay layouts o campañas
                                     p Fecha y hora inicio
                                     input(type="datetime-local" name="fromDate")
                                     br
@@ -37,6 +44,34 @@ html(lang="en")
                                     br
                                     p Prioridad
                                     input(type="number" name="priority" min="0" max ="1000")
+                                    p Orden
+                                    input(type="number" name="order" min="0" max ="1000")
                                     br
                                     input(type = "submit" value = "Create") 
-                        
+                        td 
+                            h3
+                                div.getEvents
+                                    div(id="events")
+                                    p Events list:
+
+                                        if lengthEvents > 0
+                                            ul
+                                            each event in events
+                                                li 
+                                                    | Prioridad: #{event.isPriority}   
+                                                    | Orden: #{event.displayOrder}   
+                                                    | IdContenido: #{event.layoutId}
+                                                    input(type='radio', name=`eventChecked`, value=event)
+                                                    br
+                                        else
+                                            p No hay eventos
+                            br
+                            br
+                            br
+
+                            h3
+                                form(action = "/deleteEvent", method = "POST")
+                                    a Delete event
+                                    p Delete a existing event by Id
+                                    input(type = "text" name = "eventId" placeholder = "Event id")
+                                    input(type = "submit" value = "Delete") 

@@ -1,30 +1,61 @@
 const path = require('path');
 const express = require('express');
-const layoutController = require("../controller/layoutController")
 const router = express.Router();
-let layoutManager = require("./layoutManager")
 const root = path.dirname(require.main.filename);
+
+const layoutController = require("../controller/layoutController")
+let layoutManager = require("./layoutManager")
+const campaignController = require("../controller/CampaignController")
+let campaignManager = require("./campaignManager")
 const remoteContent_path = path.join(root, 'view', 'LayoutScheduler.pug');
 const eventController = require("../controller/EventController")
+
+let params = {
+    //Obligatorios
+    eventTypeId : 1, //1=Campaign, 2=Command, 3=Overlay
+    displayOrder : "",
+    isPriority : "", 
+    displayGroupIds : 2, //Id de las pantallas, o grupos de pantallas, en los que programar el evento.
+    fromDt : "",
+    //Opcionales
+    toDt : "", 
+    campaignId : "",
+    eventId : ""
+}
+
 router.get('/LayoutScheduler', (req,res,next) => {
     layoutController.getLayout(layoutManager.layoutParams, (layouts)=>{
-
-           res.render('LayoutScheduler.pug', {
+        campaignController.getCampaign(campaignManager.params, (campaigns)=>{
+            eventController.getEvent(params, (events) => {
+                res.render('LayoutScheduler.pug', {
                 layouts: layouts,
-                lengthLayouts: layouts.length
+                lengthLayouts: layouts.length,
+                campaigns: campaigns,
+                lengthCampaigns: campaigns.length,
+                events: events,
+                lengthEvents: events.length
+                });
             });
+        });
     });
 });
 
-router.post('/LayoutScheduler/createEvent', (req,res,next) => {
-    const body = req.body;
-    console.log(body)
-    const dateIni = body.fromDate.replace('T',' ') + ':00'
-    const dateFin = body.Totote.replace('T',' ') + ':00'
+router.post('/createEvent', (req,res,next) => {
     selectedCampaign = JSON.parse(req.body.layoutChecked)
-    console.log(dateIni)
-    eventController.createEvent(selectedCampaign.layoutId,"1",dateIni,dateFin,body.priority,(idEvent)=>{
-        console.log(idEvent)
+    params.campaignId = selectedCampaign.layoutId
+    params.displayOrder = JSON.parse(req.body.order)
+    params.isPriority = JSON.parse(req.body.priority)
+    params.fromDt = req.body.fromDate.replace('T',' ') + ':00'
+    params.toDt = req.body.Totote.replace('T',' ') + ':00'
+    eventController.createEvent(params,(idEvent)=>{
+            res.redirect('/LayoutScheduler');
+        });
+});
+
+router.post('/deleteEvent', (req, res, next) =>{
+    params.eventId = req.body.eventId;
+    eventController.deleteEvent(params, ()=>{
+            res.redirect('/LayoutScheduler');
         });
 });
 
@@ -35,7 +66,7 @@ function getMediaItems(callback){
 
     //Fetch data from xibo
     const services = require('../js/httpXiboRequest');
-    services.xibo_getAccessToken((body) => {
+    services.getAccessToken((body) => {
       const access_token = body['access_token'];
       services.getLibraryMedia(access_token, (resp, body) => {
         const items = JSON.parse(body);
