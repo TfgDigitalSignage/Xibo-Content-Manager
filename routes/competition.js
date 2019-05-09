@@ -1,15 +1,21 @@
 const express = require('express')
+const request = require('request')
 const router = express.Router()
+
+const competitionController = require('../controller/CompetitionController')
+const eventController = require ('../controller/EventController')
 
 let started = 0
 
 let videoServer = ""
 
 //cogemos del archivo de config.
+
 let initLayoutId = 1
 let displaysId = 1
 let priority = 0
 let competitionId = 5
+
 
 router.get('/', (req,res,next)=>{
     res.render('competition')
@@ -25,7 +31,6 @@ router.post('/start', (req,res,next)=>{
    let startDate = dateUtil.todayISOFormat()
     let endDate = dateUtil.addDaysTodayISOFormat(1)
 
-    const eventController = require ('../controller/EventController')
     const pollFeature = require('../util/pollingFeature')
 
     //Initialised main event/schedule
@@ -78,7 +83,8 @@ router.get('/stop', (req,res,next)=>{
 })
 
 router.get('/test', (req,res,next)=>{
-    const competitionController = require('../controller/CompetitionController')
+    let startDate = dateUtil.todayISOFormat()
+    let endDate = dateUtil.addDaysTodayISOFormat(1)
     competitionController.contestFeedListerner(competitionId, event => {
         switch(event.type){
             case 'submissions':
@@ -86,7 +92,9 @@ router.get('/test', (req,res,next)=>{
             case 'judgements':
                 if (event.data.judgement_type_id == "AC"){
                     //Poner clasificacion actualizada
-                    competitionController.updateScoreboard(competitionId, res);
+                    const scoreboardLayoutId = 10
+                    const eventId = 36
+                   eventController.editEvent(scoreboardLayoutId, eventId, displaysId, startDate, endDate, priority)
                 }
                     
             break;
@@ -94,6 +102,10 @@ router.get('/test', (req,res,next)=>{
             break;
         }
     })
+})
+
+router.get('/scoreboard/:competitionId', (req,res,next)=>{
+    competitionController.getScoreboard(req.params.competitionId, res);
 })
 
 module.exports = router
