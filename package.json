@@ -10,11 +10,8 @@
     "can-ndjson-stream": "^1.0.0",
     "express": "^4.16.4",
     "form-data": "^2.3.3",
-<<<<<<< HEAD
-    "node-datetime": "^2.1.2",
-=======
     "ndjson": "^1.5.0",
->>>>>>> 20315238a00b7bebf3150fda3b4d0afb4772beab
+    "node-datetime": "^2.1.2",
     "pug": "^2.0.3",
     "request": "^2.88.0"
   },
