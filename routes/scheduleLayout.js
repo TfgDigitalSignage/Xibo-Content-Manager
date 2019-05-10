@@ -15,7 +15,7 @@ let params = {
     eventTypeId : 1, //1=Campaign, 2=Command, 3=Overlay
     displayOrder : "",
     isPriority : "", 
-    displayGroupIds : 1, //Id de las pantallas, o grupos de pantallas, en los que programar el evento.
+    displayGroupIds : 2, //Id de las pantallas, o grupos de pantallas, en los que programar el evento.
     fromDt : "",
     //Opcionales
     toDt : "", 
@@ -46,7 +46,7 @@ router.post('/createEvent', (req,res,next) => {
     params.displayOrder = JSON.parse(req.body.order)
     params.isPriority = JSON.parse(req.body.priority)
     params.fromDt = req.body.fromDate.replace('T',' ') + ':00'
-    params.toDt = req.body.Totote.replace('T',' ') + ':00'
+    params.toDt = req.body.toDate.replace('T',' ') + ':00'
     eventController.createEvent(params,(idEvent)=>{
             res.redirect('/LayoutScheduler');
         });

@@ -37,10 +37,10 @@ html(lang="en")
                                     else
                                         p No hay layouts o campañas
                                     p Fecha y hora inicio
-                                    input(type="datetime-local" name="fromDate")
+                                    input(type="datetime-local" name="fromDate" placeholder="yyyy-MM-dd hh:mm")
                                     br
                                     p Fecha y hora fin
-                                    input(type="datetime-local" name="Totote")
+                                    input(type="datetime-local" name="toDate" placeholder="yyyy-MM-dd hh:mm")
                                     br
                                     p Prioridad
                                     input(type="number" name="priority" min="0" max ="1000")
@@ -58,7 +58,7 @@ html(lang="en")
                                             ul
                                             each event in events
                                                 li 
-                                                    | idEvent: #{event.eventId}
+                                                    | IdEvent: #{event.eventId}
                                                     | Prioridad: #{event.isPriority}   
                                                     | Orden: #{event.displayOrder}   
                                                     | IdContenido: #{event.layoutId}
