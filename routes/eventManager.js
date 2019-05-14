@@ -7,7 +7,7 @@ const layoutController = require("../controller/layoutController")
 let layoutManager = require("./layoutManager")
 const campaignController = require("../controller/CampaignController")
 let campaignManager = require("./campaignManager")
-const remoteContent_path = path.join(root, 'view', 'LayoutScheduler.pug');
+const remoteContent_path = path.join(root, 'view', 'eventManager.pug');
 const eventController = require("../controller/EventController")
 
 let params = {
@@ -23,11 +23,11 @@ let params = {
     eventId : ""
 }
 
-router.get('/LayoutScheduler', (req,res,next) => {
+router.get('/EventManager', (req,res,next) => {
     layoutController.getLayout(layoutManager.layoutParams, (layouts)=>{
         campaignController.getCampaign(campaignManager.params, (campaigns)=>{
             eventController.getEvent(params, (events) => {
-                res.render('LayoutScheduler.pug', {
+                res.render('eventManager.pug', {
                 layouts: layouts,
                 lengthLayouts: layouts.length,
                 campaigns: campaigns,
