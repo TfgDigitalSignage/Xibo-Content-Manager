@@ -4,10 +4,13 @@ const router = express.Router()
 
 const competitionController = require('../controller/CompetitionController')
 const eventController = require ('../controller/EventController')
+const videoController = require('../controller/VideoController')
+
+const dateUtil = require('../util/date')
 
 let started = 0
 
-let videoServer = ""
+let videoServer = "http://localhost:3030/"
 
 //cogemos del archivo de config.
 
@@ -27,7 +30,6 @@ router.post('/start', (req,res,next)=>{
         return res.end('<h1>Lo sentimos, ya hay un concurso en marcha para hoy</h1>')
     }
     let eventId = ''
-    const dateUtil = require('../util/date')
    let startDate = dateUtil.todayISOFormat()
     let endDate = dateUtil.addDaysTodayISOFormat(1)
 
@@ -45,7 +47,6 @@ router.post('/start', (req,res,next)=>{
                     const item = content[layoutId]
                     if (item.active === 1){
                         const newPrior = item.priority ? item.priority : 0
-                        const videoController = require('../controller/VideoController')
                         if (item.type === 'video/hls'){
                             videoServer = item.host
                             videoController.startStopVideoServer(videoServer, 'start-server', (body)=>{
@@ -88,13 +89,26 @@ router.get('/test', (req,res,next)=>{
     competitionController.contestFeedListerner(competitionId, event => {
         switch(event.type){
             case 'submissions':
+                videoController.startStopVideoServer(videoServer, 'start-server', (body)=>{
+                    const webCamLayout = 12
+                    videoController.insertHlsWidget(videoServer + 'live/playlist.m3u8', webCamLayout, (body)=>{
+                        const eventId = 36
+                        eventController.editEvent(webCamLayout, eventId, displaysId, startDate, endDate, newPrior, ()=>{
+                            console.log("HLS widget update succesfull")
+                        })
+                    })
+                })
             break;
             case 'judgements':
                 if (event.data.judgement_type_id == "AC"){
-                    //Poner clasificacion actualizada
-                    const scoreboardLayoutId = 10
-                    const eventId = 36
-                   eventController.editEvent(scoreboardLayoutId, eventId, displaysId, startDate, endDate, priority)
+                    videoController.startStopVideoServer(videoServer, 'stop-server', body=>{
+                        //Poner clasificacion actualizada
+                        const scoreboardLayoutId = 10
+                        const eventId = 36
+                        eventController.editEvent(scoreboardLayoutId, eventId, displaysId, startDate, endDate, priority, body=>{
+                            console.log("Evento modificado: " + body)
+                        })
+                    })
                 }
                     
             break;
