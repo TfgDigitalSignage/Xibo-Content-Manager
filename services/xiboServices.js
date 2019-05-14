@@ -331,7 +331,24 @@ module.exports = {
     });
   },
 
-  postSchedule: (token, layoutId, displayGroupIds, fromDt, toDt,priority, callback)=>{
+  getSchedule: (token, displayGroupId, date, callback)=>{
+    const options = {
+      url: constant.baseUrl + 'schedule/' + displayGroupId + '/events',
+      qs: {
+        date: date
+      },
+      headers:{ 
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/x-www-form-urlencoded' 
+      } 
+    }
+    request.get(options, function (error, response, body) {
+      if (error) throw new Error(error);
+      callback && callback(body)
+    })
+  },
+
+  postSchedule: (token, layoutId, displayGroupIds, fromDt, toDt, priority, displayOrder, eventTypeId, callback)=>{
     const options = {
       url: constant.baseUrl + 'schedule',
       headers: 
@@ -341,9 +358,9 @@ module.exports = {
       },
       form:
       {
-        eventTypeId: '1',
+        eventTypeId: eventTypeId,
         campaignId: layoutId,
-        displayOrder: '1',
+        displayOrder: displayOrder,
         isPriority: priority,
         'displayGroupIds[]': displayGroupIds,
         fromDt: fromDt,
@@ -391,7 +408,7 @@ module.exports = {
       } 
     }
     
-    request.delete(options, function (error, response, body) {
+    request.del(options, function (error, response, body) {
       if (error) throw new Error(error);
       callback(body)
     });
