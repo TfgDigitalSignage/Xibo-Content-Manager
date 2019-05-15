@@ -41,10 +41,28 @@ module.exports = {
                     //console.log(JSON.parse(body).problem_id)
                     body = JSON.parse(body)
                     domJudgeServices.getNameProblem(contestId,body.problem_id, res =>{
-                        console.log(JSON.parse(res.name))
+                        console.log(JSON.parse(res).name)
                     })
                 })
             })
+        })
+    },
+
+    getTeams: (constestId, response) => {
+        let cont = 0;
+        domJudgeServices.getAllTeams(constestId,callback =>{
+            callback = JSON.parse(callback)
+            var length = callback.length
+            var i = 0
+            var teams = []
+            while (i < length){
+                teams[i] = {
+                    'name': callback[i].name,
+                    'members': callback[i].members
+                }
+                i++
+            }
+            response.status(200).render('teams', {'teams': teams});
         })
     }
 }

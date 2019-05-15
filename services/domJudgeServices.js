@@ -78,7 +78,7 @@ module.exports = {
     },
 
     getNameProblem: (contestId,problem_id,callback) =>{
-        
+
         const options = {
             url: baseUrl + 'contests/' + contestId + '/problems/' + problem_id,
             headers: { 
@@ -89,6 +89,19 @@ module.exports = {
             if (err) throw err
             callback(body)
         })
+    },
+
+    getAllTeams: (contestId, callback) =>{
+        const options = {
+            url: baseUrl + 'contests/' + contestId + '/teams',
+            headers: { 
+                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Content-Type': 'application/json' } 
+        }
+        request.get(options, (err, res, body)=>{
+            if (err) throw err
+            callback(body)
+        })  
     }
 }
 

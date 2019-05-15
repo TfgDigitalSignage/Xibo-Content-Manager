@@ -126,4 +126,8 @@ router.get('/graphics/:competitionId',(req,res,next)=>{
     competitionController.getGraphics(req.params.competitionId,res);
 })
 
+router.get('/teams/:competitionId',(req,res,next)=>{
+    competitionController.getTeams(req.params.competitionId,res);
+})
+
 module.exports = router
