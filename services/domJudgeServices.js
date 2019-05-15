@@ -3,13 +3,15 @@ const ndjson = require('ndjson')
 const base64Encoder = require('../util/utils').getBase64Token
 
 const baseUrl = 'http://testdj.programa-me.com/domjudge61/api/v4/'
+const username = "xibo"
+const password = "xiboadmin"
 
 module.exports = {
     getContestEventFeed: (contestId, callback) => {
         const options = {
             url: baseUrl + 'contests/' + contestId + '/event-feed?types=submissions,judgements',
             headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/x-ndjson' } 
         }
         request.get(options)
@@ -27,24 +29,11 @@ module.exports = {
         const options = {
             url: baseUrl + 'contests/' + contestId + '/scoreboard',
             headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
-            if (err) throw err
-            callback(body)
-        })
-    },
-
-    getOneTeamFromContest: (contestId, teamId, callback) => {
-        const options = {
-            url: baseUrl + 'contests/' + contestId + '/teams/' + teamId,
-            headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
-                'Content-Type': 'application/json' } 
-        }
-        request.get(options, (err, res, body)=>{
-            if (err) throw err
+            if (err || res.statusCode >= 400) throw err
             callback(body)
         })
     }
