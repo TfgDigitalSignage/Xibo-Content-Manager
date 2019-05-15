@@ -34,10 +34,14 @@ module.exports = {
 
     getRemainingTime: (contestId, response) => {
         domJudgeServices.getContest(contestId, contest=>{
+            contestname = JSON.parse(contest).name
+            shortname = JSON.parse(contest).shortname
             endTime = JSON.parse(contest).end_time;
             milisecsEndTime = new Date(endTime).getTime()
             response.status(200).render('remainingTime', {
-                endTime: milisecsEndTime
+                endTime: milisecsEndTime,
+                contestname: contestname,
+                shortname: shortname
             });
          })
     },
