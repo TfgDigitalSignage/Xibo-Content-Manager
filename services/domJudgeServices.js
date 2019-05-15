@@ -47,5 +47,45 @@ module.exports = {
             if (err) throw err
             callback(body)
         })
+    },
+
+    getContestStatus: (contestId, callback) => {
+        const options = {
+            url: baseUrl + 'contests/' + contestId + '/state',
+            headers: { 
+                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Content-Type': 'application/json' } 
+        }
+        request.get(options, (err, res, body)=>{
+            if (err) throw err
+            callback(body)
+        })
+    },
+    getContest: (contestId, callback) => {
+        const options = {
+            url: baseUrl + 'contests/' + contestId,
+            headers: { 
+                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Content-Type': 'application/json' } 
+        }
+        request.get(options, (err, res, body)=>{
+            if (err) throw err
+            callback(body)
+        })
+    }  
+
+/*
+    getContestClarifications: (contestId, callback) => {
+        const options = {
+            url: baseUrl + 'contests/' + contestId + '/clarifications',
+            headers: { 
+                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Content-Type': 'application/json' } 
+        }
+        request.get(options, (err, res, body)=>{
+            if (err) throw err
+            callback(body)
+        })
     }
+*/
 }

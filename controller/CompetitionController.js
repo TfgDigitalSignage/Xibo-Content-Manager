@@ -29,5 +29,15 @@ module.exports = {
                 })
             });
         })
+    },
+
+    getRemainingTime: (contestId, response) => {
+        domJudgeServices.getContest(contestId, contest=>{
+            endTime = JSON.parse(contest).end_time;
+            milisecsEndTime = new Date(endTime).getTime()
+            response.status(200).render('remainingTime', {
+                endTime: milisecsEndTime
+            });
+        })
     }
 }

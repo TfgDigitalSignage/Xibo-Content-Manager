@@ -122,4 +122,8 @@ router.get('/scoreboard/:competitionId', (req,res,next)=>{
     competitionController.getScoreboard(req.params.competitionId, res);
 })
 
+router.get('/:competitionId/remainingTime', (req,res,next)=>{
+    competitionController.getRemainingTime(req.params.competitionId, res);
+})
+
 module.exports = router
