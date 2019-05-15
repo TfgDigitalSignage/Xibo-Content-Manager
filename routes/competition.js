@@ -93,6 +93,7 @@ router.get('/test', (req,res,next)=>{
     competitionController.contestFeedListerner(competitionId, event => {
         switch(event.type){
             case 'submissions':
+                
                 videoController.startStopVideoServer(videoServer, 'start-server', videoServer_username, videoServer_password, body=>{
                     if (JSON.parse(body).status !== "success"){
                         console.log("Cannot start webcam server pointed at ", videoServer)
@@ -105,7 +106,23 @@ router.get('/test', (req,res,next)=>{
                         })
                     }
                 })
-                
+                /*
+                let dataSubmission = event.data
+                let teamId = dataSubmission.team_id
+                let problemId = dataSubmission.problem_id
+                competitionController.getContest(competitionId, contest=>{
+                    competitionController.getTeam(competitionId, teamId, team=>{
+                        competitionController.getProblem(competitionId, problemId, problem =>{
+                            competitionController.getJudgementForSubmission(competitionId, dataSubmission.id, judgement=>{
+                                console.log("CONTEST: " + contest)
+                                console.log("TEAM: " + team)
+                                console.log("PROBLEM: " + problem)
+                                console.log("JUDGEMENT: " + judgement)
+                            })
+                        })
+                    })
+                }) 
+                */
             break;
             case 'judgements':
                 if (event.data.judgement_type_id == "AC"){

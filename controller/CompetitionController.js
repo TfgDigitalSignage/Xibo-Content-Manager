@@ -7,6 +7,28 @@ module.exports = {
         })
     },
 
+    getContest: (contestId, callback) => {
+        domJudgeServices.getContest(contestId, contest=>{
+            callback(contest)
+         })
+    },
+
+    getTeam: (contestId, teamId, callback) => {
+        domJudgeServices.getTeam(contestId, teamId, team=>{
+            callback(team)
+         })
+    },
+    getProblem:(contestId, problemId, callback) => {
+        domJudgeServices.getNameProblem(contestId, problemId, problem=>{
+            callback(problem)
+         })
+    },
+    getJudgementForSubmission:(contestId, submissionId, callback) => {
+        domJudgeServices.getJudgementForSubmission(contestId, submissionId, judgement=>{
+            callback(judgement)
+         })
+    },
+
     getScoreboard: (contestId, response) => {
         let cont = 0;
         domJudgeServices.getScoreboard(contestId, board => {
@@ -45,6 +67,7 @@ module.exports = {
             });
          })
     },
+
 
     getGraphics: (contestId,response) => {
 

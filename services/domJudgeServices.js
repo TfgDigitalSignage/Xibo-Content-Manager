@@ -1,6 +1,7 @@
 const request = require ('request')
 const ndjson = require('ndjson')
 const base64Encoder = require('../util/utils').getBase64Token
+const qs = require('querystring');
 
 const baseUrl = 'http://testdj.programa-me.com/domjudge61/api/v4/'
 const username = "xibo"
@@ -103,15 +104,41 @@ module.exports = {
             if (err) throw err
             callback(body)
         })
-    }  
+    },
+    getJudgementForSubmission: (contestId, submissionId, callback) => {
+        const options = {
+            url: baseUrl + 'contests/' + contestId + 'judgements',
+              qs: {
+                submission_id: submissionId
+              },
+            headers: { 
+                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Content-Type': 'application/json' } 
+        }
+        request.get(options, (err, res, body)=>{
+            if (err) throw err
+            callback(body)
+        })
+    },
+    getTeam: (contestId, teamId, callback) => {
+        const options = {
+            url: baseUrl + 'contests/' + contestId + 'teams/' + teamId,
+            headers: { 
+                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Content-Type': 'application/json' } 
+        }
+        request.get(options, (err, res, body)=>{
+            if (err) throw err
+            callback(body)
+        })
+    }
 
-<<<<<<< HEAD
-    getNameProblem: (contestId,problem_id,callback) =>{
 
-=======
+    //getNameProblem: (contestId,problem_id,callback) =>{
+
+
 /*
     getContestClarifications: (contestId, callback) => {
->>>>>>> 90a2822531095a77409c665840ba5b4b3ac1adca
         const options = {
             url: baseUrl + 'contests/' + contestId + '/clarifications',
             headers: { 
