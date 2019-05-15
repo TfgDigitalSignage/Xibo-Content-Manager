@@ -31,6 +31,7 @@ module.exports = {
         })
     },
 
+
     getRemainingTime: (contestId, response) => {
         domJudgeServices.getContest(contestId, contest=>{
             endTime = JSON.parse(contest).end_time;
@@ -38,6 +39,23 @@ module.exports = {
             response.status(200).render('remainingTime', {
                 endTime: milisecsEndTime
             });
+         })
+    },
+
+    getGraphics: (contestId,response) => {
+
+        domJudgeServices.getAllJudgements(contestId, callback =>{
+            const problem = []
+            callback = JSON.parse(callback)
+            callback.forEach((element,index) => {
+                domJudgeServices.getSubmission(contestId,callback[index].submission_id, body =>{
+                    //console.log(JSON.parse(body).problem_id)
+                    body = JSON.parse(body)
+                    domJudgeServices.getNameProblem(contestId,body.problem_id, res =>{
+                        console.log(JSON.parse(res.name))
+                    })
+                })
+            })
         })
     }
 }
