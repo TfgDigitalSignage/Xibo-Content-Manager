@@ -19,7 +19,8 @@ const priority = 1
 //DomJudge config
 const competitionId = 5
 //HLS Server config
-const videoServer = "http://192.168.1.17:3030/"
+//const videoServer = "http://192.168.1.17:3030/"
+const videoServer = "http://localhost:3030/"
 const videoServer_username = "admin"
 const videoServer_password = "1985"
 
@@ -50,7 +51,6 @@ router.post('/start', (req,res,next)=>{
                     const item = content[layoutId]
                     if (item.active === 1){
                         const newPrior = item.priority ? item.priority : 0
-                        const videoController = require('../controller/VideoController')
                         if (item.type === 'video/hls'){
                             videoServer = item.host
                             videoController.startStopVideoServer(videoServer, 'start-server', (body)=>{
@@ -124,6 +124,10 @@ router.get('/test', (req,res,next)=>{
 
 router.get('/scoreboard/:competitionId', (req,res,next)=>{
     competitionController.getScoreboard(req.params.competitionId, res);
+})
+
+router.get('/graphics/:competitionId',(req,res,next)=>{
+    competitionController.getGraphics(req.params.competitionId,res);
 })
 
 module.exports = router

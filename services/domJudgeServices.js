@@ -36,5 +36,50 @@ module.exports = {
             if (err || res.statusCode >= 400) throw err
             callback(body)
         })
+    },
+
+    getAllJudgements: (contestId,callback) =>{
+           const options = {
+            url: baseUrl + 'contests/' + contestId + '/judgements',
+            headers: { 
+                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Content-Type': 'application/json' } 
+        }
+        request.get(options, (err, res, body)=>{
+            if (err) throw err
+
+            callback(body)
+        })
+    },
+
+    getSubmission: (contestId,submission_id,callback) =>{
+
+        const options = {
+            url: baseUrl + 'contests/' + contestId + '/submissions/' + submission_id,
+            headers: { 
+                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Content-Type': 'application/json' } 
+        }
+        request.get(options, (err, res, body)=>{
+            if (err) throw err
+            callback(body)
+        })
+    },
+
+    getNameProblem: (contestId,problem_id,callback) =>{
+        
+        const options = {
+            url: baseUrl + 'contests/' + contestId + '/problems/' + problem_id,
+            headers: { 
+                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Content-Type': 'application/json' } 
+        }
+        request.get(options, (err, res, body)=>{
+            if (err) throw err
+            callback(body)
+        })
     }
 }
+
+
+
