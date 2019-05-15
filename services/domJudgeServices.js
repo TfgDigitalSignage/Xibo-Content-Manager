@@ -107,7 +107,7 @@ module.exports = {
     },
     getJudgementForSubmission: (contestId, submissionId, callback) => {
         const options = {
-            url: baseUrl + 'contests/' + contestId + 'judgements',
+            url: baseUrl + 'contests/' + contestId + '/judgements',
               qs: {
                 submission_id: submissionId
               },
@@ -122,7 +122,7 @@ module.exports = {
     },
     getTeam: (contestId, teamId, callback) => {
         const options = {
-            url: baseUrl + 'contests/' + contestId + 'teams/' + teamId,
+            url: baseUrl + 'contests/' + contestId + '/teams/' + teamId,
             headers: { 
                 'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
                 'Content-Type': 'application/json' } 
