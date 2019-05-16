@@ -28,4 +28,30 @@ body
                       td.cell100.column1= competition.name
                       td.cell100.column2= competition.ini
                       td.cell100.column3= competition.fin
-                      td.cell100.column4= competition.duration  
+                      td.cell100.column4= competition.duration
+        .table100.ver1.m-b-110
+          .table100-head
+            table
+              thead
+                tr.row100.head
+                  th.cell100.column1 Nombre equipo
+                  th.cell100.column2 integrantes
+          .table100-body.js-pscroll
+            table
+              tbody
+                each team in teams
+                  tr.row100.body
+                      td.cell100.column1= team.name
+                      td.cell100.column2= team.members
+        .table100.ver1.m-b-110
+          .table100-head
+            table
+              thead
+                tr.row100.head
+                  th.cell100.column1 Nombre del problema
+          .table100-body.js-pscroll
+            table
+              tbody
+                each problem in problems
+                  tr.row100.body
+                      td.cell100.column1= problem.name
