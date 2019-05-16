@@ -109,7 +109,7 @@ module.exports = {
     },
 
     getTeams: (constestId, response) => {
-        let cont = 0;
+        
         domJudgeServices.getAllTeams(constestId,callback =>{
             callback = JSON.parse(callback)
             var length = callback.length
@@ -142,7 +142,34 @@ module.exports = {
                 'fin': fin,
                 'duration': callback.duration
             }
-             response.status(200).render('contest', {'competition': competition});
+            domJudgeServices.getAllTeams(constestId,callback =>{
+                callback = JSON.parse(callback)
+                var teams = []
+                var length = callback.length
+                var i = 0
+                while (i < length){
+                    teams[i] = {
+                        'name': callback[i].name,
+                        'members': callback[i].members
+                    }
+                    i++
+                }
+
+                domJudgeServices.getProblem(constestId, "", problem=>{
+                    var problems = []
+                    problem = JSON.parse(problem)
+                    var length = problem.length
+                    var i = 0
+                    while (i < length){
+                        problems[i] = {
+                            'name': problem[i].name
+                        }
+                        i++
+                    }
+                    response.status(200).render('contest', {'competition': competition, 'teams': teams, 'problems': problems});
+                })
+               
+            })
         })
     }
 }

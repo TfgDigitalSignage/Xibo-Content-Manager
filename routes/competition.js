@@ -179,7 +179,7 @@ router.get('/teams',(req,res,next)=>{
     competitionController.getTeams(competitionId,res);
 })
 
-router.get('/contest/:competitionId',(req,res,next)=>{
-    competitionController.getCompetition(req.params.competitionId,res);
+router.get('/contest',(req,res,next)=>{
+    competitionController.getCompetition(competitionId,res);
 })
 module.exports = router
