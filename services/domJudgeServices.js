@@ -132,29 +132,7 @@ module.exports = {
             callback(body)
         })
     },
-
-
-    //getNameProblem: (contestId,problem_id,callback) =>{
-
-
-<<<<<<< HEAD
-/*
-=======
-
->>>>>>> 551700febe212dfec33c9a771ae074f5e85a8fd4
-    getContestClarifications: (contestId, callback) => {
-        const options = {
-            url: baseUrl + 'contests/' + contestId + '/clarifications',
-            headers: { 
-                'Authorization': 'Basic ' + base64Encoder(username, password),
-                'Content-Type': 'application/json' } 
-        }
-        request.get(options, (err, res, body)=>{
-            if (err) throw err
-            callback(body)
-        })
-    },
-
+    
     getAllTeams: (contestId, callback) =>{
         const options = {
             url: baseUrl + 'contests/' + contestId + '/teams',
@@ -167,6 +145,23 @@ module.exports = {
             callback(body)
         })  
     }
+
+
+/*
+    getContestClarifications: (contestId, callback) => {
+        const options = {
+            url: baseUrl + 'contests/' + contestId + '/clarifications',
+            headers: { 
+                'Authorization': 'Basic ' + base64Encoder(username, password),
+                'Content-Type': 'application/json' } 
+        }
+        request.get(options, (err, res, body)=>{
+            if (err) throw err
+            callback(body)
+        })
+    }
+*/
+
 
 }
 
