@@ -138,6 +138,10 @@ router.get('/graphics/:competitionId',(req,res,next)=>{
 
 router.get('/teams/:competitionId',(req,res,next)=>{
     competitionController.getTeams(req.params.competitionId,res);
+
 })
 
+router.get('/contest/:competitionId',(req,res,next)=>{
+    competitionController.getCompetition(req.params.competitionId,res);
+})
 module.exports = router

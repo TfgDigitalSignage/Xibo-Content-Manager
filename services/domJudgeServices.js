@@ -105,10 +105,6 @@ module.exports = {
         })
     }  
 
-<<<<<<< HEAD
-    getNameProblem: (contestId,problem_id,callback) =>{
-
-=======
 /*
     getContestClarifications: (contestId, callback) => {
 >>>>>>> 90a2822531095a77409c665840ba5b4b3ac1adca

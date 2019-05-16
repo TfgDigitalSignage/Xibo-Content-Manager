@@ -79,5 +79,25 @@ module.exports = {
             }
             response.status(200).render('teams', {'teams': teams});
         })
+    },
+
+        getCompetition: (constestId, response) => {
+        let cont = 0;
+        domJudgeServices.getContest(constestId,callback =>{
+            callback = JSON.parse(callback)
+            var aux = callback.start_time.split('T')
+            var aux2 = aux[1].split('+')
+            var ini = aux[0] + ' ' + aux2[0]
+            var auxFin = callback.end_time.split('T')
+            var aux3 = auxFin[1].split('+')
+            var fin = auxFin[0] + ' ' + aux3[0]
+            var competition = {
+                'name': callback.formal_name,
+                'ini': ini,
+                'fin': fin,
+                'duration': callback.duration
+            }
+             response.status(200).render('contest', {'competition': competition});
+        })
     }
 }
