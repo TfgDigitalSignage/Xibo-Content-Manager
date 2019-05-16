@@ -7,6 +7,28 @@ module.exports = {
         })
     },
 
+    getContest: (contestId, callback) => {
+        domJudgeServices.getContest(contestId, contest=>{
+            callback(contest)
+         })
+    },
+
+    getTeam: (contestId, teamId, callback) => {
+        domJudgeServices.getTeam(contestId, teamId, team=>{
+            callback(team)
+         })
+    },
+    getProblem:(contestId, problemId, callback) => {
+        domJudgeServices.getNameProblem(contestId, problemId, problem=>{
+            callback(problem)
+         })
+    },
+    getJudgementForSubmission:(contestId, submissionId, callback) => {
+        domJudgeServices.getJudgementForSubmission(contestId, submissionId, judgement=>{
+            callback(judgement)
+         })
+    },
+
     getScoreboard: (contestId, response) => {
         let cont = 0;
         domJudgeServices.getScoreboard(contestId, board => {
@@ -30,6 +52,22 @@ module.exports = {
             });
         })
     },
+
+
+    getRemainingTime: (contestId, response) => {
+        domJudgeServices.getContest(contestId, contest=>{
+            contestname = JSON.parse(contest).name
+            shortname = JSON.parse(contest).shortname
+            endTime = JSON.parse(contest).end_time;
+            milisecsEndTime = new Date(endTime).getTime()
+            response.status(200).render('remainingTime', {
+                endTime: milisecsEndTime,
+                contestname: contestname,
+                shortname: shortname
+            });
+         })
+    },
+
 
     getGraphics: (contestId,response) => {
         domJudgeServices.getAllJudgements(contestId, judgments =>{
@@ -67,6 +105,24 @@ module.exports = {
                     })
                 })
             })
+        })
+    },
+
+    getTeams: (constestId, response) => {
+        let cont = 0;
+        domJudgeServices.getAllTeams(constestId,callback =>{
+            callback = JSON.parse(callback)
+            var length = callback.length
+            var i = 0
+            var teams = []
+            while (i < length){
+                teams[i] = {
+                    'name': callback[i].name,
+                    'members': callback[i].members
+                }
+                i++
+            }
+            response.status(200).render('teams', {'teams': teams});
         })
     }
 }
