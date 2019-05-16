@@ -1,0 +1,31 @@
+head
+  meta(charset='UTF-8')
+  meta(name='viewport', content='width=device-width, initial-scale=1')
+  link(rel='stylesheet', type='text/css', href='/vendor/bootstrap/css/bootstrap.min.css')
+  link(rel='stylesheet', type='text/css', href='/fonts/font-awesome-4.7.0/css/font-awesome.min.css')
+  link(rel='stylesheet', type='text/css', href='/vendor/animate/animate.css')
+  link(rel='stylesheet', type='text/css', href='/vendor/select2/select2.min.css')
+  link(rel='stylesheet', type='text/css', href='/vendor/perfect-scrollbar/perfect-scrollbar.css')
+  link(rel='stylesheet', type='text/css', href='/css/util.css')
+  link(rel='stylesheet', type='text/css', href='/css/main.css')
+body
+  .limiter
+    .container-table100
+      .wrap-table100
+        .table100.ver1.m-b-110
+          .table100-head
+            table
+              thead
+                tr.row100.head
+                  th.cell100.column1 Nombre
+                  th.cell100.column2 Inicio
+                  th.cell100.column3 Final
+                  th.cell100.column4 Duracion
+          .table100-body.js-pscroll
+            table
+              tbody
+                  tr.row100.body
+                      td.cell100.column1= competition.name
+                      td.cell100.column2= competition.ini
+                      td.cell100.column3= competition.fin
+                      td.cell100.column4= competition.duration  
