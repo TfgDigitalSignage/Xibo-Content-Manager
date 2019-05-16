@@ -70,38 +70,31 @@ module.exports = {
 
 
     getGraphics: (contestId,response) => {
-        domJudgeServices.getAllJudgements(contestId, judgments =>{
-            const graphicObj = []
-            let end = 0
-            judgments = JSON.parse(judgments)
-            judgments.forEach((element, index) => {
-                domJudgeServices.getSubmission(contestId, element.submission_id, submission =>{
-                    submission = JSON.parse(submission)
-                    domJudgeServices.getProblem(contestId, submission.problem_id, problem =>{
-                        problem = JSON.parse(problem)
-                        const pos = graphicObj.findIndex(item=>item[0] === problem.short_name)
-                        end++
-                        if (pos != -1){
-                            judgments[pos][1]++;
-                            const curr = judgments[pos][2]
-                            judgments[pos][2] = curr + 1 ? element.judgement_type_id === "AC": curr
-                        }
-                        else{
-                            let corrects = 0
-                            if (element.judgement_type_id === "AC")
-                                corrects++
-                            graphicObj.push([
-                                problem.short_name, 
-                                1,
-                                corrects
-                            ])
-                        }
-                        if (end == judgments.length){
-                            response.status(200).render('submissions-graphic', {
-                                "data": graphicObj,
-                                "dataLength": graphicObj.length
-                            })
-                        }
+        const graphicObj = []
+        let end = 0
+        domJudgeServices.getAllJudgements(contestId, body =>{
+            const judgments = JSON.parse(body)
+            domJudgeServices.getSubmission(contestId, '', body => {
+                const submissions = JSON.parse(body)
+                domJudgeServices.getProblem(contestId, '', body =>{
+                    const problems = JSON.parse(body)
+                    problems.forEach((problem, i) => {
+                        const attemps = submissions.filter(item => item.problem_id === problem.id)
+                        let corrects = []
+                        attemps.forEach((attemp, i)=>{
+                            corrects = judgments.filter(item => 
+                                item.submission_id === attemp.id && item.judgement_type_id === "AC")
+                        })
+                        graphicObj.push([
+                            problem.short_name,
+                            attemps.length,
+                            corrects.length
+                        ])
+                    })
+                    console.log(graphicObj, contestId)
+                    response.status(200).render('submissions-graphic', {
+                        "data": graphicObj,
+                        "dataLength": graphicObj.length
                     })
                 })
             })
