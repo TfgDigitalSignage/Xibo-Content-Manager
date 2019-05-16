@@ -19,7 +19,7 @@ module.exports = {
          })
     },
     getProblem:(contestId, problemId, callback) => {
-        domJudgeServices.getNameProblem(contestId, problemId, problem=>{
+        domJudgeServices.getProblem(contestId, problemId, problem=>{
             callback(problem)
          })
     },

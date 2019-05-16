@@ -1,0 +1,66 @@
+doctype html
+html
+	head
+		style.
+			#div1 {
+			margin:10px;
+			font-size:1.25em;
+			}
+			table{
+			border-collapse:collapse;
+			border:1px solid #7f7f7f;
+			}
+			td{
+			border:1px solid #7f7f7f;
+			width:50px;
+			height:50px;
+			text-align:center;
+			}
+
+	body
+
+#div1
+
+script.
+	var totalRows = 10;
+	var cellsInRow = 6;
+	var min = 1;
+	var max = 10;
+
+	    function drawTable(numActual) {
+	        // get the reference for the body
+	        var div1 = document.getElementById('div1');
+	 
+	        // creates a <table> element
+	        var tbl = document.createElement("table");
+	 
+	        // creating rows
+	        if(numActual < totalRows)
+	        for (var r = 0; r < numActual; r++) {
+	            var row = document.createElement("tr");
+		     
+		     // create cells in row
+	             for (var c = 0; c < cellsInRow; c++) {
+	                var cell = document.createElement("td");
+					if (c == 0)
+						var cellText = document.createTextNode("#{time");
+					else if (c == 1)
+	                	var cellText = document.createTextNode("#{teamId}");
+	                else if (c == 2)
+	                	var cellText = document.createTextNode("#{teamName}");
+	                else if (c == 3)
+	                	var cellText = document.createTextNode("#{problemId}");
+	                else if (c == 4)
+	                	var cellText = document.createTextNode("#{problemName}");
+	                else if (c == 5)
+	                	var cellText = document.createTextNode("#{judgement}");
+	                cell.appendChild(cellText);
+	                row.appendChild(cell);
+	            }           
+	            
+			tbl.appendChild(row); // add the row to the end of the table body
+	        }
+	    
+	     div1.appendChild(tbl); // appends <table> into <div1>
+	}
+	window.onload=drawTable(#{submissionCounter}); 
