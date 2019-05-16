@@ -24,7 +24,8 @@ const videoServer = "http://localhost:3030/"
 const videoServer_username = "admin"
 const videoServer_password = "1985"
 
-let submissionPendingId
+let submissionPendingId = []
+let submissionCounter = 0
 
 router.get('/', (req,res,next)=>{
     res.render('competition')
@@ -110,18 +111,31 @@ router.get('/test', (req,res,next)=>{
                 })
                 */
                 let dataSubmission = event.data
-                submissionPendingId = dataSubmission.id
+                submissionPendingId[dataSubmission.id] = 1
                 console.log(dataSubmission)
                 let teamId = dataSubmission.team_id
+                var myDate = new Date(dataSubmission.time);
+                var minutes = myDate.getMinutes();
+                var hours = myDate.getHours();
+                let time = hours + ":" + minutes
                 let problemId = dataSubmission.problem_id
+                submissionCounter = submissionCounter + 1
                 competitionController.getContest(competitionId, contest=>{
                     competitionController.getTeam(competitionId, teamId, team=>{
+                        let teamName = JSON.parse(team).name
                         competitionController.getProblem(competitionId, problemId, problem =>{
-                            competitionController.getJudgementForSubmission(competitionId, dataSubmission.id, judgement=>{
-                                console.log("CONTEST: " + contest)
-                                console.log("TEAM: " + team)
-                                console.log("PROBLEM: " + problem)
-                                console.log("JUDGEMENT: " + judgement)
+                            let problemName = JSON.parse(problem).name
+                            console.log("CONTEST: " + contest)
+                            console.log("TEAM: " + team)
+                            console.log("PROBLEM: " + problem)
+                            res.status(200).render('submissionsTable', {
+                                time: time,
+                                teamId: teamId, 
+                                teamName: teamName,
+                                problemId: problemId, 
+                                problemName: problemName,
+                                "judgement": "waiting",
+                                submissionCounter: submissionCounter
                             })
                         })
                     })
@@ -135,9 +149,10 @@ router.get('/test', (req,res,next)=>{
                         console.log('Schedule modified: ', body)
                     })
                 }
-                if (event.data.submission_id == submissionPendingId){
+                if (submissionPendingId[event.data.submission_id] && event.data.judgement_type_id != null){
                     console.log("RESUELTO")
                     console.log(event.data)
+                    submissionPendingId[event.data.submission_id] = 0
                 }
                     
             break;
