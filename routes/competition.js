@@ -24,6 +24,8 @@ const videoServer = "http://localhost:3030/"
 const videoServer_username = "admin"
 const videoServer_password = "1985"
 
+let submissionPendingId
+
 router.get('/', (req,res,next)=>{
     res.render('competition')
 })
@@ -93,6 +95,7 @@ router.get('/test', (req,res,next)=>{
     competitionController.contestFeedListerner(competitionId, event => {
         switch(event.type){
             case 'submissions':
+                /*
                 videoController.startStopVideoServer(videoServer, 'start-server', videoServer_username, videoServer_password, body=>{
                     if (JSON.parse(body).status !== "success"){
                         console.log("Cannot start webcam server pointed at ", videoServer)
@@ -105,6 +108,24 @@ router.get('/test', (req,res,next)=>{
                         })
                     }
                 })
+                */
+                let dataSubmission = event.data
+                submissionPendingId = dataSubmission.id
+                console.log(dataSubmission)
+                let teamId = dataSubmission.team_id
+                let problemId = dataSubmission.problem_id
+                competitionController.getContest(competitionId, contest=>{
+                    competitionController.getTeam(competitionId, teamId, team=>{
+                        competitionController.getProblem(competitionId, problemId, problem =>{
+                            competitionController.getJudgementForSubmission(competitionId, dataSubmission.id, judgement=>{
+                                console.log("CONTEST: " + contest)
+                                console.log("TEAM: " + team)
+                                console.log("PROBLEM: " + problem)
+                                console.log("JUDGEMENT: " + judgement)
+                            })
+                        })
+                    })
+                }) 
                 
             break;
             case 'judgements':
@@ -114,6 +135,10 @@ router.get('/test', (req,res,next)=>{
                         console.log('Schedule modified: ', body)
                     })
                 }
+                if (event.data.submission_id == submissionPendingId){
+                    console.log("RESUELTO")
+                    console.log(event.data)
+                }
                     
             break;
             default:
@@ -122,23 +147,21 @@ router.get('/test', (req,res,next)=>{
     })
 })
 
-router.get('/scoreboard/:competitionId', (req,res,next)=>{
-    competitionController.getScoreboard(req.params.competitionId, res);
+router.get('/scoreboard', (req,res,next)=>{
+    competitionController.getScoreboard(competitionId, res);
+})
+
+router.get('/submission-graphic',(req,res,next)=>{
+    competitionController.getGraphics(competitionId, res);
+})
+
+router.get('/remainingTime', (req,res,next)=>{
+    competitionController.getRemainingTime(competitionId, res);
 })
 
 
-router.get('/:competitionId/remainingTime', (req,res,next)=>{
-    competitionController.getRemainingTime(req.params.competitionId, res);
-})
-
-router.get('/graphics/:competitionId',(req,res,next)=>{
-    competitionController.getGraphics(req.params.competitionId,res);
-
-})
-
-router.get('/teams/:competitionId',(req,res,next)=>{
-    competitionController.getTeams(req.params.competitionId,res);
-
+router.get('/teams',(req,res,next)=>{
+    competitionController.getTeams(competitionId,res);
 })
 
 router.get('/contest/:competitionId',(req,res,next)=>{

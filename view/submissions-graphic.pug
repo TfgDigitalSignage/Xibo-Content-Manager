@@ -1,0 +1,45 @@
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title Grafica Envios
+    body
+        script(type='text/javascript', src='https://www.gstatic.com/charts/loader.js')
+        #chart_div(style='width: 800px; height: 500px;')
+        script. 
+            google.charts.load('current', {'packages':['corechart', 'bar']});
+            google.charts.setOnLoadCallback(drawStuff);
+
+            function drawStuff() {
+
+            var button = document.getElementById('change-chart');
+            var chartDiv = document.getElementById('chart_div');
+            var myData = [['Problemas', 'Intentos', 'AC']]
+            var rawData = "#{data}"
+            rawData = rawData.split(",")
+            for (var i = 0; i < #{dataLength}; i++){
+                myData.push([
+                    rawData[3*i], parseInt(rawData[3*i+1]), parseInt(rawData[3*i+2])
+                ])
+            }
+            
+            var data = google.visualization.arrayToDataTable(myData);
+
+            var options = {
+                width: 900,
+                series: {
+                    0: {targetAxisIndex: 0},
+                    1: {targetAxisIndex: 1}
+                },
+                title: 'Intentos/Aciertos por problemas'
+            };
+
+
+            function drawClassicChart() {
+                var classicChart = new google.visualization.ColumnChart(chartDiv);
+                classicChart.draw(data, options);
+            }
+
+            drawClassicChart();
+            };
