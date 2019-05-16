@@ -4,7 +4,7 @@ const base64Encoder = require('../util/utils').getBase64Token
 const qs = require('querystring');
 
 const baseUrl = 'http://testdj.programa-me.com/domjudge61/api/v4/'
-// const baseUrl = 'http://localhost:12345/api/v4/'
+//  baseUrl = 'http://localhost:12345/api/v4/'
 const username = "xibo"
 const password = "xiboadmin"
 
@@ -44,7 +44,7 @@ module.exports = {
            const options = {
             url: baseUrl + 'contests/' + contestId + '/judgements',
             headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
@@ -58,7 +58,7 @@ module.exports = {
         const options = {
             url: baseUrl + 'contests/' + contestId + '/submissions/' + submission_id,
             headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
@@ -72,7 +72,7 @@ module.exports = {
         const options = {
             url: baseUrl + 'contests/' + contestId + '/problems/' + problem_id,
             headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
@@ -85,7 +85,7 @@ module.exports = {
         const options = {
             url: baseUrl + 'contests/' + contestId + '/state',
             headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
@@ -97,7 +97,7 @@ module.exports = {
         const options = {
             url: baseUrl + 'contests/' + contestId,
             headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
@@ -112,7 +112,7 @@ module.exports = {
                 submission_id: submissionId
               },
             headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
@@ -124,25 +124,25 @@ module.exports = {
         const options = {
             url: baseUrl + 'contests/' + contestId + '/teams/' + teamId,
             headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
             if (err) throw err
             callback(body)
         })
-    }
+    },
 
 
     //getNameProblem: (contestId,problem_id,callback) =>{
 
 
-/*
+
     getContestClarifications: (contestId, callback) => {
         const options = {
             url: baseUrl + 'contests/' + contestId + '/clarifications',
             headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
@@ -155,7 +155,7 @@ module.exports = {
         const options = {
             url: baseUrl + 'contests/' + contestId + '/teams',
             headers: { 
-                'Authorization': 'Basic ' + base64Encoder('xibo', 'xiboadmin'),
+                'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
@@ -163,7 +163,7 @@ module.exports = {
             callback(body)
         })  
     }
-*/
+
 }
 
 

@@ -35,7 +35,7 @@ module.exports = {
             const teams = []
             const rows = JSON.parse(board).rows;
             rows.forEach((element,index) => {
-                domJudgeServices.getOneTeamFromContest(contestId, element.team_id, team => {
+                domJudgeServices.getTeam(contestId, element.team_id, team => {
                     teams[index] = {
                         'rank': element.rank, 
                         'name': JSON.parse(team).name, 
