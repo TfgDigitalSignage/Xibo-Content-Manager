@@ -32,16 +32,38 @@ module.exports = {
     },
 
     getGraphics: (contestId,response) => {
-
-        domJudgeServices.getAllJudgements(contestId, callback =>{
-            const problem = []
-            callback = JSON.parse(callback)
-            callback.forEach((element,index) => {
-                domJudgeServices.getSubmission(contestId,callback[index].submission_id, body =>{
-                    //console.log(JSON.parse(body).problem_id)
-                    body = JSON.parse(body)
-                    domJudgeServices.getNameProblem(contestId,body.problem_id, res =>{
-                        console.log(JSON.parse(res.name))
+        domJudgeServices.getAllJudgements(contestId, judgments =>{
+            const graphicObj = []
+            let end = 0
+            judgments = JSON.parse(judgments)
+            judgments.forEach((element, index) => {
+                domJudgeServices.getSubmission(contestId, element.submission_id, submission =>{
+                    submission = JSON.parse(submission)
+                    domJudgeServices.getProblem(contestId, submission.problem_id, problem =>{
+                        problem = JSON.parse(problem)
+                        const pos = graphicObj.findIndex(item=>item[0] === problem.short_name)
+                        end++
+                        if (pos != -1){
+                            judgments[pos][1]++;
+                            const curr = judgments[pos][2]
+                            judgments[pos][2] = curr + 1 ? element.judgement_type_id === "AC": curr
+                        }
+                        else{
+                            let corrects = 0
+                            if (element.judgement_type_id === "AC")
+                                corrects++
+                            graphicObj.push([
+                                problem.short_name, 
+                                1,
+                                corrects
+                            ])
+                        }
+                        if (end == judgments.length){
+                            response.status(200).render('submissions-graphic', {
+                                "data": graphicObj,
+                                "dataLength": graphicObj.length
+                            })
+                        }
                     })
                 })
             })

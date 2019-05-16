@@ -3,6 +3,7 @@ const ndjson = require('ndjson')
 const base64Encoder = require('../util/utils').getBase64Token
 
 const baseUrl = 'http://testdj.programa-me.com/domjudge61/api/v4/'
+// const baseUrl = 'http://localhost:12345/api/v4/'
 const username = "xibo"
 const password = "xiboadmin"
 
@@ -46,8 +47,7 @@ module.exports = {
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
-            if (err) throw err
-
+            if (err || res.statusCode>=400) console.log(err)
             callback(body)
         })
     },
@@ -61,12 +61,12 @@ module.exports = {
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
-            if (err) throw err
+            if (err || res.statusCode>=400) console.log(err)
             callback(body)
         })
     },
 
-    getNameProblem: (contestId,problem_id,callback) =>{
+    getProblem: (contestId,problem_id,callback) =>{
         
         const options = {
             url: baseUrl + 'contests/' + contestId + '/problems/' + problem_id,
@@ -75,7 +75,7 @@ module.exports = {
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
-            if (err) throw err
+            if (err || res.statusCode>=400) console.log(err)
             callback(body)
         })
     }

@@ -122,12 +122,12 @@ router.get('/test', (req,res,next)=>{
     })
 })
 
-router.get('/scoreboard/:competitionId', (req,res,next)=>{
-    competitionController.getScoreboard(req.params.competitionId, res);
+router.get('/scoreboard', (req,res,next)=>{
+    competitionController.getScoreboard(competitionId, res);
 })
 
-router.get('/graphics/:competitionId',(req,res,next)=>{
-    competitionController.getGraphics(req.params.competitionId,res);
+router.get('/submission-graphic',(req,res,next)=>{
+    competitionController.getGraphics(competitionId, res);
 })
 
 module.exports = router
