@@ -227,7 +227,7 @@ module.exports = {
                 xiboServices.getWidgetsOfPlaylist(token, playlistId, resp=>{
                     const widgets = JSON.parse(resp.body)
                     if (widgets.length == 0){
-                        xiboServices.postWidgetWebContent(playlistId, token, params.uri, 1, 1, 10, body=>{
+                        xiboServices.postWidgetWebContent(playlistId, token, params.uri, 1, 0, 0, body=>{
                             callback(body)
                         })
                     }
@@ -239,6 +239,14 @@ module.exports = {
                         })
                     }
                 })
+            })
+        })
+    },
+    createWebPageWidgetDummy: (playlistId, uri, callback) => {
+        xiboServices.getAccessToken((body)=>{
+            const token = body['access_token'];
+            xiboServices.postWidgetWebContent(playlistId, token, uri, 1, 1, 10, (res, widget) => {
+                callback(widget)
             })
         })
     }

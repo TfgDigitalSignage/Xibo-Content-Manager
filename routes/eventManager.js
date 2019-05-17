@@ -48,14 +48,14 @@ router.post('/createEvent', (req,res,next) => {
     params.fromDt = req.body.fromDate.replace('T',' ') + ':00'
     params.toDt = req.body.toDate.replace('T',' ') + ':00'
     eventController.createEvent(params,(idEvent)=>{
-            res.redirect('/LayoutScheduler');
+            res.redirect('/EventManaget');
         });
 });
 
 router.post('/deleteEvent', (req, res, next) =>{
     params.eventId = req.body.eventId;
     eventController.deleteEvent(params, ()=>{
-            res.redirect('/LayoutScheduler');
+            res.redirect('/EventManager');
         });
 });
 

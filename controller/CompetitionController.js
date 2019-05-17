@@ -1,4 +1,7 @@
 const domJudgeServices = require('../services/domJudgeServices')
+const layoutController = require('../controller/layoutController')
+const eventController = require('../controller/EventController')
+const date = require('../util/date')
 
 module.exports = {
     contestFeedListerner: (contestId, callback) => {
@@ -175,6 +178,7 @@ module.exports = {
 
     submissionFeed: (competitionId, submissionId, res) => {
         domJudgeServices.getSubmission(competitionId, submissionId, dataSubmission=>{
+            dataSubmission = JSON.parse(dataSubmission)
             const teamId = dataSubmission.team_id
             const myDate = new Date(dataSubmission.time);
             let minutes = myDate.getMinutes()
@@ -196,6 +200,44 @@ module.exports = {
                         'problemName': problemName,
                     })
                 })
+            })
+        })
+    },
+
+    initCompetitionSchedule: (params, serverAddr, serverPort) => {
+        serverAddr = serverAddr === "::1" ? "localhost" : serverAddr
+        const base_url = 'http://' + serverAddr + ':' + serverPort + '/competition/'
+        domJudgeServices.getContest(params.contestId, contest=> {
+            const contestInfo = JSON.parse(contest)
+            params.start_time = date.dateToISOFormat(contestInfo.start_time)
+            params.end_time = date.dateToISOFormat(contestInfo.end_time)
+            layoutController.createLayout({
+                layoutName: 'MainLayout'
+            }, layout => {
+                params.mainLayoutId = layout.layoutId
+                const playlistId = layout.regions[0].playlists[0].playlistId
+                const contest_uri = base_url + 'contest'
+                layoutController.createWebPageWidgetDummy(playlistId, contest_uri, body => {
+                    const teamInfo_uri = base_url + 'teams'
+                    layoutController.createWebPageWidgetDummy(playlistId, teamInfo_uri, body => {
+                        const remainingTime_uri = base_url + 'remainingTime'
+                        layoutController.createWebPageWidgetDummy(playlistId, remainingTime_uri, body => {
+                            const scoreboard_uri = base_url + 'scoreboard'
+                            layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri, body => {
+                                eventController.createEvent({
+                                    campaignId: params.mainLayoutId,
+                                    displayGroupIds: params.displaysId, 
+                                    fromDt: params.start_time, 
+                                    toDt: params.end_time, 
+                                    isPriority: params.priority, 
+                                    displayOrder: 1, 
+                                    eventTypeId: 1
+                                })
+                            })
+                        })
+                    })
+                })
+        
             })
         })
     }

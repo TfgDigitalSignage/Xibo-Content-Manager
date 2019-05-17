@@ -1,5 +1,4 @@
 const express = require('express')
-const request = require('request')
 const router = express.Router()
 
 const competitionController = require('../controller/CompetitionController')
@@ -11,19 +10,35 @@ const dateUtil = require('../util/date')
 let started = 0
 
 //Xibo config
-const eventId = 38
+const eventId = 40
 const initLayoutId = 16
 const scoreboardLayoutId = 10
 const webcamLayoutId = 15
-const displaysId = 5
+const displaysId = 6
 const priority = 1
+const start_time = ''
+const end_time = ''
 //DomJudge config
-const competitionId = 5
+const competitionId = 4
 //HLS Server config
-const videoServer = "http://192.168.1.17:3030/"
-// const videoServer = "http://localhost:3030/"
+// const videoServer = "http://192.168.1.17:3030/"
+const videoServer = "http://localhost:3030/"
 const videoServer_username = "admin"
 const videoServer_password = "1985"
+
+let options = {
+    //Xibo specs
+    eventId: '',
+    mainLayoutId: '',
+    submissionLayout: 15,
+    displaysId: 6,
+    priority: 1,
+    //DomJudgeSpecs
+    contestId: 5,
+    //VideoServer specs
+    videoServer_username: 'admin',
+    videoServer_password: '1985'
+}
 
 router.get('/', (req,res,next)=>{
     res.render('competition')
@@ -89,8 +104,8 @@ router.get('/stop', (req,res,next)=>{
 })
 
 router.get('/test', (req,res,next)=>{
-    let startDate = dateUtil.todayISOFormat()
-    let endDate = dateUtil.addDaysTodayISOFormat(1)
+    competitionController.initCompetitionSchedule(options, req.connection.remoteAddress, req.connection.localPort);
+
     competitionController.contestFeedListerner(competitionId, event => {
         switch(event.type){
             case 'submissions':
@@ -102,57 +117,21 @@ router.get('/test', (req,res,next)=>{
                         videoController.insertHlsWidget(videoServer+"live/playlist.m3u8", webcamLayoutId, data=>{
                             const opt = {
                                 layoutId: webcamLayoutId,
-                                uri: 'http://localhost:3000/competition/judgement-type/' + event.data.id
+                                uri: 'http://192.168.1.17:3000/competition/submissionFeed/' + event.data.id
                             }
                             layoutController.editSubmissionFeed(opt, body=>{
                                 eventController.editEvent(webcamLayoutId, eventId, displaysId, startDate, endDate, priority, ()=>{
                                     console.log("Everything ok")
                                     setInterval(()=>{
                                         videoController.startStopVideoServer(videoServer, 'stop-server', videoServer_username, videoServer_password, body=>{
-                                            eventController.editEvent(scoreboardLayoutId, eventId, displaysId, startDate, endDate, priority, ()=>{
-                                                setInterval(()=>{
-                                                    eventController.editEvent(initLayoutId, eventId, displaysId, startDate, endDate, priority, ()=>{})
-                                                }, 1000)
-                                            })
+                                            eventController.editEvent(initLayoutId, eventId, displaysId, startDate, endDate, priority, ()=>{})
                                         })
-                                    }, 10000)
+                                    }, 30000)
                                 })
                             })
                         })
                     }
                 })
-                
-                // let dataSubmission = event.data
-                // submissionPendingId[dataSubmission.id] = 1
-                // console.log(dataSubmission)
-                // let teamId = dataSubmission.team_id
-                // var myDate = new Date(dataSubmission.time);
-                // var minutes = myDate.getMinutes();
-                // var hours = myDate.getHours();
-                // let time = hours + ":" + minutes
-                // let problemId = dataSubmission.problem_id
-                // submissionCounter = submissionCounter + 1
-                // competitionController.getContest(competitionId, contest=>{
-                //     competitionController.getTeam(competitionId, teamId, team=>{
-                //         let teamName = JSON.parse(team).name
-                //         competitionController.getProblem(competitionId, problemId, problem =>{
-                //             let problemName = JSON.parse(problem).name
-                //             console.log("CONTEST: " + contest)
-                //             console.log("TEAM: " + team)
-                //             console.log("PROBLEM: " + problem)
-                //             res.status(200).render('submissionsTable', {
-                //                 submissionId: dataSubmission.id,
-                //                 time: time,
-                //                 teamId: teamId, 
-                //                 teamName: teamName,
-                //                 problemId: problemId, 
-                //                 problemName: problemName,
-                //                 "judgement": "waiting",
-                //                 submissionCounter: submissionCounter
-                //             })
-                //         })
-                //     })
-                // }) 
                 
             break;
             case 'judgements':
