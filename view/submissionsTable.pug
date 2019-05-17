@@ -1,6 +1,8 @@
 doctype html
 html
 	head
+		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js", type="text/javascript")
+		link(rel="stylesheet", href="/css/submissionTable.css")
 		style.
 			#div1 {
 			margin:10px;
@@ -16,51 +18,87 @@ html
 			height:50px;
 			text-align:center;
 			}
-
 	body
+		#content
+			table.rwd-table
+				tbody
+					tr
+						th Hora
+						th Equipo
+						th Problema
+						th Resultado
+					tr
+						td(data-th="Hora",id="time")=time
+						td(data-th="Equipo",id="team")=teamName
+						td(data-th="Problema",id="problem")=problemName
+						td(data-th="Resultado",id="judgement") Waiting
+					
+						
 
-#div1
 
 script.
-	var totalRows = 10;
+	/*var totalRows = 10;
 	var cellsInRow = 6;
 	var min = 1;
 	var max = 10;
+	var submissionList = []
 
-	    function drawTable(numActual) {
-	        // get the reference for the body
-	        var div1 = document.getElementById('div1');
-	 
-	        // creates a <table> element
-	        var tbl = document.createElement("table");
-	 
-	        // creating rows
-	        if(numActual < totalRows)
-	        for (var r = 0; r < numActual; r++) {
-	            var row = document.createElement("tr");
-		     
-		     // create cells in row
-	             for (var c = 0; c < cellsInRow; c++) {
-	                var cell = document.createElement("td");
-					if (c == 0)
-						var cellText = document.createTextNode("#{time");
-					else if (c == 1)
-	                	var cellText = document.createTextNode("#{teamId}");
-	                else if (c == 2)
-	                	var cellText = document.createTextNode("#{teamName}");
-	                else if (c == 3)
-	                	var cellText = document.createTextNode("#{problemId}");
-	                else if (c == 4)
-	                	var cellText = document.createTextNode("#{problemName}");
-	                else if (c == 5)
-	                	var cellText = document.createTextNode("#{judgement}");
-	                cell.appendChild(cellText);
-	                row.appendChild(cell);
-	            }           
-	            
-			tbl.appendChild(row); // add the row to the end of the table body
-	        }
-	    
-	     div1.appendChild(tbl); // appends <table> into <div1>
+	function drawTable(numActual) {
+		// get the reference for the body
+		var div1 = document.getElementById('div1');
+	
+		// creates a <table> element
+		var tbl = document.createElement("table");
+	
+		// creating rows
+		if(numActual < totalRows)
+		for (var r = 0; r < numActual; r++) {
+			var row = document.createElement("tr");
+			
+			// create cells in row
+				for (var c = 0; c < cellsInRow; c++) {
+				var cell = document.createElement("td");
+				if (c == 0)
+					var cellText = document.createTextNode("#{time}");
+				else if (c == 1)
+					var cellText = document.createTextNode("#{teamId}");
+				else if (c == 2)
+					var cellText = document.createTextNode("#{teamName}");
+				else if (c == 3)
+					var cellText = document.createTextNode("#{problemId}");
+				else if (c == 4)
+					var cellText = document.createTextNode("#{problemName}");
+				else if (c == 5){
+					var cellText = document.createTextNode("#{judgement}");
+					$(cell).attr('id', "judgement")
+				}
+				cell.appendChild(cellText);
+				row.appendChild(cell);
+			}           
+			
+		tbl.appendChild(row); // add the row to the end of the table body
+		submissionList.push("#{submissionId}")
+		}
+	
+		div1.appendChild(tbl); // appends <table> into <div1>
+	}*/
+
+	function getJudgementChange(){
+		$.ajax({
+			type: "GET",
+			url: "judgement-type/" + "#{submissionId}",
+			success: (res, status, xhr) => {
+				if (res.data !== "waiting"){
+					$('#judgement').html(res.data);
+					if (res.data == "AC")
+						$('#judgement').addClass('right')
+					else	
+						$('#judgement').addClass('wrong')
+					clearInterval(interval);
+				}
+			}
+		})
 	}
-	window.onload=drawTable(#{submissionCounter}); 
+
+	//window.onload=drawTable(#{submissionCounter}); 
+	var interval = window.setInterval(getJudgementChange, 5000);

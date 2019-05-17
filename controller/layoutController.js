@@ -219,5 +219,27 @@ module.exports = {
             })
         })
     },
-
+    editSubmissionFeed: (params, callback) => {
+        xiboServices.getAccessToken((body)=>{
+            const token = body['access_token'];
+            xiboServices.getLayout(token, params.layoutId, response=>{
+                const playlistId = JSON.parse(response.body)[0].regions[1].playlists[0].playlistId
+                xiboServices.getWidgetsOfPlaylist(token, playlistId, resp=>{
+                    const widgets = JSON.parse(resp.body)
+                    if (widgets.length == 0){
+                        xiboServices.postWidgetWebContent(playlistId, token, params.uri, 1, 1, 10, body=>{
+                            callback(body)
+                        })
+                    }
+                    else {
+                        xiboServices.deleteWidget(token, widgets[0].widgetId, ()=>{
+                            xiboServices.postWidgetWebContent(playlistId, token, params.uri, 1, 1, 10, body=>{
+                                callback(body)
+                            })
+                        })
+                    }
+                })
+            })
+        })
+    }
 }

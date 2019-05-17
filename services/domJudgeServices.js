@@ -105,9 +105,9 @@ module.exports = {
             callback(body)
         })
     },
-    getJudgementForSubmission: (contestId, submissionId, callback) => {
+    getJudgement: (contestId, judgementId, callback) => {
         const options = {
-            url: baseUrl + 'contests/' + contestId + '/judgements/' + submissionId,
+            url: baseUrl + 'contests/' + contestId + '/judgements/' + judgementId,
             headers: { 
                 'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 

@@ -23,10 +23,17 @@ module.exports = {
             callback(problem)
          })
     },
-    getJudgementForSubmission:(contestId, submissionId, callback) => {
-        domJudgeServices.getJudgementForSubmission(contestId, submissionId, judgement=>{
-            callback(judgement)
-         })
+    getJudgementForSubmission:(contestId, submissionId, res) => {
+        domJudgeServices.getJudgement(contestId, "", judgements=>{
+            const filter = JSON.parse(judgements).find(judgment => judgment.submission_id === submissionId)
+            let ret = {
+                "status": "success",
+                "data": "waiting"
+            }
+            if (filter.judgement_type_id)
+                ret.data = filter.judgement_type_id
+            return res.status(200).json(ret)
+        })
     },
 
     getScoreboard: (contestId, response) => {
@@ -119,7 +126,7 @@ module.exports = {
         })
     },
 
-        getCompetition: (constestId, response) => {
+    getCompetition: (constestId, response) => {
         let cont = 0;
         domJudgeServices.getContest(constestId,callback =>{
             callback = JSON.parse(callback)
@@ -162,6 +169,33 @@ module.exports = {
                     response.status(200).render('contest', {'competition': competition, 'teams': teams, 'problems': problems});
                 })
                
+            })
+        })
+    },
+
+    submissionFeed: (competitionId, submissionId, res) => {
+        domJudgeServices.getSubmission(competitionId, submissionId, dataSubmission=>{
+            const teamId = dataSubmission.team_id
+            const myDate = new Date(dataSubmission.time);
+            let minutes = myDate.getMinutes()
+            let hours = myDate.getHours()
+            if (hours < 10)
+                hours = "0" + hours
+            if (minutes < 10)
+                minutes = "0" + minutes 
+            const time = hours + ":" + minutes
+    
+            domJudgeServices.getTeam(competitionId, teamId, team=>{
+                const teamName = JSON.parse(team).name
+                domJudgeServices.getProblem(competitionId, dataSubmission.problem_id, problem =>{
+                    const problemName = JSON.parse(problem).name
+                    res.status(200).render('submissionsTable', {
+                        'submissionId': submissionId,
+                        'time': time,
+                        'teamName': teamName,
+                        'problemName': problemName,
+                    })
+                })
             })
         })
     }

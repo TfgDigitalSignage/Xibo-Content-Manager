@@ -12,7 +12,7 @@ module.exports = {
         }
         request.get(options, (err, res, body)=>{
             if (err || res.statusCode > 400)
-                throw new Error(err)
+                console.log(err)
             callback(body)
         })
     },
