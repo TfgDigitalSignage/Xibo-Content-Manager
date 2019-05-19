@@ -39,12 +39,15 @@ module.exports = {
         })
     },
 
-    getAllJudgements: (contestId,callback) =>{
-           const options = {
+    getAllJudgements: (contestId, judgementType, callback) =>{
+           let options = {
             url: baseUrl + 'contests/' + contestId + '/judgements',
             headers: { 
                 'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/json' } 
+        }
+        if (judgementType) options.qs = {
+            result: judgementType   
         }
         request.get(options, (err, res, body)=>{
             if (err || res.statusCode>=400) console.log(err)

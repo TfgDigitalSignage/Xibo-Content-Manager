@@ -206,7 +206,6 @@ module.exports = {
                 }
                 else
                 {
-                    //console.log("Widget eliminado")
                     params.widgetId = ""
                     params.widgetName = ""
                     params.widgetType = ""

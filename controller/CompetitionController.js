@@ -26,6 +26,8 @@ module.exports = {
             callback(problem)
          })
     },
+    getACJudgements: (contestId, callback) =>  domJudgeServices.getAllJudgements(contestId, 'correct', callback),
+
     getJudgementForSubmission:(contestId, submissionId, res) => {
         domJudgeServices.getJudgement(contestId, "", judgements=>{
             const filter = JSON.parse(judgements).find(judgment => judgment.submission_id === submissionId)
@@ -78,30 +80,24 @@ module.exports = {
          })
     },
 
-
     getGraphics: (contestId,response) => {
         const graphicObj = []
         let end = 0
-        domJudgeServices.getAllJudgements(contestId, body =>{
-            const judgments = JSON.parse(body)
+        domJudgeServices.getAllJudgements(contestId, 'correct', body =>{
+            const judgementsAC = JSON.parse(body)
             domJudgeServices.getSubmission(contestId, '', body => {
                 const submissions = JSON.parse(body)
                 domJudgeServices.getProblem(contestId, '', body =>{
                     const problems = JSON.parse(body)
                     problems.forEach((problem, i) => {
                         const attemps = submissions.filter(item => item.problem_id === problem.id)
-                        let corrects = []
-                        attemps.forEach((attemp, i)=>{
-                            corrects = judgments.filter(item => 
-                                item.submission_id === attemp.id && item.judgement_type_id === "AC")
-                        })
+                        const corrects = judgementsAC.filter(judge => attemps.some(attemp => judge.submission_id == attemp.id))
                         graphicObj.push([
                             problem.short_name,
                             attemps.length,
                             corrects.length
                         ])
                     })
-                    console.log(graphicObj, contestId)
                     response.status(200).render('submissions-graphic', {
                         "data": graphicObj,
                         "dataLength": graphicObj.length
@@ -204,8 +200,7 @@ module.exports = {
         })
     },
 
-    initCompetitionSchedule: (params, req, res) => {
-        const base_url = require('../util/utils').getIpv4LocalAddress(req) + '/competition/'
+    initCompetitionSchedule: (params, base_url, res) => {
         domJudgeServices.getContest(params.contestId, contest=> {
             const contestInfo = JSON.parse(contest)
             params.start_time = date.dateToISOFormat(contestInfo.start_time)
@@ -215,6 +210,7 @@ module.exports = {
             }, layout => {
                 params.mainLayoutId = layout.layoutId
                 const playlistId = layout.regions[0].playlists[0].playlistId
+                params.mainPlaylistId = playlistId
                 const contest_uri = base_url + 'contest'
                 layoutController.createWebPageWidgetDummy(playlistId, contest_uri, body => {
                     const teamInfo_uri = base_url + 'teams'
@@ -232,7 +228,7 @@ module.exports = {
                                     displayOrder: 1, 
                                     eventTypeId: 1
                                 }, body => {
-                                    res.status(200).render('competitionStarted')
+                                    // res.status(200).render('competitionStarted')
                                 })
                             })
                         })
