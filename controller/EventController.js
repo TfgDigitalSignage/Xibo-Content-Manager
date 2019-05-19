@@ -41,12 +41,10 @@ module.exports = {
             })
         })
     },
-    getEvent: (params, callback) => {
+    getEvent:   (params, callback) => {
         xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
-            var dateTime = require('node-datetime');
-            var dt = dateTime.create();
-            var nowTime = dt.format('Y-m-d H:M:S');
+            var nowTime = require('../util/date').todayISOFormat()
             xiboServices.getSchedule(token, params.displayGroupIds, nowTime, (body)=>{
                 const rb = JSON.parse(body).events
                 callback(rb)

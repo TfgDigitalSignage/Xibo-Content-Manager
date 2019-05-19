@@ -2,8 +2,11 @@ const request = require('request')
 const xiboServices = require('../services/xiboServices')
 const base64Encoder = require('../util/utils').getBase64Token
 
+const username = process.env.HLS_SERVER_USERNAME
+const password = process.env.HLS_SERVER_PASSWORD
+
 module.exports = {
-    startStopVideoServer: (url, command, username, password, callback) => {
+    startStopVideoServer: (url, command, callback) => {
         const options = {
             url: url+command,
             headers: {

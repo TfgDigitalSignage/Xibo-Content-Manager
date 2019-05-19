@@ -1,8 +1,5 @@
 const xiboServices = require('../services/xiboServices')
 
-
-
-
 module.exports = {
     createLayout: (params, callback) => {
         xiboServices.getAccessToken((body)=>{

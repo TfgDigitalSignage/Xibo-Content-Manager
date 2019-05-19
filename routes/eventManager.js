@@ -7,7 +7,6 @@ const layoutController = require("../controller/layoutController")
 let layoutManager = require("./layoutManager")
 const campaignController = require("../controller/CampaignController")
 let campaignManager = require("./campaignManager")
-const remoteContent_path = path.join(root, 'view', 'eventManager.pug');
 const eventController = require("../controller/EventController")
 
 let params = {
@@ -15,7 +14,7 @@ let params = {
     eventTypeId : 1, //1=Campaign, 2=Command, 3=Overlay
     displayOrder : "",
     isPriority : "", 
-    displayGroupIds : 2, //Id de las pantallas, o grupos de pantallas, en los que programar el evento.
+    displayGroupIds : process.env.XIBO_DISPLAY_ID,
     fromDt : "",
     //Opcionales
     toDt : "", 
@@ -48,7 +47,7 @@ router.post('/createEvent', (req,res,next) => {
     params.fromDt = req.body.fromDate.replace('T',' ') + ':00'
     params.toDt = req.body.toDate.replace('T',' ') + ':00'
     eventController.createEvent(params,(idEvent)=>{
-            res.redirect('/EventManaget');
+            res.redirect('/EventManager');
         });
 });
 

@@ -204,9 +204,8 @@ module.exports = {
         })
     },
 
-    initCompetitionSchedule: (params, serverAddr, serverPort) => {
-        serverAddr = serverAddr === "::1" ? "localhost" : serverAddr
-        const base_url = 'http://' + serverAddr + ':' + serverPort + '/competition/'
+    initCompetitionSchedule: (params, req, res) => {
+        const base_url = require('../util/utils').getIpv4LocalAddress(req) + '/competition/'
         domJudgeServices.getContest(params.contestId, contest=> {
             const contestInfo = JSON.parse(contest)
             params.start_time = date.dateToISOFormat(contestInfo.start_time)
@@ -232,6 +231,8 @@ module.exports = {
                                     isPriority: params.priority, 
                                     displayOrder: 1, 
                                     eventTypeId: 1
+                                }, body => {
+                                    res.status(200).render('competitionStarted')
                                 })
                             })
                         })

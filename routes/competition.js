@@ -7,126 +7,50 @@ const videoController = require('../controller/VideoController')
 const layoutController = require('../controller/layoutController')
 const dateUtil = require('../util/date')
 
-let started = 0
-
-//Xibo config
-const eventId = 40
-const initLayoutId = 16
-const scoreboardLayoutId = 10
-const webcamLayoutId = 15
-const displaysId = 6
-const priority = 1
-const start_time = ''
-const end_time = ''
-//DomJudge config
-const competitionId = 4
-//HLS Server config
-// const videoServer = "http://192.168.1.17:3030/"
-const videoServer = "http://localhost:3030/"
-const videoServer_username = "admin"
-const videoServer_password = "1985"
-
 let options = {
     //Xibo specs
     eventId: '',
     mainLayoutId: '',
-    submissionLayout: 15,
-    displaysId: 6,
-    priority: 1,
+    submissionLayout: '',
+    start_time: '',
+    end_time: '',
+    displaysId: process.env.XIBO_DISPLAY_ID,
+    priority: process.env.XIBO_COMPETITION_PRIORITY,
     //DomJudgeSpecs
-    contestId: 5,
+    contestId: process.env.DOMJUDGE_CONTEST_ID,
     //VideoServer specs
-    videoServer_username: 'admin',
-    videoServer_password: '1985'
+    videoServer_username: process.env.HLS_SERVER_USERNAME,
+    videoServer_password: process.env.HLS_SERVER_PASSWORD
 }
 
 router.get('/', (req,res,next)=>{
     res.render('competition')
 })
 
-//Twitter, Imagen Clasificacion, WebPage, WebCamStreaming -> Mismo layout
 router.post('/start', (req,res,next)=>{
-    if (started === 1){
-        return res.end('<h1>Lo sentimos, ya hay un concurso en marcha para hoy</h1>')
-    }
-    let eventId = ''
-   let startDate = dateUtil.todayISOFormat()
-    let endDate = dateUtil.addDaysTodayISOFormat(1)
-
-    const pollFeature = require('../util/pollingFeature')
-
-    //Initialised main event/schedule
-    eventController.createEvent(initLayoutId,displaysId,startDate,endDate,priority, (eventId)=>{
-        started = 1
-        res.end('<h1>Competicion Iniciada. Escuchando cambios en el servidor</h1>')
-        pollFeature.pollingRemoteFile(req.body.urlName, (fileChanged)=>{
-           const content = JSON.parse(fileChanged)
-           for (const layoutId in content){
-               if (content.hasOwnProperty(layoutId)){
-                    //Provisional: Solo un layout con valor a 1 en el json
-                    const item = content[layoutId]
-                    if (item.active === 1){
-                        const newPrior = item.priority ? item.priority : 0
-                        if (item.type === 'video/hls'){
-                            videoServer = item.host
-                            videoController.startStopVideoServer(videoServer, 'start-server', (body)=>{
-                                videoController.insertHlsWidget(videoServer + 'live/playlist.m3u8', layoutId, (body)=>{
-                                    eventController.editEvent(layoutId, eventId, displaysId, startDate, endDate, newPrior, ()=>{
-                                        console.log("HLS widget update succesfull")
-                                    })
-                                })
-                            })
-                        }
-                        else {
-                            if (videoServer)
-                                videoController.startStopVideoServer(videoServer, "stop-server", body => {
-                                    console.log(body)
-                                })
-                            eventController.editEvent(layoutId,eventId,displaysId,startDate,endDate,newPrior, ()=>{
-                                console.log('Evento cambiado con exito(IdLayout = ' + layoutId + ')')
-                            })
-                        }
-                    }
-               }
-           }
-        })
-    })
-})
-
-router.get('/stop', (req,res,next)=>{
-    if (started === 0){
-        return res.end('<h1>No hay ningun concurso en marcha</h1>')
-    }
-    started = 0
-    require('../controller/EventController').deleteEvent(eventId, ()=>{
-        res.end('<h1>Competicion Cancelada</h1>')
-    })
-})
-
-router.get('/test', (req,res,next)=>{
-    competitionController.initCompetitionSchedule(options, req.connection.remoteAddress, req.connection.localPort);
-
-    competitionController.contestFeedListerner(competitionId, event => {
+    competitionController.initCompetitionSchedule(options, req.connection.remoteAddress, req.connection.localPort, res);
+    competitionController.contestFeedListerner(options.contest, event => {
         switch(event.type){
             case 'submissions':
-                videoController.startStopVideoServer(videoServer, 'start-server', videoServer_username, videoServer_password, body=>{
+                videoController.startStopVideoServer(videoServer, 'start-server', body=>{
                     if (JSON.parse(body).status !== "success"){
                         console.log("Cannot start webcam server pointed at ", videoServer)
                     }
                     else{
-                        videoController.insertHlsWidget(videoServer+"live/playlist.m3u8", webcamLayoutId, data=>{
+                        videoController.insertHlsWidget(videoServer+"live/playlist.m3u8", options.submissionLayout, data=>{
                             const opt = {
-                                layoutId: webcamLayoutId,
-                                uri: 'http://192.168.1.17:3000/competition/submissionFeed/' + event.data.id
+                                layoutId: options.submissionLayout,
+                                uri: require('../util/utils').getIpv4LocalAddress(req) + '/competition/submissionFeed/' + event.data.id
                             }
                             layoutController.editSubmissionFeed(opt, body=>{
-                                eventController.editEvent(webcamLayoutId, eventId, displaysId, startDate, endDate, priority, ()=>{
-                                    console.log("Everything ok")
-                                    setInterval(()=>{
-                                        videoController.startStopVideoServer(videoServer, 'stop-server', videoServer_username, videoServer_password, body=>{
-                                            eventController.editEvent(initLayoutId, eventId, displaysId, startDate, endDate, priority, ()=>{})
+                                eventController.editEvent(options.submissionLayout, options.eventId, options.displaysId, options.start_time, options.end_time, options.priority, ()=>{
+                                    let interval = setInterval(()=>{
+                                        videoController.startStopVideoServer(videoServer, 'stop-server', body=>{
+                                            eventController.editEvent(options.mainLayoutId, options.eventId, options.displaysId, options.start_time, options.end_time, options.priority, ()=>{
+                                                clearInterval(interval)
+                                            })
                                         })
-                                    }, 30000)
+                                    }, process.env.WEBCAM_VIEW_DURATION)
                                 })
                             })
                         })
@@ -135,18 +59,7 @@ router.get('/test', (req,res,next)=>{
                 
             break;
             case 'judgements':
-                // if (event.data.judgement_type_id == "AC"){
-                //     //Poner clasificacion actualizada  
-                //     eventController.editEvent(scoreboardLayoutId, eventId, displaysId, startDate, endDate, priority, body=>{
-                //         console.log('Schedule modified: ', body)
-                //     })
-                // }
-                // if (submissionPendingId[event.data.submission_id] && event.data.judgement_type_id != null){
-                //     console.log("RESUELTO")
-                //     console.log(event.data)
-                //     submissionPendingId[event.data.submission_id] = 0
-                // }
-                    
+                
             break;
             default:
             break;
@@ -155,32 +68,33 @@ router.get('/test', (req,res,next)=>{
 })
 
 router.get('/submissionFeed/:submissionId', (req,res,next)=>{
-    competitionController.submissionFeed(competitionId, req.params.submissionId, res)
+    competitionController.submissionFeed(options.contestId, req.params.submissionId, res)
 })
 
 router.get('/judgement-type/:submissionId', (req,res,next)=>{
-    competitionController.getJudgementForSubmission(competitionId, req.params.submissionId, res)
+    competitionController.getJudgementForSubmission(options.contestId, req.params.submissionId, res)
 })
 
 router.get('/scoreboard', (req,res,next)=>{
-    competitionController.getScoreboard(competitionId, res);
+    competitionController.getScoreboard(options.contestId, res);
 })
 
 router.get('/submission-graphic',(req,res,next)=>{
-    competitionController.getGraphics(competitionId, res);
+    competitionController.getGraphics(options.contestId, res);
 })
 
 
 router.get('/remainingTime', (req,res,next)=>{
-    competitionController.getRemainingTime(competitionId, res);
+    competitionController.getRemainingTime(options.contestId, res);
 })
 
 
 router.get('/teams',(req,res,next)=>{
-    competitionController.getTeams(competitionId,res);
+    competitionController.getTeams(options.contestId,res);
 })
 
 router.get('/contest',(req,res,next)=>{
-    competitionController.getCompetition(competitionId,res);
+    competitionController.getCompetition(options.contestId,res);
 })
+
 module.exports = router

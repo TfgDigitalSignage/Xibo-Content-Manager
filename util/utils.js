@@ -9,3 +9,9 @@ exports.getJsonData = (url, callback) =>{
       callback && callback (body);
     });
 }
+
+exports.getIpv4LocalAddress = requestObj => {
+  const addr = requestObj.connection.localAddress !== "::1" ? requestObj.connection.localAddress: "localhost"
+  const port = requestObj.connection.localPort
+  return "http://" + addr + ":" + port
+}

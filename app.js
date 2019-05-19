@@ -1,5 +1,7 @@
 const express = require('express');
 const body_parser = require('body-parser');
+//Read enviroment variables from .env file
+require('dotenv').config()
 
 const app = express();
 //Change render mode to Pug Template

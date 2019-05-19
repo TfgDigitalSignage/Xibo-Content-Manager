@@ -1,32 +1,20 @@
 //NodeJs request module
 const request = require ('request');
-const qs = require('querystring');
-const constant = {
-    //CLIENT INFO GABRI
-    client_id: '6Ca5RWWPXR6Jq1kpYV9BV7z0nP6G9WAx7yacSnhs',
-    client_secret: '5GJrGW6RGMHeTkowBSTdsypdnWJaXG1uVWf9NnCPru74UOSjvlTMAk6FH5wi1eMm5rpzZbIuhV39oMoM1SQYD7f64FSQzMX2fZaQv3hcc8bYpncfplQhTy7fHIVWojUWvbd0BXmEXiZsagmyxRCcCy3Xcv8DHD2q2N6aNK1H1HfrWwTnZGTMkTkJMupaRP6L0Z1vrmeMCJ4sTmIb8srZeDRNAgYAId2r9uE2fnwvWeUYWJNonUB0exs2iQhWYj',
-    baseUrl: 'http://localhost/api/'
-    //CLIENT INFO ADRI
-    // client_id: 'Tv7PRCwXCi3n6po1WcuhXzIsVZv0gb0gXE6kl7if',
-    // client_secret: 'ndTS6bNNxQ4S9qnT8akJrEoeOBHCO4RLmAYcrNlTMCPIxjfCL5Oc9HeEUv6Oi8Bq0OXQ2LQKCBUh7DUvqOKLY3L1aLyi1ngwcgByFi5YQ0nYfiJeOspmsFbBruT0GitdIp4AsFyRoMdytjVgqXiUvxQ20VtJ7iHmdozO4Hj5pO1F0lMWX9WBocBCoIrBBFS51P7sqjxu2QIh8ywOeEG3MhqvqIyTYod45NCopwpYfwJxWSp5kGswvweHWWZKIr',
-    // baseUrl: 'http://localhost/api/'
-    //CLIENT INFO DANI
-    //client_id: 'Aw8RNRb5AEqmS7B8C5ipq5XcV40LxagxnD41sCmg',
-    //client_secret: '6gWsZef5ajJiTKmuPiQB56vCrlVQi86o0DqxTiKZyzu1XpzX4jzSug5BPRmnTFbjLDgcVVXTFsO0594mp1e07qAgvMxAjiEt1Yo83bYy4G6YgUD0EPKDJPGzIdhqUhc8iD7WyExfj9oDLauG2R4n0um5cMUEPVNI3ZvOOkJPoTXsV8K6xmA25Jscif3ZOncUQ5ivCfordmIlg0C5IHTVIjWGn9EyXGNECLsIZLBGAKwka3Eq01MqRKpPnR9u7F',
-    //baseUrl: 'http://localhost/api/'
-}
+
+const xibo_client_id = process.env.XIBO_CLIENT_ID
+const xibo_client_secret = process.env.XIBO_CLIENT_SECRET
+const xibo_api_url = process.env.XIBO_API_URL
 
 module.exports = {
   getAccessToken: callback=>{
     var options = {
       method: 'POST',
-      url: constant.baseUrl + "authorize/access_token",
-      // path: '/authorize/access_token',
+      url: xibo_api_url + "authorize/access_token",
       headers:{},
       form: {
         grant_type: 'client_credentials',
-        client_id:     constant.client_id,
-        client_secret: constant.client_secret
+        client_id:     xibo_client_id,
+        client_secret: xibo_client_secret
        }
      };
   
@@ -42,14 +30,14 @@ module.exports = {
   },
 
   getTime: (token, callback)=>{
-    request.get(constant.baseUrl + "clock?access_token="+token, function(error, response, body){
+    request.get(xibo_api_url + "clock?access_token="+token, function(error, response, body){
       if (!error) callback && callback(body);
     });
   },
 
   getLayout: (token, idLayout, callback)=>{
     const options = {
-      url: constant.baseUrl + 'layout',
+      url: xibo_api_url + 'layout',
       qs: {
         layoutId: idLayout, 
         embed: 'regions,playlists',
@@ -68,7 +56,7 @@ module.exports = {
 
   postLayout: (token, name, callback)=>{
     const options = {
-      url: constant.baseUrl + "layout",
+      url: xibo_api_url + "layout",
       headers:{
       'content-type' : 'application/x-www-form-urlencoded',
       'Authorization': 'Bearer ' + token
@@ -87,7 +75,7 @@ module.exports = {
 
   deleteLayout: (token, idLayout, callback)=>{
     const options = {
-      url: constant.baseUrl + "layout/" + idLayout,
+      url: xibo_api_url + "layout/" + idLayout,
       headers:{
       'content-type' : 'application/x-www-form-urlencoded',
       'Authorization': 'Bearer ' + token
@@ -106,7 +94,7 @@ module.exports = {
 
   getWidgetsOfPlaylist: (token, playlistId, callback)=>{
     var options = {
-      url: constant.baseUrl + "playlist/widget?playlistId=" + playlistId,
+      url: xibo_api_url + "playlist/widget?playlistId=" + playlistId,
       headers:{
       'content-type' : 'application/x-www-form-urlencoded',
       'Authorization': 'Bearer ' + token
@@ -122,7 +110,7 @@ module.exports = {
 
   postWidgetWebContent: (playlistId, token, uri, modeId, useDuration, duration, callback)=>{
     var options = {
-      url: constant.baseUrl + "playlist/widget/webpage/" + playlistId,
+      url: xibo_api_url + "playlist/widget/webpage/" + playlistId,
       headers: {
         'content-type' : 'application/x-www-form-urlencoded'
       },
@@ -144,7 +132,7 @@ module.exports = {
 
   putWidgetWebContent: (widgedId, token, uri, modeId, useDuration, duration, callback)=>{
     var options = {
-      url: constant.baseUrl + "playlist/widget/" + widgedId,
+      url: xibo_api_url + "playlist/widget/" + widgedId,
       headers: {
         'content-type' : 'application/x-www-form-urlencoded',
         'authorization': 'Bearer ' + token
@@ -167,7 +155,7 @@ module.exports = {
 
   postHlsWidget: (token, playlistId, uri, useDuration, duration, callback)=>{
     var options = {
-      url: constant.baseUrl + 'playlist/widget/hls/' + playlistId,
+      url: xibo_api_url + 'playlist/widget/hls/' + playlistId,
       headers: {
         Authorization: 'Bearer ' + token,
         'content-type': 'application/x-www-form-urlencoded' 
@@ -187,7 +175,7 @@ module.exports = {
 
   editHlsWidget: (token, widgetId, uri, useDuration, duration, callback)=>{
     var options = {
-      url: constant.baseUrl + 'playlist/widget/' + widgetId,
+      url: xibo_api_url + 'playlist/widget/' + widgetId,
       headers: {
         Authorization: 'Bearer ' + token,
         'content-type': 'application/x-www-form-urlencoded' 
@@ -210,7 +198,7 @@ module.exports = {
     const key = "widgets["+widgedId+"]";
     
     var options = {
-      url: constant.baseUrl + "playlist/order/" + playlistId,
+      url: xibo_api_url + "playlist/order/" + playlistId,
       headers: {
         'content-type'  : 'application/x-www-form-urlencoded'
       },
@@ -233,7 +221,7 @@ module.exports = {
 
   addTextWidget: (token, widgetType, playlistId, textParam, callback)=>{
     var options = {
-      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      url: xibo_api_url + 'playlist/widget/' + widgetType + '/' + playlistId,
       headers: {
         Authorization: 'Bearer ' + token,
         'content-type': 'application/x-www-form-urlencoded' 
@@ -251,7 +239,7 @@ module.exports = {
 
   addLocalVideoWidget: (token, widgetType, playlistId, uriParam, callback)=>{
     var options = {
-      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      url: xibo_api_url + 'playlist/widget/' + widgetType + '/' + playlistId,
       headers: {
         Authorization: 'Bearer ' + token,
         'content-type': 'application/x-www-form-urlencoded' 
@@ -269,7 +257,7 @@ module.exports = {
 
   addWebpageWidget: (token, widgetType, playlistId, uriParam, modeIdParam, callback)=>{
     var options = {
-      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      url: xibo_api_url + 'playlist/widget/' + widgetType + '/' + playlistId,
       headers: {
           Authorization: 'Bearer ' + token,
           'content-type': 'application/x-www-form-urlencoded' 
@@ -288,7 +276,7 @@ module.exports = {
 
   addTwitterWidget: (token, widgetType, playlistId, searchTermParam, templateIdParam, callback)=>{
     var options = {
-      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      url: xibo_api_url + 'playlist/widget/' + widgetType + '/' + playlistId,
       headers: {
         Authorization: 'Bearer ' + token,
         'content-type': 'application/x-www-form-urlencoded' 
@@ -307,7 +295,7 @@ module.exports = {
 
   addClockWidget: (token, widgetType, playlistId, clockTypeIdParam, callback)=>{
     var options = {
-      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      url: xibo_api_url + 'playlist/widget/' + widgetType + '/' + playlistId,
       headers: {
         Authorization: 'Bearer ' + token,
         'content-type': 'application/x-www-form-urlencoded' 
@@ -325,7 +313,7 @@ module.exports = {
 
   addEmbeddedWidget: (token, widgetType, playlistId, embedHtmlParam, callback)=>{
     var options = {
-      url: constant.baseUrl + 'playlist/widget/' + widgetType + '/' + playlistId,
+      url: xibo_api_url + 'playlist/widget/' + widgetType + '/' + playlistId,
       headers: {
         Authorization: 'Bearer ' + token,
         'content-type': 'application/x-www-form-urlencoded' 
@@ -343,7 +331,7 @@ module.exports = {
 
   getLibraryMedia: (token,callback)=>{
     var options = {
-      url: constant.baseUrl + 'library' + '?access_token=' + token,
+      url: xibo_api_url + 'library' + '?access_token=' + token,
       headers: {
         'content-type'  : 'application/x-www-form-urlencoded'
       }
@@ -357,7 +345,7 @@ module.exports = {
 
   getSchedule: (token, displayGroupId, date, callback)=>{
     const options = {
-      url: constant.baseUrl + 'schedule/' + displayGroupId + '/events',
+      url: xibo_api_url + 'schedule/' + displayGroupId + '/events',
       qs: {
         date: date
       },
@@ -374,7 +362,7 @@ module.exports = {
 
   postSchedule: (token, layoutId, displayGroupIds, fromDt, toDt, priority, displayOrder, eventTypeId, callback)=>{
     const options = {
-      url: constant.baseUrl + 'schedule',
+      url: xibo_api_url + 'schedule',
       headers: 
       {
         Authorization: 'Bearer ' + token,
@@ -401,7 +389,7 @@ module.exports = {
 
   putSchedule: (token, idLayout,idEvent,displayGroupIds,fromDt, toDt,priority, callback)=>{
     var options = {
-      url: constant.baseUrl + "schedule/"+ idEvent,
+      url: xibo_api_url + "schedule/"+ idEvent,
       headers: {
         Authorization: 'Bearer ' + token,
         'content-type'  : 'application/x-www-form-urlencoded'
@@ -426,7 +414,7 @@ module.exports = {
 
   deleteSchedule: (token, scheduleId, callback)=>{
     const options = {
-      url: constant.baseUrl + 'schedule/' + scheduleId,
+      url: xibo_api_url + 'schedule/' + scheduleId,
       headers: {
         Authorization: 'Bearer ' + token
       } 
@@ -460,7 +448,7 @@ module.exports = {
     let idLayout = 'layoutId[0][layoutId]'
     let orderDisplay = 'layoutId[0][displayOrder]'
     const options = {
-      url: constant.baseUrl + 'campaign/layout/assign/' + campaignId,
+      url: xibo_api_url + 'campaign/layout/assign/' + campaignId,
       headers: 
        { 
          Authorization: 'Bearer ' + token,
@@ -496,7 +484,7 @@ module.exports = {
 
   getCampaign: (token, idCampaign, callback)=>{
     const options = {
-      url: constant.baseUrl + 'campaign',
+      url: xibo_api_url + 'campaign',
       qs: {
         campaignId: idCampaign, 
         embed: 'regions,playlists',
@@ -515,7 +503,7 @@ module.exports = {
 
   deleteWidget: (token, widgetId, callback)=>{
       var options = { 
-        url: constant.baseUrl + 'playlist/widget/' + widgetId,
+        url: xibo_api_url + 'playlist/widget/' + widgetId,
         headers: 
         {
           'content-type': 'application/x-www-form-urlencoded',

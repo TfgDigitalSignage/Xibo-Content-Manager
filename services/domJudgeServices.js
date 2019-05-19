@@ -3,10 +3,9 @@ const ndjson = require('ndjson')
 const base64Encoder = require('../util/utils').getBase64Token
 const qs = require('querystring');
 
-const baseUrl = 'http://testdj.programa-me.com/domjudge61/api/v4/'
-//  baseUrl = 'http://localhost:12345/api/v4/'
-const username = "xibo"
-const password = "xiboadmin"
+const baseUrl = process.env.DOMJUDGE_API_URL
+const username = process.env.DOMJUDGE_USERNAME 
+const password = process.env.DOMJUDGE_PASSWORD 
 
 module.exports = {
     getContestEventFeed: (contestId, callback) => {
@@ -35,7 +34,7 @@ module.exports = {
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
-            if (err || res.statusCode >= 400) throw err
+            if (err || res.statusCode >= 400) console.log(err, res.statusCode)
             callback(body)
         })
     },
