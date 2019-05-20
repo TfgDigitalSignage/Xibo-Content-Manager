@@ -20,7 +20,7 @@ let widgetParams = {
 
 router.get('/LayoutManager', (req,res,next) => {
     layoutController.getLayout(layoutParams, (layouts)=>{
-        res.render('layoutManager.pug', {
+        res.render('cmsFeatures/layoutManager.pug', {
             layouts: layouts,
             length: layouts.length});
         });
@@ -49,7 +49,7 @@ router.post('/designLayout', (req,res,next) =>{
     layoutParams.layoutRegion = selectedLayout.regions[0]
     layoutParams.layoutPlaylist = selectedLayout.regions[0].playlists[0]
     layoutController.getWidgets(layoutParams, (widgets)=>{
-        res.render('designLayout.pug', {
+        res.render('cmsFeatures/designLayout.pug', {
             widgets: widgets,
             length: widgets.length});
         });
@@ -103,7 +103,7 @@ router.post('/addWidget', (req,res,next) =>{
                 break;
             default:
         } 
-        res.render('addWidget.pug', {
+        res.render('cmsFeatures/addWidget.pug', {
             type: widgetParams.widgetType,
             params: requiredParams,
             length: requiredParams.length
@@ -126,7 +126,7 @@ router.post('/postWidget', (req,res,next) =>{
     }
     layoutController.addWidget(widgetParams, layoutParams, requiredParams, ()=>{
         layoutController.getWidgets(layoutParams, (widgets)=>{
-        res.render('designLayout.pug', {
+        res.render('cmsFeatures/designLayout.pug', {
             widgets: widgets,
             length: widgets.length});
             });
@@ -139,7 +139,7 @@ router.post('/deleteWidget', (req,res,next) => {
     widgetParams.widgetId = rb.widgetId;
     layoutController.deleteWidget(widgetParams, ()=>{
         layoutController.getWidgets(layoutParams, (widgets)=>{
-        res.render('designLayout.pug', {
+        res.render('cmsFeatures/designLayout.pug', {
             widgets: widgets,
             length: widgets.length});
         });

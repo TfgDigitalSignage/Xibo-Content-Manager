@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session')
 const body_parser = require('body-parser');
 //Read enviroment variables from .env file
 require('dotenv').config()
@@ -16,6 +17,11 @@ const campaignManager_route = require('./routes/campaignManager')
 
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({extended: true}));
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}))
 
 app.use(express.static('public'))
 

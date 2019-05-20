@@ -8,7 +8,6 @@ module.exports = {
                 const rb = JSON.parse(response.body)
                 if(rb.error)
                 {
-                    console.log("ERROR")
                     if (rb.error.code == 409)
                         console.log("Error al crear el layout: nombre ya existente")
                     else if (rb.error.code == 422)
