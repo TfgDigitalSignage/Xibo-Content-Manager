@@ -56,7 +56,7 @@ module.exports = {
                     }
                     cont++;
                     if (cont == rows.length){
-                        response.status(200).render('scoreboard', {
+                        response.status(200).render('competition/scoreboard', {
                             'teams': teams
                         });
                     }
@@ -72,7 +72,7 @@ module.exports = {
             shortname = JSON.parse(contest).shortname
             endTime = JSON.parse(contest).end_time;
             milisecsEndTime = new Date(endTime).getTime()
-            response.status(200).render('remainingTime', {
+            response.status(200).render('competition/remainingTime', {
                 endTime: milisecsEndTime,
                 contestname: contestname,
                 shortname: shortname
@@ -98,7 +98,7 @@ module.exports = {
                             corrects.length
                         ])
                     })
-                    response.status(200).render('submissions-graphic', {
+                    response.status(200).render('competition/submissions-graphic', {
                         "data": graphicObj,
                         "dataLength": graphicObj.length
                     })
@@ -127,7 +127,7 @@ module.exports = {
                 }
                 i++
             }
-            response.status(200).render('teams', {'teams': teams});
+            response.status(200).render('competition/teams', {'teams': teams});
         })
     },
 
@@ -171,7 +171,7 @@ module.exports = {
                         }
                         i++
                     }
-                    response.status(200).render('contest', {'competition': competition, 'teams': teams, 'problems': problems});
+                    response.status(200).render('competition/contest', {'competition': competition, 'teams': teams, 'problems': problems});
                 })
                
             })
@@ -195,7 +195,7 @@ module.exports = {
                 const teamName = JSON.parse(team).name
                 domJudgeServices.getProblem(competitionId, dataSubmission.problem_id, problem =>{
                     const problemName = JSON.parse(problem).name
-                    res.status(200).render('submissionsTable', {
+                    res.status(200).render('competition/submissionsTable', {
                         'submissionId': submissionId,
                         'time': time,
                         'teamName': teamName,
@@ -206,14 +206,19 @@ module.exports = {
         })
     },
 
-    initCompetitionSchedule: (params, base_url, res) => {
+    initCompetitionSchedule: (params, base_url, layoutName, res) => {
         domJudgeServices.getContest(params.contestId, contest=> {
             const contestInfo = JSON.parse(contest)
             params.start_time = date.dateToISOFormat(contestInfo.start_time)
             params.end_time = date.dateToISOFormat(contestInfo.end_time)
             layoutController.createLayout({
-                layoutName: 'MainLayout'
+                layoutName: layoutName
             }, layout => {
+                if (layout.error){
+                    return res.render('competition/competitionError', {
+                        msg: "Ya existe un layout de un concurso previo con ese nombre. Por favor, elija otro o elimine el layout existente"
+                    })
+                }
                 params.mainLayoutId = layout.layoutId
                 const playlistId = layout.regions[0].playlists[0].playlistId
                 params.mainPlaylistId = playlistId
@@ -234,7 +239,8 @@ module.exports = {
                                     displayOrder: 1, 
                                     eventTypeId: 1
                                 }, body => {
-                                    // res.status(200).render('competitionStarted')
+                                    params.eventId = JSON.parse(body).eventId
+                                    res.render('competition/stopCompetition')
                                 })
                             })
                         })
@@ -243,5 +249,18 @@ module.exports = {
         
             })
         })
+    },
+
+    stopCompetition: (params, request, response) => {
+        if (request.body.clean){
+            eventController.deleteEvent(params, body=> {
+                layoutController.deleteLayout({layoutId:params.mainLayoutId}, body=>{
+                    params.mainLayoutId = ''
+                    response.redirect('/');
+                })
+            })
+        }
+        else
+            response.redirect('/competition')
     }
 }

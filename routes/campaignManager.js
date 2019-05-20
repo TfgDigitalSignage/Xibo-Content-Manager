@@ -17,7 +17,7 @@ let params = {
 
 router.get('/CampaignManager', (req,res,next) => {
     campaignController.getCampaign(params, (campaigns)=>{
-            res.render('campaignManager.pug', {
+            res.render('cmsFeatures/campaignManager.pug', {
                 campaigns: campaigns,
                 length: campaigns.length});
         });
@@ -46,7 +46,7 @@ router.post('/designCampaign', (req,res,next) =>{
     layoutController.getLayout(layoutManager.layoutParams, (layouts)=>{
         if(params.numberLayouts == 0)
         {
-           res.render('designCampaign.pug', {
+           res.render('cmsFeatures/designCampaign.pug', {
                 campaignLayouts: [],
                 lengthCampaignLayouts: 0,
                 layouts: layouts,
@@ -66,7 +66,7 @@ router.post('/addLayoutToCampaign', (req,res,next) =>{
 
 
     /*
-        res.render('addWidget.pug', {
+        res.render('cmsFeatures/addWidget.pug', {
             type: widgetParams.widgetType,
             params: requiredParams,
             length: requiredParams.length

@@ -24,12 +24,12 @@ let options = {
 }
 
 router.get('/', (req,res,next)=>{
-    res.render('competition')
+    res.render('competition/competition')
 })
 
-router.get('/start', (req,res,next)=>{
+router.post('/start', (req,res,next)=>{
     const base_url = require('../util/utils').getIpv4LocalAddress(req) + '/competition/'
-    competitionController.initCompetitionSchedule(options, base_url, res);
+    competitionController.initCompetitionSchedule(options, base_url, req.body.layoutName, res);
     competitionController.contestFeedListerner(options.contestId, event => {
         switch(event.type){
             case 'submissions':
@@ -88,6 +88,10 @@ router.get('/start', (req,res,next)=>{
             break;
         }
     })
+})
+
+router.post('/stop', (req,res,next)=> {
+    competitionController.stopCompetition(options, req, res)
 })
 
 router.get('/submissionFeed/:submissionId', (req,res,next)=>{

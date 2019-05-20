@@ -26,7 +26,7 @@ router.get('/EventManager', (req,res,next) => {
     layoutController.getLayout(layoutManager.layoutParams, (layouts)=>{
         campaignController.getCampaign(campaignManager.params, (campaigns)=>{
             eventController.getEvent(params, (events) => {
-                res.render('eventManager.pug', {
+                res.render('cmsFeatures/eventManager.pug', {
                 layouts: layouts,
                 lengthLayouts: layouts.length,
                 campaigns: campaigns,

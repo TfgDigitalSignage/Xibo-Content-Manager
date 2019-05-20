@@ -7,7 +7,7 @@ module.exports = {
             const token = body['access_token'];
             xiboServices.postSchedule(token,params.campaignId, params.displayGroupIds, params.fromDt, params.toDt, params.isPriority, params.displayOrder, params.eventTypeId, (body)=>{
                 params.eventId = JSON.parse(body).eventId
-                callback()
+                callback(body)
             })
         })
     },

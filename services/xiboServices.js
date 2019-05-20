@@ -428,7 +428,7 @@ module.exports = {
 
   createCampaign: (token, name, callback)=>{
     const options = {
-      url: 'http://localhost/api/campaign',
+      url: xibo_api_url + 'campaign/',
       headers: 
       { 
         Authorization: 'Bearer ' + token,
@@ -468,7 +468,7 @@ module.exports = {
 
   deleteCampaign: (token, idCampaign, callback)=>{
     const options = {
-      url: 'http://localhost/api/campaign/' + idCampaign,
+      url: xibo_api_url + 'campaign/' + idCampaign,
       headers: 
       { 
         Authorization: 'Bearer ' + token
@@ -516,26 +516,3 @@ module.exports = {
     });
   }
 }
-
-/*
-function createCampaign(token,campaignId,layoutId,layoutOrder,i,callback){
-  var string1 = 'layoutId[' + i + '][layoutId]';
-  var string2 = 'layoutId[' + i + '][displayOrder]'
-  console.log(string1 + ' ' + layoutId)
-  var request = require("request");
-  var options = { method: 'POST',
-  url: 'http://localhost/api/campaign/layout/assign/' + campaignId,
-  headers: 
-  { 
-    Authorization: 'Bearer ' + token,
-    'content-type': 'application/x-www-form-urlencoded' },
-    formData: 
-    { string1: layoutId,
-      string2: layoutOrder } };
-      
-      request(options, function (error, response, body) {
-        if (error) throw new Error(error);
-        
-        callback(body)
-      });
-    }*/
