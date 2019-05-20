@@ -9,6 +9,9 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', 'view');
 
+const isAuth = require('./auth')
+
+const login_route = require('./routes/login')
 const index_route = require('./routes/index');
 const scheduleLayout_route = require('./routes/eventManager');
 const competition_route = require('./routes/competition')
@@ -25,11 +28,13 @@ app.use(session({
 
 app.use(express.static('public'))
 
-app.use(index_route);
-app.use(scheduleLayout_route);
-app.use('/competition', competition_route)
-app.use(layoutManager_route)
-app.use(campaignManager_route)
+app.use(login_route)
+app.use(isAuth, index_route);
+app.use(isAuth, scheduleLayout_route);
+app.use('/competition', isAuth, competition_route)
+app.use(isAuth, layoutManager_route)
+app.use(isAuth, campaignManager_route)
+
 
 //Not Found page
 app.use((req,res,next) => {
