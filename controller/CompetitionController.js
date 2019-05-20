@@ -115,9 +115,15 @@ module.exports = {
             var i = 0
             var teams = []
             while (i < length){
+                let tmp = ""
+                if (callback[i].members){
+                    const member_field = callback[i].members.split('\r\n')
+                    for (let j = 1; j < member_field.length; j++)
+                        tmp += member_field[j] + ", ";
+                }
                 teams[i] = {
                     'name': callback[i].name,
-                    'members': callback[i].members
+                    'members': tmp
                 }
                 i++
             }
