@@ -16,8 +16,6 @@
     "request": "^2.88.0"
   },
   "devDependencies": {
-    "node-fetch": "^2.5.0",
-    "nodemon": "^1.18.9"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
