@@ -45,6 +45,10 @@ module.exports = {
         xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
             var nowTime = require('../util/date').todayISOFormat()
+            d = new Date()
+
+            console.log(nowTime)
+            console.log(d)
             xiboServices.getSchedule(token, params.displayGroupIds, nowTime, (body)=>{
                 const rb = JSON.parse(body).events
                 callback(rb)

@@ -111,10 +111,12 @@ router.get('/submission-graphic',(req,res,next)=>{
 })
 
 
-router.get('/remainingTime', (req,res,next)=>{
-    competitionController.getRemainingTime(options.contestId, res);
+router.get('/remainingEndTime', (req,res,next)=>{
+    competitionController.getRemainingTime(options.contestId, "end", res);
 })
-
+router.get('/remainingStartTime', (req,res,next)=>{
+    competitionController.getRemainingTime(options.contestId, "start", res);
+})
 
 router.get('/teams',(req,res,next)=>{
     competitionController.getTeams(options.contestId,res);

@@ -66,14 +66,18 @@ module.exports = {
     },
 
 
-    getRemainingTime: (contestId, response) => {
+    getRemainingTime: (contestId, startOrEnd, response) => {
         domJudgeServices.getContest(contestId, contest=>{
-            contestname = JSON.parse(contest).name
-            shortname = JSON.parse(contest).shortname
-            endTime = JSON.parse(contest).end_time;
-            milisecsEndTime = new Date(endTime).getTime()
+            const contestname = JSON.parse(contest).name
+            const shortname = JSON.parse(contest).shortname
+            let time = ''
+            if(startOrEnd == 'start')
+                time = JSON.parse(contest).start_time
+            if(startOrEnd == 'end')
+                time = JSON.parse(contest).end_time
+            milisecsTime = new Date(time).getTime()
             response.status(200).render('competition/remainingTime', {
-                endTime: milisecsEndTime,
+                time: milisecsTime,
                 contestname: contestname,
                 shortname: shortname
             });
