@@ -275,6 +275,7 @@ module.exports = {
   },
 
   addTwitterWidget: (token, widgetType, playlistId, searchTermParam, templateIdParam, callback)=>{
+    console.log("ADDING")
     var options = {
       url: xibo_api_url + 'playlist/widget/' + widgetType + '/' + playlistId,
       headers: {
@@ -514,5 +515,27 @@ module.exports = {
       if (error) throw err;
       callback(body)
     });
+  },
+
+  addRegion: (token, layoutId, top, left, width, height, callback)=>{
+      var options = { 
+        url: xibo_api_url + 'region/' + layoutId,
+        headers: 
+        {
+          'content-type': 'application/x-www-form-urlencoded',
+      Authorization: 'Bearer ' + token 
+      },
+      form: { 
+          width: width, 
+          height: height,
+          top: top,
+          left: left
+      }
+    };
+    request.post(options, function (error, response, body) {
+      if (error) throw err;
+      callback(body)
+    })
   }
+
 }

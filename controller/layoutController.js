@@ -244,5 +244,18 @@ module.exports = {
                 callback(widget)
             })
         })
+    },
+
+    addTwitterRegionToLayout: (layoutId, callback) =>{
+        xiboServices.getAccessToken((body)=>{
+            const token = body['access_token'];
+            xiboServices.addRegion(token, layoutId, 482, 5, 312, 590, (region) => {
+                const regionInfo = JSON.parse(region)
+                //console.log(regionInfo)
+                //console.log(regionInfo.regionId)
+                //console.log(regionInfo.playlists[0].playlistId)
+                callback(regionInfo)
+            })
+        })
     }
 }

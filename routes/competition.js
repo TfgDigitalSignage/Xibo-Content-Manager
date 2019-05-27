@@ -126,4 +126,35 @@ router.get('/contest',(req,res,next)=>{
     competitionController.getCompetition(options.contestId,res);
 })
 
+router.get('/addTwitterRegion/:layoutId', (req,res,next)=>{
+    layoutController.addTwitterRegionToLayout(req.params.layoutId, (regionInfo)=>{
+        let widgetParams = {
+            widgetName : "TwitterWidget",
+            widgetId: "",
+            widgetType: "twitter"
+        }
+        let layoutParams = {
+            layoutName : "",
+            layoutId : req.params.layoutId,
+            layoutBackgroundColor : "",
+            layoutBackgroundzIndex : "",
+            layoutRegion: regionInfo.regionId,
+            layoutPlaylist:regionInfo.playlists[0]
+        }
+        let requiredParams =[];
+        requiredParams.push({
+            key: "searchTerm",
+            value: "from:FdiXibo"
+        });
+        requiredParams.push({
+            key: "searchTerm",
+            value: 12
+        });
+        layoutController.addWidget(widgetParams, layoutParams, requiredParams, (callback)=>{
+            console.log(callback)
+        }) 
+    })
+
+})
+
 module.exports = router
