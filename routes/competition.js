@@ -35,7 +35,8 @@ router.post('/start', (req,res,next)=>{
             case 'submissions':
                 competitionController.getTeam(options.contestId, event.data.team_id, data => {
                     const team = JSON.parse(data)
-                    const webcamIp = team.members.split('\r\n')[0]
+                    const members_field = team.members.split('\r\n')
+                    const webcamIp = members_field[members_field.length-1]
                     videoController.startStopVideoServer(webcamIp, '/start-server', body=>{
                         if (!body || JSON.parse(body).status !== "success"){
                             console.log("Cannot start webcam server pointed at ", webcamIp)
@@ -124,6 +125,10 @@ router.get('/teams',(req,res,next)=>{
 
 router.get('/contest',(req,res,next)=>{
     competitionController.getCompetition(options.contestId,res);
+})
+
+router.get('/congratulations',(req,res,next)=>{
+    competitionController.congratulationsScreen(options.contestId,res);
 })
 
 router.get('/addTwitterRegion/:layoutId', (req,res,next)=>{

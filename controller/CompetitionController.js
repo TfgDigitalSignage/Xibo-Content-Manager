@@ -122,8 +122,13 @@ module.exports = {
                 let tmp = ""
                 if (callback[i].members){
                     const member_field = callback[i].members.split('\r\n')
-                    for (let j = 1; j < member_field.length; j++)
-                        tmp += member_field[j] + ", ";
+                    for (let j = 0; j < member_field.length - 1; j++){
+                        tmp += member_field[j];
+                        if(j < member_field.length - 2)
+                            tmp += ", "
+                    }
+                        
+                            
                 }
                 teams[i] = {
                     'name': callback[i].name,
@@ -156,10 +161,20 @@ module.exports = {
                 var teams = []
                 var length = callback.length
                 var i = 0
+
                 while (i < length){
+                    let members = ""
+                    if(callback[i].members){
+                        let members_field = callback[i].members.split('\r\n')                 
+                        for (let j = 0; j < members_field.length - 1; j++){
+                            members += members_field[j];
+                            if(j < members_field.length - 2)
+                                members += ", "
+                        }
+                    }
                     teams[i] = {
                         'name': callback[i].name,
-                        'members': callback[i].members
+                        'members': members
                     }
                     i++
                 }
@@ -266,5 +281,40 @@ module.exports = {
         }
         else
             response.redirect('/competition')
+    },
+
+    congratulationsScreen: (contestId, res) => {
+        domJudgeServices.getScoreboard(contestId,callback =>{
+            winnerInfo = JSON.parse(callback).rows[0]
+            teamId = winnerInfo.team_id
+            score = winnerInfo.score
+            problems = winnerInfo.problems
+            //console.log(teamId)
+            //console.log(score)
+            //console.log(problems)
+            domJudgeServices.getTeam(contestId, teamId, team=>{
+                team = JSON.parse(team)
+                teamName = team.name
+                teamMembers = team.members
+                members_field = teamMembers.split('\r\n')
+                members = ""
+                for (let j = 0; j < members_field.length - 1; j++){
+                    members += members_field[j];
+                    if(j < members_field.length - 2)
+                        members += ", "
+                }
+                //console.log(teamName)
+                //console.log(members)
+                teamNationality = team.teamNationality
+                teamOrganization = team.organization_id
+                res.status(200).render('competition/congratulations', {
+                    'teamId': teamId,
+                    'teamName': teamName,
+                    'members': members,
+                    'score': score
+                })
+            })
+
+        })
     }
 }
