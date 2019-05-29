@@ -21,7 +21,7 @@ module.exports = {
     request(options, function (error, response, body) {
       if (error){
         console.log("AUTH ERROR: " + error);
-        throw new Error(error);
+        //throw new Error(error);
       }
       else{
         callback && callback(JSON.parse(body));
@@ -49,7 +49,7 @@ module.exports = {
         } 
     }
     request.get(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback && callback(response)
     })
   },
@@ -68,7 +68,7 @@ module.exports = {
   
     request.post(options, function(err, response, body){
       if (err)
-        throw new Error(err);
+        console.log(err) //throw new Error(err);
       callback && callback (response);
     });
   },
@@ -87,7 +87,7 @@ module.exports = {
   
     request.del(options, function(err, response, body){
       if (err)
-        throw new Error(err);
+        console.log(err) //throw new Error(err);
       callback && callback (body);
     });
   },
@@ -103,7 +103,7 @@ module.exports = {
   
     request.get(options, function(err, response, data){
       if (err)
-        throw new Error(err);
+        console.log(err) //throw new Error(err);
       callback && callback (response);
       });
   },
@@ -125,7 +125,7 @@ module.exports = {
   
     request.post(options, function(err, response, data){
       if (err)
-        throw new Error(err);
+        console.log(err) //throw new Error(err);
       callback && callback (response, JSON.parse(data));
       });
   },
@@ -148,7 +148,7 @@ module.exports = {
   
     request.put(options, function(err, response, data){
       if (err)
-        throw new Error(err);
+        console.log(err) //throw new Error(err);
       callback && callback (response, JSON.parse(data));
       });
   },
@@ -168,7 +168,7 @@ module.exports = {
     };
   
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -188,7 +188,7 @@ module.exports = {
     };
   
     request.put(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -210,7 +210,7 @@ module.exports = {
 
     const req = request.post(options, function(err, response, data){
       if (err)
-        throw new Error(err);
+       console.log(err) //throw new Error(err);
 
       callback && callback (response, data);
     });
@@ -232,7 +232,7 @@ module.exports = {
     };
 
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -250,7 +250,7 @@ module.exports = {
     };
     
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -269,7 +269,7 @@ module.exports = {
       };
       
       request.post(options, function (error, response, body) {
-        if (error) throw new Error(error);
+        if (error) console.log(error) //throw new Error(error);
         callback(body)
       });
   },
@@ -289,7 +289,7 @@ module.exports = {
     };
     
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -307,7 +307,7 @@ module.exports = {
     };
 
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -325,7 +325,7 @@ module.exports = {
     };
     
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -356,7 +356,7 @@ module.exports = {
       } 
     }
     request.get(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback && callback(body)
     })
   },
@@ -382,7 +382,7 @@ module.exports = {
     }
     
     request.post(options, (error, response, body) => {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       
       callback(body)
     });
@@ -407,7 +407,7 @@ module.exports = {
     };
     request.put(options, function(error,request, body){
       if (error){
-        throw new Error(error)
+        console.log(error) //throw new Error(error)
       }
       callback && callback(body);
     });
@@ -422,7 +422,7 @@ module.exports = {
     }
     
     request.del(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -440,7 +440,7 @@ module.exports = {
       } 
     };
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -462,7 +462,7 @@ module.exports = {
     };
       request.post(options, function (error, response, body) {
         console.log(body)
-        if (error) throw new Error(error);
+        if (error) console.log(error) //throw new Error(error);
         callback && callback(body)
     })
   },
@@ -478,7 +478,7 @@ module.exports = {
       } 
     };
     request.del(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -497,7 +497,7 @@ module.exports = {
       } 
     }
     request.get(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback && callback(body)
     })
   },
@@ -512,7 +512,7 @@ module.exports = {
       } 
     };
     request.del(options, function (error, response, body) {
-      if (error) throw err;
+      if (error) console.log(error) //throw err;
       callback(body)
     });
   },
@@ -533,7 +533,7 @@ module.exports = {
       }
     };
     request.post(options, function (error, response, body) {
-      if (error) throw err;
+      if (error) console.log(error) //throw error;
       callback(body)
     })
   }

@@ -289,9 +289,6 @@ module.exports = {
             teamId = winnerInfo.team_id
             score = winnerInfo.score
             problems = winnerInfo.problems
-            //console.log(teamId)
-            //console.log(score)
-            //console.log(problems)
             domJudgeServices.getTeam(contestId, teamId, team=>{
                 team = JSON.parse(team)
                 teamName = team.name
@@ -303,15 +300,13 @@ module.exports = {
                     if(j < members_field.length - 2)
                         members += ", "
                 }
-                //console.log(teamName)
-                //console.log(members)
                 teamNationality = team.teamNationality
                 teamOrganization = team.organization_id
                 res.status(200).render('competition/congratulations', {
-                    'teamId': teamId,
                     'teamName': teamName,
                     'members': members,
-                    'score': score
+                    'score': score,
+                    'numProblems': problems.length
                 })
             })
 

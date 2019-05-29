@@ -8,6 +8,18 @@ head
   link(rel='stylesheet', type='text/css', href='/vendor/perfect-scrollbar/perfect-scrollbar.css')
   link(rel='stylesheet', type='text/css', href='/css/util.css')
   link(rel='stylesheet', type='text/css', href='/css/main.css')
+  style.
+      body{
+      background-color: #52b1ea;
+      height: 100%;
+      display: table-cell;
+      vertical-align: middle;
+      }
+      .container-table100{
+      background-color: #52b1ea !important;
+      }
+
+
 body
   .limiter
     .container-table100
@@ -29,20 +41,6 @@ body
                       td.cell100.column2= competition.ini
                       td.cell100.column3= competition.fin
                       td.cell100.column4= competition.duration
-        .table100.ver1.m-b-110
-          .table100-head
-            table
-              thead
-                tr.row100.head
-                  th.cell100.column1 Nombre equipo
-                  th.cell100.column2 integrantes
-          .table100-body.js-pscroll
-            table
-              tbody
-                each team in teams
-                  tr.row100.body
-                      td.cell100.column1= team.name
-                      td.cell100.column2= team.members
         .table100.ver1.m-b-110
           .table100-head
             table

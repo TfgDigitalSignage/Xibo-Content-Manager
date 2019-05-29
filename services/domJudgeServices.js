@@ -22,7 +22,8 @@ module.exports = {
                     callback(obj)
             })
             .on('error', err=>{
-                throw err;
+                //throw err;
+                console.log(err)
             })        
     },
 
@@ -91,7 +92,7 @@ module.exports = {
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
-            if (err) throw err
+            if (err) console.log(err) //throw err 
             callback(body)
         })
     },
@@ -103,7 +104,7 @@ module.exports = {
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
-            if (err) throw err
+            if (err) console.log(err) //throw err
             callback(body)
         })
     },
@@ -115,7 +116,7 @@ module.exports = {
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
-            if (err) throw err
+            if (err) console.log(err) //throw err
             callback(body)
         })
     },
@@ -127,7 +128,7 @@ module.exports = {
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
-            if (err) throw err
+            if (err) console.log(err) //throw err
             callback(body)
         })
     },
@@ -140,7 +141,7 @@ module.exports = {
                 'Content-Type': 'application/json' } 
         }
         request.get(options, (err, res, body)=>{
-            if (err) throw err
+            if (err) console.log(err) //throw err
             callback(body)
         })  
     }
