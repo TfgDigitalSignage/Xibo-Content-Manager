@@ -5,7 +5,7 @@ module.exports = {
     },
 
     dateToISOFormat: date => {
-        return date.replace(/T/, ' ').split('+')[0]
+        return date.replace(/T/, ' ').split('+')[0].split(".")[0]
     },
 
     addDaysTodayISOFormat: (numDay)=>{
