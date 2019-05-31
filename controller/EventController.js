@@ -47,7 +47,7 @@ module.exports = {
             const token = body['access_token'];
             //var nowTime = new Date().toLocaleString() // d/m/yyyy hh:mm:ss
             var nowTime = new Date().toISOString()
-            nowTime = util.dateToISOFormat(nowTime)
+            nowTime = util.addHoursToISOFormat(util.dateToISOFormat(nowTime), 2)
             // function formatDate(input){
             //     var datePart = input.match(/\d+/g),
             //     year = datePart[2], // get only two digits
