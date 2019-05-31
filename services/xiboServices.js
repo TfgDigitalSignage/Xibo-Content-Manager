@@ -430,13 +430,13 @@ module.exports = {
 
   createCampaign: (token, name, callback)=>{
     const options = {
-      url: xibo_api_url + 'campaign/',
+      url: xibo_api_url + 'campaign',
       headers: 
       { 
         Authorization: 'Bearer ' + token,
-        'content-type': 'multipart/form-data' 
+        'content-type': 'application/x-www-form-urlencoded' 
       },
-      form: { 
+      formData: { 
         name: name 
       } 
     };
