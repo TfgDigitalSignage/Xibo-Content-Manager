@@ -54,7 +54,7 @@ module.exports = {
     })
   },
 
-  postLayout: (token, name, callback)=>{
+  postLayout: (token, name, templateId, callback)=>{
     const options = {
       url: xibo_api_url + "layout",
       headers:{
@@ -62,7 +62,8 @@ module.exports = {
       'Authorization': 'Bearer ' + token
       },
       form: {
-        name: name
+        name: name,
+        layoutId: templateId
        }
      };
   
@@ -536,6 +537,18 @@ module.exports = {
       if (error) console.log(error) //throw error;
       callback(body)
     })
-  }
+  },
 
+  getTemplates: (token, callback)=>{
+    const options = {
+      url: xibo_api_url + 'template',
+      headers:{ 
+        Authorization: 'Bearer ' + token,
+      } 
+    }
+    request.get(options, function (error, response, body) {
+      if (error) console.log(error)
+      callback && callback(body)
+    })
+  } 
 }
