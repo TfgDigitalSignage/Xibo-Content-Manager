@@ -21,7 +21,7 @@ module.exports = {
     request(options, function (error, response, body) {
       if (error){
         console.log("AUTH ERROR: " + error);
-        throw new Error(error);
+        //throw new Error(error);
       }
       else{
         callback && callback(JSON.parse(body));
@@ -49,12 +49,12 @@ module.exports = {
         } 
     }
     request.get(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback && callback(response)
     })
   },
 
-  postLayout: (token, name, callback)=>{
+  postLayout: (token, name, templateId, callback)=>{
     const options = {
       url: xibo_api_url + "layout",
       headers:{
@@ -62,13 +62,14 @@ module.exports = {
       'Authorization': 'Bearer ' + token
       },
       form: {
-        name: name
+        name: name,
+        layoutId: templateId
        }
      };
   
     request.post(options, function(err, response, body){
       if (err)
-        throw new Error(err);
+        console.log(err) //throw new Error(err);
       callback && callback (response);
     });
   },
@@ -87,7 +88,7 @@ module.exports = {
   
     request.del(options, function(err, response, body){
       if (err)
-        throw new Error(err);
+        console.log(err) //throw new Error(err);
       callback && callback (body);
     });
   },
@@ -103,7 +104,7 @@ module.exports = {
   
     request.get(options, function(err, response, data){
       if (err)
-        throw new Error(err);
+        console.log(err) //throw new Error(err);
       callback && callback (response);
       });
   },
@@ -125,7 +126,7 @@ module.exports = {
   
     request.post(options, function(err, response, data){
       if (err)
-        throw new Error(err);
+        console.log(err) //throw new Error(err);
       callback && callback (response, JSON.parse(data));
       });
   },
@@ -148,7 +149,7 @@ module.exports = {
   
     request.put(options, function(err, response, data){
       if (err)
-        throw new Error(err);
+        console.log(err) //throw new Error(err);
       callback && callback (response, JSON.parse(data));
       });
   },
@@ -168,7 +169,7 @@ module.exports = {
     };
   
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -188,7 +189,7 @@ module.exports = {
     };
   
     request.put(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -210,7 +211,7 @@ module.exports = {
 
     const req = request.post(options, function(err, response, data){
       if (err)
-        throw new Error(err);
+       console.log(err) //throw new Error(err);
 
       callback && callback (response, data);
     });
@@ -232,7 +233,7 @@ module.exports = {
     };
 
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -250,7 +251,7 @@ module.exports = {
     };
     
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -269,12 +270,13 @@ module.exports = {
       };
       
       request.post(options, function (error, response, body) {
-        if (error) throw new Error(error);
+        if (error) console.log(error) //throw new Error(error);
         callback(body)
       });
   },
 
   addTwitterWidget: (token, widgetType, playlistId, searchTermParam, templateIdParam, callback)=>{
+    console.log("ADDING")
     var options = {
       url: xibo_api_url + 'playlist/widget/' + widgetType + '/' + playlistId,
       headers: {
@@ -288,7 +290,7 @@ module.exports = {
     };
     
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -306,7 +308,7 @@ module.exports = {
     };
 
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -324,7 +326,7 @@ module.exports = {
     };
     
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -355,7 +357,7 @@ module.exports = {
       } 
     }
     request.get(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback && callback(body)
     })
   },
@@ -381,7 +383,7 @@ module.exports = {
     }
     
     request.post(options, (error, response, body) => {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       
       callback(body)
     });
@@ -406,7 +408,7 @@ module.exports = {
     };
     request.put(options, function(error,request, body){
       if (error){
-        throw new Error(error)
+        console.log(error) //throw new Error(error)
       }
       callback && callback(body);
     });
@@ -421,25 +423,25 @@ module.exports = {
     }
     
     request.del(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
 
   createCampaign: (token, name, callback)=>{
     const options = {
-      url: xibo_api_url + 'campaign/',
+      url: xibo_api_url + 'campaign',
       headers: 
       { 
         Authorization: 'Bearer ' + token,
-        'content-type': 'multipart/form-data' 
+        'content-type': 'application/x-www-form-urlencoded' 
       },
-      form: { 
+      formData: { 
         name: name 
       } 
     };
     request.post(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -461,7 +463,7 @@ module.exports = {
     };
       request.post(options, function (error, response, body) {
         console.log(body)
-        if (error) throw new Error(error);
+        if (error) console.log(error) //throw new Error(error);
         callback && callback(body)
     })
   },
@@ -477,7 +479,7 @@ module.exports = {
       } 
     };
     request.del(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback(body)
     });
   },
@@ -496,7 +498,7 @@ module.exports = {
       } 
     }
     request.get(options, function (error, response, body) {
-      if (error) throw new Error(error);
+      if (error) console.log(error) //throw new Error(error);
       callback && callback(body)
     })
   },
@@ -511,8 +513,42 @@ module.exports = {
       } 
     };
     request.del(options, function (error, response, body) {
-      if (error) throw err;
+      if (error) console.log(error) //throw err;
       callback(body)
     });
-  }
+  },
+
+  addRegion: (token, layoutId, top, left, width, height, callback)=>{
+      var options = { 
+        url: xibo_api_url + 'region/' + layoutId,
+        headers: 
+        {
+          'content-type': 'application/x-www-form-urlencoded',
+      Authorization: 'Bearer ' + token 
+      },
+      form: { 
+          width: width, 
+          height: height,
+          top: top,
+          left: left
+      }
+    };
+    request.post(options, function (error, response, body) {
+      if (error) console.log(error) //throw error;
+      callback(body)
+    })
+  },
+
+  getTemplates: (token, callback)=>{
+    const options = {
+      url: xibo_api_url + 'template',
+      headers:{ 
+        Authorization: 'Bearer ' + token,
+      } 
+    }
+    request.get(options, function (error, response, body) {
+      if (error) console.log(error)
+      callback && callback(body)
+    })
+  } 
 }

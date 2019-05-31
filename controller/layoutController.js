@@ -4,7 +4,7 @@ module.exports = {
     createLayout: (params, callback) => {
         xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
-            xiboServices.postLayout(token, params.layoutName, (response)=>{
+            xiboServices.postLayout(token, params.layoutName, params.templateId, (response)=>{
                 const rb = JSON.parse(response.body)
                 if(rb.error)
                 {
@@ -244,5 +244,31 @@ module.exports = {
                 callback(widget)
             })
         })
+    },
+
+    addTwitterRegionToLayout: (layoutId, callback) =>{
+        xiboServices.getAccessToken((body)=>{
+            const token = body['access_token'];
+            xiboServices.addRegion(token, layoutId, 482, 5, 312, 590, (region) => {
+                const regionInfo = JSON.parse(region)
+                callback(regionInfo)
+            })
+        })
+    },
+
+    getContestTemplate: callback => {
+        xiboServices.getAccessToken(body => {
+            const token = body['access_token'];
+            xiboServices.getTemplates(token, templateList => {
+                if (!templateList)
+                    callback("");
+                const list = JSON.parse(templateList)
+                list.forEach(item => {
+                    if (item.layout === "CompetitionLayoutTemplate"){
+                        callback(item.layoutId)
+                    }
+                });
+            })
+        }) 
     }
 }

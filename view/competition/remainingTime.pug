@@ -4,7 +4,7 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1')
     style.
       body{
-      background-color: #6c7ae0;;
+      background-color: #52b1ea;
       }
       p#demo {
       text-align: center;
@@ -28,13 +28,15 @@ html
       text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
       }
   body
-    p#name #{contestname}
-    p#shortname #{shortname}
+    if startOrEnd == 'start' 
+      p#name El concurso empieza en:
+    if startOrEnd == 'end' 
+      p#name El concurso finaliza en:
     p#demo
     script.
       // Set the date we're counting down to
       // var countDownDate = new Date("May 15, 2019 22:30:00").getTime();
-      var countDownDate = #{endTime}
+      var countDownDate = #{time}
       // Update the count down every 1 second
       var x = setInterval(function() {
       // Get today's date and time
