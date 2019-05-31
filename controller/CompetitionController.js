@@ -78,8 +78,7 @@ module.exports = {
             milisecsTime = new Date(time).getTime()
             response.status(200).render('competition/remainingTime', {
                 time: milisecsTime,
-                contestname: contestname,
-                shortname: shortname
+                "startOrEnd": startOrEnd
             });
          })
     },

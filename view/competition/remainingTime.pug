@@ -28,8 +28,10 @@ html
       text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
       }
   body
-    p#name #{contestname}
-    p#shortname #{shortname}
+    if startOrEnd == 'start' 
+      p#name El concurso empieza en:
+    if startOrEnd == 'end' 
+      p#name El concurso finaliza en:
     p#demo
     script.
       // Set the date we're counting down to
