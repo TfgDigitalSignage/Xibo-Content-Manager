@@ -10,7 +10,7 @@ const password = process.env.DOMJUDGE_PASSWORD
 module.exports = {
     getContestEventFeed: (contestId, callback) => {
         const options = {
-            url: baseUrl + 'contests/' + contestId + '/event-feed?types=submissions,judgements',
+            url: baseUrl + 'contests/' + contestId + '/event-feed?types=submissions,judgements,state',
             headers: { 
                 'Authorization': 'Basic ' + base64Encoder(username, password),
                 'Content-Type': 'application/x-ndjson' } 

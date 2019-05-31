@@ -224,53 +224,93 @@ module.exports = {
         })
     },
 
-    initCompetitionSchedule: (params, base_url, layoutName, res) => {
-        domJudgeServices.getContest(params.contestId, contest=> {
-            const contestInfo = JSON.parse(contest)
-            params.start_time = date.dateToISOFormat(contestInfo.start_time)
-            params.end_time = date.dateToISOFormat(contestInfo.end_time)
-            
-            layoutController.getContestTemplate(templateId => {
-                layoutController.createLayout({
-                    layoutName: layoutName,
-                    templateId: templateId
-                }, layout => {
-                    if (layout.error){
-                        return res.render('competition/competitionError', {
-                            msg: "Ya existe un layout de un concurso previo con ese nombre. Por favor, elija otro o elimine el layout existente"
+    beforeContestSchedule: (params, base_url, layoutName, res) => {
+        layoutController.getContestTemplate(templateId => {
+            layoutController.createLayout({
+                layoutName: layoutName + "_before",
+                templateId: templateId
+            }, layout => {
+                if (layout.error){
+                    return res.render('competition/competitionError', {
+                        msg: "Ya existe un layout de un concurso previo con ese nombre. Por favor, elija otro o elimine el layout existente"
+                    })
+                }
+                params.beforeLayoutId = layout.layoutId
+                const playlistId = layout.regions[0].playlists[0].playlistId
+                //params.mainPlaylistId = playlistId
+                const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
+                const contest_uri = base_url + 'contest'
+                layoutController.createWebPageWidgetDummy(playlistId, contest_uri + authSufix, body => {
+                    const teamInfo_uri = base_url + 'teams'
+                    layoutController.createWebPageWidgetDummy(playlistId, teamInfo_uri + authSufix, body => {
+                        const remainig_uri = base_url + 'remainingStartTime'
+                        layoutController.createWebPageWidgetDummy(playlistId, remainig_uri + authSufix, body => {
+                             eventController.createEvent({
+                                campaignId: layout.layoutId,
+                                displayGroupIds: params.displaysId, 
+                                fromDt: params.start_time, 
+                                toDt: params.end_time, 
+                                isPriority: params.priority, 
+                                displayOrder: 1, 
+                                eventTypeId: 1
+                            }, body => {
+                                params.eventId = JSON.parse(body).eventId
+                                res.render('competition/stopCompetition')
+                            })
                         })
-                    }
+                    })
+                })
+            })
+        })
+    },
+
+    contestSchedule: (params, base_url, layoutName) => {
+        layoutController.getContestTemplate(templateId => {
+            layoutController.createLayout({
+                layoutName: layoutName,
+                templateId: templateId
+            }, layout => {
+                if (!layout.error){
                     params.mainLayoutId = layout.layoutId
                     const playlistId = layout.regions[0].playlists[0].playlistId
                     params.mainPlaylistId = playlistId
                     const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
-                    const contest_uri = base_url + 'contest'
-                    layoutController.createWebPageWidgetDummy(playlistId, contest_uri + authSufix, body => {
-                        const teamInfo_uri = base_url + 'teams'
-                        layoutController.createWebPageWidgetDummy(playlistId, teamInfo_uri + authSufix, body => {
-                            const remainingTime_uri = base_url + 'remainingEndTime'
-                            layoutController.createWebPageWidgetDummy(playlistId, remainingTime_uri + authSufix, body => {
-                                const scoreboard_uri = base_url + 'scoreboard'
-                                layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri + authSufix, body => {
-                                    eventController.createEvent({
-                                        campaignId: params.mainLayoutId,
-                                        displayGroupIds: params.displaysId, 
-                                        fromDt: params.start_time, 
-                                        toDt: params.end_time, 
-                                        isPriority: params.priority, 
-                                        displayOrder: 1, 
-                                        eventTypeId: 1
-                                    }, body => {
-                                        params.eventId = JSON.parse(body).eventId
-                                        res.render('competition/stopCompetition')
-                                    })
-                                })
+                    const remainingTime_uri = base_url + 'remainingEndTime'
+                    layoutController.createWebPageWidgetDummy(playlistId, remainingTime_uri + authSufix, body => {
+                        const scoreboard_uri = base_url + 'scoreboard'
+                        layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri + authSufix, body => {
+                            eventController.editEvent(layout.layoutId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
+                                // res.render('competition/stopCompetition')
                             })
                         })
                     })
-            
-                })
+                }
+            })
 
+        })
+    },
+
+    afterContestSchedule: (params, base_url, layoutName) => {
+        layoutController.getContestTemplate(templateId => {
+            layoutController.createLayout({
+                layoutName: layoutName + "_after",
+                templateId: templateId
+            }, layout => {
+                if (!layout.error){
+                    params.afterLayoutId = layout.layoutId
+                    const playlistId = layout.regions[0].playlists[0].playlistId
+                    // params.mainPlaylistId = playlistId
+                    const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
+                    const winners_uri = base_url + 'congratulations'
+                    layoutController.createWebPageWidgetDummy(playlistId, winners_uri + authSufix, body => {
+                        const scoreboard_uri = base_url + 'scoreboard'
+                        layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri + authSufix, body => {
+                            eventController.editEvent(layout.layoutId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
+                                // res.render('competition/stopCompetition')
+                            })
+                        })
+                    })
+                }
             })
         })
     },
@@ -278,10 +318,25 @@ module.exports = {
     stopCompetition: (params, request, response) => {
         if (request.body.clean){
             eventController.deleteEvent(params, body=> {
-                layoutController.deleteLayout({layoutId:params.mainLayoutId}, body=>{
-                    params.mainLayoutId = ''
-                    response.redirect('/');
-                })
+                if (params.beforeLayoutId && params.beforeLayoutId != ''){
+                    layoutController.deleteLayout({layoutId:params.beforeLayoutId}, body=>{
+                        params.beforeLayoutId = ''
+                    })
+                }
+                if (params.afterLayoutId && params.afterLayoutId != ''){
+                    layoutController.deleteLayout({layoutId:params.afterLayoutId}, body=>{
+                        params.afterLayoutId = ''
+                    })
+                }
+                if (params.mainLayoutId && params.mainLayoutId != ''){
+                    layoutController.deleteLayout({layoutId:params.mainLayoutId}, body=>{
+                        params.mainLayoutId = ''
+                    })
+                }
+                const i = setInterval(()=>{
+                    clearInterval(i)
+                    return response.redirect('/')
+                }, 4000);
             })
         }
         else
