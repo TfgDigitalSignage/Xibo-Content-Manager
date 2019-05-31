@@ -229,42 +229,48 @@ module.exports = {
             const contestInfo = JSON.parse(contest)
             params.start_time = date.dateToISOFormat(contestInfo.start_time)
             params.end_time = date.dateToISOFormat(contestInfo.end_time)
-            layoutController.createLayout({
-                layoutName: layoutName
-            }, layout => {
-                if (layout.error){
-                    return res.render('competition/competitionError', {
-                        msg: "Ya existe un layout de un concurso previo con ese nombre. Por favor, elija otro o elimine el layout existente"
-                    })
-                }
-                params.mainLayoutId = layout.layoutId
-                const playlistId = layout.regions[0].playlists[0].playlistId
-                params.mainPlaylistId = playlistId
-                const contest_uri = base_url + 'contest'
-                layoutController.createWebPageWidgetDummy(playlistId, contest_uri, body => {
-                    const teamInfo_uri = base_url + 'teams'
-                    layoutController.createWebPageWidgetDummy(playlistId, teamInfo_uri, body => {
-                        const remainingTime_uri = base_url + 'remainingTime'
-                        layoutController.createWebPageWidgetDummy(playlistId, remainingTime_uri, body => {
-                            const scoreboard_uri = base_url + 'scoreboard'
-                            layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri, body => {
-                                eventController.createEvent({
-                                    campaignId: params.mainLayoutId,
-                                    displayGroupIds: params.displaysId, 
-                                    fromDt: params.start_time, 
-                                    toDt: params.end_time, 
-                                    isPriority: params.priority, 
-                                    displayOrder: 1, 
-                                    eventTypeId: 1
-                                }, body => {
-                                    params.eventId = JSON.parse(body).eventId
-                                    res.render('competition/stopCompetition')
+            
+            layoutController.getContestTemplate(templateId => {
+                layoutController.createLayout({
+                    layoutName: layoutName,
+                    templateId: templateId
+                }, layout => {
+                    if (layout.error){
+                        return res.render('competition/competitionError', {
+                            msg: "Ya existe un layout de un concurso previo con ese nombre. Por favor, elija otro o elimine el layout existente"
+                        })
+                    }
+                    params.mainLayoutId = layout.layoutId
+                    const playlistId = layout.regions[0].playlists[0].playlistId
+                    params.mainPlaylistId = playlistId
+                    const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
+                    const contest_uri = base_url + 'contest'
+                    layoutController.createWebPageWidgetDummy(playlistId, contest_uri + authSufix, body => {
+                        const teamInfo_uri = base_url + 'teams'
+                        layoutController.createWebPageWidgetDummy(playlistId, teamInfo_uri + authSufix, body => {
+                            const remainingTime_uri = base_url + 'remainingEndTime'
+                            layoutController.createWebPageWidgetDummy(playlistId, remainingTime_uri + authSufix, body => {
+                                const scoreboard_uri = base_url + 'scoreboard'
+                                layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri + authSufix, body => {
+                                    eventController.createEvent({
+                                        campaignId: params.mainLayoutId,
+                                        displayGroupIds: params.displaysId, 
+                                        fromDt: params.start_time, 
+                                        toDt: params.end_time, 
+                                        isPriority: params.priority, 
+                                        displayOrder: 1, 
+                                        eventTypeId: 1
+                                    }, body => {
+                                        params.eventId = JSON.parse(body).eventId
+                                        res.render('competition/stopCompetition')
+                                    })
                                 })
                             })
                         })
                     })
+            
                 })
-        
+
             })
         })
     },

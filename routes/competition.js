@@ -27,6 +27,10 @@ router.get('/', (req,res,next)=>{
     res.render('competition/competition')
 })
 
+router.get('/test', (req, res, next)=>{
+    layoutController.getContestTemplate(t => console.log(t));
+})
+
 router.post('/start', (req,res,next)=>{
     const base_url = require('../util/utils').getIpv4LocalAddress(req) + '/competition/'
     competitionController.initCompetitionSchedule(options, base_url, req.body.layoutName, res);
