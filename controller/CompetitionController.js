@@ -66,16 +66,19 @@ module.exports = {
     },
 
 
-    getRemainingTime: (contestId, response) => {
+    getRemainingTime: (contestId, startOrEnd, response) => {
         domJudgeServices.getContest(contestId, contest=>{
-            contestname = JSON.parse(contest).name
-            shortname = JSON.parse(contest).shortname
-            endTime = JSON.parse(contest).end_time;
-            milisecsEndTime = new Date(endTime).getTime()
+            const contestname = JSON.parse(contest).name
+            const shortname = JSON.parse(contest).shortname
+            let time = ''
+            if(startOrEnd == 'start')
+                time = JSON.parse(contest).start_time
+            if(startOrEnd == 'end')
+                time = JSON.parse(contest).end_time
+            milisecsTime = new Date(time).getTime()
             response.status(200).render('competition/remainingTime', {
-                endTime: milisecsEndTime,
-                contestname: contestname,
-                shortname: shortname
+                time: milisecsTime,
+                "startOrEnd": startOrEnd
             });
          })
     },
@@ -118,8 +121,13 @@ module.exports = {
                 let tmp = ""
                 if (callback[i].members){
                     const member_field = callback[i].members.split('\r\n')
-                    for (let j = 1; j < member_field.length; j++)
-                        tmp += member_field[j] + ", ";
+                    for (let j = 0; j < member_field.length - 1; j++){
+                        tmp += member_field[j];
+                        if(j < member_field.length - 2)
+                            tmp += ", "
+                    }
+                        
+                            
                 }
                 teams[i] = {
                     'name': callback[i].name,
@@ -152,10 +160,20 @@ module.exports = {
                 var teams = []
                 var length = callback.length
                 var i = 0
+
                 while (i < length){
+                    let members = ""
+                    if(callback[i].members){
+                        let members_field = callback[i].members.split('\r\n')                 
+                        for (let j = 0; j < members_field.length - 1; j++){
+                            members += members_field[j];
+                            if(j < members_field.length - 2)
+                                members += ", "
+                        }
+                    }
                     teams[i] = {
                         'name': callback[i].name,
-                        'members': callback[i].members
+                        'members': members
                     }
                     i++
                 }
@@ -206,47 +224,93 @@ module.exports = {
         })
     },
 
-    initCompetitionSchedule: (params, base_url, layoutName, res) => {
-        domJudgeServices.getContest(params.contestId, contest=> {
-            const contestInfo = JSON.parse(contest)
-            params.start_time = date.dateToISOFormat(contestInfo.start_time)
-            params.end_time = date.dateToISOFormat(contestInfo.end_time)
+    beforeContestSchedule: (params, base_url, layoutName, res) => {
+        layoutController.getContestTemplate(templateId => {
             layoutController.createLayout({
-                layoutName: layoutName
+                layoutName: layoutName + "_before",
+                templateId: templateId
             }, layout => {
                 if (layout.error){
                     return res.render('competition/competitionError', {
                         msg: "Ya existe un layout de un concurso previo con ese nombre. Por favor, elija otro o elimine el layout existente"
                     })
                 }
-                params.mainLayoutId = layout.layoutId
+                params.beforeLayoutId = layout.layoutId
                 const playlistId = layout.regions[0].playlists[0].playlistId
-                params.mainPlaylistId = playlistId
+                //params.mainPlaylistId = playlistId
+                const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
                 const contest_uri = base_url + 'contest'
-                layoutController.createWebPageWidgetDummy(playlistId, contest_uri, body => {
+                layoutController.createWebPageWidgetDummy(playlistId, contest_uri + authSufix, body => {
                     const teamInfo_uri = base_url + 'teams'
-                    layoutController.createWebPageWidgetDummy(playlistId, teamInfo_uri, body => {
-                        const remainingTime_uri = base_url + 'remainingTime'
-                        layoutController.createWebPageWidgetDummy(playlistId, remainingTime_uri, body => {
-                            const scoreboard_uri = base_url + 'scoreboard'
-                            layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri, body => {
-                                eventController.createEvent({
-                                    campaignId: params.mainLayoutId,
-                                    displayGroupIds: params.displaysId, 
-                                    fromDt: params.start_time, 
-                                    toDt: params.end_time, 
-                                    isPriority: params.priority, 
-                                    displayOrder: 1, 
-                                    eventTypeId: 1
-                                }, body => {
-                                    params.eventId = JSON.parse(body).eventId
-                                    res.render('competition/stopCompetition')
-                                })
+                    layoutController.createWebPageWidgetDummy(playlistId, teamInfo_uri + authSufix, body => {
+                        const remainig_uri = base_url + 'remainingStartTime'
+                        layoutController.createWebPageWidgetDummy(playlistId, remainig_uri + authSufix, body => {
+                             eventController.createEvent({
+                                campaignId: layout.layoutId,
+                                displayGroupIds: params.displaysId, 
+                                fromDt: params.start_time, 
+                                toDt: params.end_time, 
+                                isPriority: params.priority, 
+                                displayOrder: 1, 
+                                eventTypeId: 1
+                            }, body => {
+                                params.eventId = JSON.parse(body).eventId
+                                res.render('competition/stopCompetition')
                             })
                         })
                     })
                 })
-        
+            })
+        })
+    },
+
+    contestSchedule: (params, base_url, layoutName) => {
+        layoutController.getContestTemplate(templateId => {
+            layoutController.createLayout({
+                layoutName: layoutName,
+                templateId: templateId
+            }, layout => {
+                if (!layout.error){
+                    params.mainLayoutId = layout.layoutId
+                    const playlistId = layout.regions[0].playlists[0].playlistId
+                    params.mainPlaylistId = playlistId
+                    const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
+                    const remainingTime_uri = base_url + 'remainingEndTime'
+                    layoutController.createWebPageWidgetDummy(playlistId, remainingTime_uri + authSufix, body => {
+                        const scoreboard_uri = base_url + 'scoreboard'
+                        layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri + authSufix, body => {
+                            eventController.editEvent(layout.layoutId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
+                                // res.render('competition/stopCompetition')
+                            })
+                        })
+                    })
+                }
+            })
+
+        })
+    },
+
+    afterContestSchedule: (params, base_url, layoutName) => {
+        layoutController.getContestTemplate(templateId => {
+            layoutController.createLayout({
+                layoutName: layoutName + "_after",
+                templateId: templateId
+            }, layout => {
+                if (!layout.error){
+                    params.afterLayoutId = layout.layoutId
+                    const playlistId = layout.regions[0].playlists[0].playlistId
+                    // params.mainPlaylistId = playlistId
+                    const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
+                    const winners_uri = base_url + 'congratulations'
+                    layoutController.createWebPageWidgetDummy(playlistId, winners_uri + authSufix, body => {
+                        const scoreboard_uri = base_url + 'scoreboard'
+                        layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri + authSufix, body => {
+                            eventController.editEvent(layout.layoutId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
+                                // res.render('competition/stopCompetition')
+                            })
+                        })
+                    })
+                }
             })
         })
     },
@@ -254,13 +318,58 @@ module.exports = {
     stopCompetition: (params, request, response) => {
         if (request.body.clean){
             eventController.deleteEvent(params, body=> {
-                layoutController.deleteLayout({layoutId:params.mainLayoutId}, body=>{
-                    params.mainLayoutId = ''
-                    response.redirect('/');
-                })
+                if (params.beforeLayoutId && params.beforeLayoutId != ''){
+                    layoutController.deleteLayout({layoutId:params.beforeLayoutId}, body=>{
+                        params.beforeLayoutId = ''
+                    })
+                }
+                if (params.afterLayoutId && params.afterLayoutId != ''){
+                    layoutController.deleteLayout({layoutId:params.afterLayoutId}, body=>{
+                        params.afterLayoutId = ''
+                    })
+                }
+                if (params.mainLayoutId && params.mainLayoutId != ''){
+                    layoutController.deleteLayout({layoutId:params.mainLayoutId}, body=>{
+                        params.mainLayoutId = ''
+                    })
+                }
+                const i = setInterval(()=>{
+                    clearInterval(i)
+                    return response.redirect('/')
+                }, 4000);
             })
         }
         else
             response.redirect('/competition')
+    },
+
+    congratulationsScreen: (contestId, res) => {
+        domJudgeServices.getScoreboard(contestId,callback =>{
+            winnerInfo = JSON.parse(callback).rows[0]
+            teamId = winnerInfo.team_id
+            score = winnerInfo.score
+            problems = winnerInfo.problems
+            domJudgeServices.getTeam(contestId, teamId, team=>{
+                team = JSON.parse(team)
+                teamName = team.name
+                teamMembers = team.members
+                members_field = teamMembers.split('\r\n')
+                members = ""
+                for (let j = 0; j < members_field.length - 1; j++){
+                    members += members_field[j];
+                    if(j < members_field.length - 2)
+                        members += ", "
+                }
+                teamNationality = team.teamNationality
+                teamOrganization = team.organization_id
+                res.status(200).render('competition/congratulations', {
+                    'teamName': teamName,
+                    'members': members,
+                    'score': score,
+                    'numProblems': problems.length
+                })
+            })
+
+        })
     }
 }
