@@ -1,9 +1,33 @@
 const domJudgeServices = require('../services/domJudgeServices')
 const layoutController = require('../controller/layoutController')
 const eventController = require('../controller/EventController')
+const xiboServices = require('../services/xiboServices')
 const date = require('../util/date')
 
 module.exports = {
+    
+    createContestForm: (req,res,next) => {
+        xiboServices.getAccessToken(body => {
+            const token = body['access_token'];
+            xiboServices.getTemplates(token, templateList => {
+                let ret = {
+                    "templates": [],
+                    "templatesLength" : 0
+                }
+                if (templateList){
+                    const list = JSON.parse(templateList)
+                    if (list.length > 0){
+                        list.forEach(item => {
+                            ret.templates.push(item)
+                            ret.templatesLength++
+                        })
+                    }
+                }
+                res.render('competition/competition', ret)
+            })
+        })   
+    },
+
     contestFeedListerner: (contestId, callback) => {
         domJudgeServices.getContestEventFeed(contestId, event=>{
             callback(event)
@@ -224,15 +248,15 @@ module.exports = {
         })
     },
 
-    beforeContestSchedule: (params, base_url, layoutName, res) => {
-        layoutController.getContestTemplate(templateId => {
+    beforeContestSchedule: (params, base_url, layoutName, templateId, res) => {
+        //layoutController.getContestTemplate(templateId => {
             layoutController.createLayout({
                 layoutName: layoutName + "_before",
                 templateId: templateId
             }, layout => {
                 if (layout.error){
                     return res.render('competition/competitionError', {
-                        msg: "Ya existe un layout de un concurso previo con ese nombre. Por favor, elija otro o elimine el layout existente"
+                        msg: "Ya existe un layout de un concurso previo con ese nombre o la plantilla elegida no existe"
                     })
                 }
                 params.beforeLayoutId = layout.layoutId
@@ -261,11 +285,11 @@ module.exports = {
                     })
                 })
             })
-        })
+        //})
     },
 
-    contestSchedule: (params, base_url, layoutName) => {
-        layoutController.getContestTemplate(templateId => {
+    contestSchedule: (params, base_url, layoutName, templateId) => {
+        // layoutController.getContestTemplate(templateId => {
             layoutController.createLayout({
                 layoutName: layoutName,
                 templateId: templateId
@@ -287,11 +311,11 @@ module.exports = {
                 }
             })
 
-        })
+        // })
     },
 
-    afterContestSchedule: (params, base_url, layoutName) => {
-        layoutController.getContestTemplate(templateId => {
+    afterContestSchedule: (params, base_url, layoutName, templateId) => {
+        // layoutController.getContestTemplate(templateId => {
             layoutController.createLayout({
                 layoutName: layoutName + "_after",
                 templateId: templateId
@@ -312,7 +336,7 @@ module.exports = {
                     })
                 }
             })
-        })
+        // })
     },
 
     stopCompetition: (params, request, response) => {

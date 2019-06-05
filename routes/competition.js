@@ -24,16 +24,20 @@ let options = {
     videoServer_password: process.env.HLS_SERVER_PASSWORD
 }
 
-router.get('/', (req,res,next)=>{
-    res.render('competition/competition')
-})
+router.get('/', competitionController.createContestForm)
 
 let state = ""
 
 router.post('/start', (req,res,next)=>{
     const layoutName = req.body.layoutName
+    if (!layoutName){
+        res.render('competition/competitionError', {
+            msg: "Por favor, introduce un nombre para las diapositivas del concurso."
+        })
+    }
+    const templateId = isNaN(req.body.templateId) ? '': req.body.templateId
     const base_url = require('../util/utils').getIpv4LocalAddress(req) + '/competition/'
-    competitionController.beforeContestSchedule(options, base_url, layoutName, res);
+    competitionController.beforeContestSchedule(options, base_url, layoutName, templateId, res);
     state = "non_Started"
     competitionController.getContest(options.contestId, info=> {
         const startTime = JSON.parse(info).start_time
@@ -43,13 +47,13 @@ router.post('/start', (req,res,next)=>{
 
         const startInterval = setInterval(()=>{
             clearInterval(startInterval)
-            competitionController.contestSchedule(options, base_url, layoutName);
+            competitionController.contestSchedule(options, base_url, layoutName, templateId);
             state = "started"
         }, remainingStart)
 
         const stopInterval = setInterval(()=>{
             clearInterval(stopInterval)
-            competitionController.afterContestSchedule(options, base_url, layoutName);
+            competitionController.afterContestSchedule(options, base_url, layoutName, templateId);
             state = "ended"
         }, remainingEndTime)
     })

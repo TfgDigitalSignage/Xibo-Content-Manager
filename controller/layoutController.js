@@ -254,7 +254,7 @@ module.exports = {
                 callback(regionInfo)
             })
         })
-    },
+    }/*,
 
     getContestTemplate: callback => {
         xiboServices.getAccessToken(body => {
@@ -270,5 +270,5 @@ module.exports = {
                 });
             })
         }) 
-    }
+    }*/
 }
