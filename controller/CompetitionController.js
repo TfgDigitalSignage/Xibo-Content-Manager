@@ -270,7 +270,7 @@ module.exports = {
                         const remainig_uri = base_url + 'remainingStartTime'
                         layoutController.createWebPageWidgetDummy(playlistId, remainig_uri + authSufix, body => {
                              eventController.createEvent({
-                                campaignId: layout.layoutId,
+                                campaignId: layout.campaignId,
                                 displayGroupIds: params.displaysId, 
                                 fromDt: params.start_time, 
                                 toDt: params.end_time, 
@@ -279,6 +279,12 @@ module.exports = {
                                 eventTypeId: 1
                             }, body => {
                                 params.eventId = JSON.parse(body).eventId
+                                const err = JSON.parse(body).error
+                                if (err){
+                                    return res.render('competition/competitionError', {
+                                        msg: err.message
+                                    })
+                                }
                                 res.render('competition/stopCompetition')
                             })
                         })

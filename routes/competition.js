@@ -16,7 +16,7 @@ let options = {
     start_time: util.todayISOFormat(),
     end_time: util.addDaysTodayISOFormat(1),
     displaysId: process.env.XIBO_DISPLAY_ID,
-    priority: process.env.XIBO_COMPETITION_PRIORITY,
+    priority: parseInt(process.env.XIBO_COMPETITION_PRIORITY,10),
     //DomJudgeSpecs
     contestId: process.env.DOMJUDGE_CONTEST_ID,
     //VideoServer specs
