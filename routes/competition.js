@@ -28,7 +28,7 @@ router.get('/', competitionController.createContestForm)
 
 let state = ""
 
-router.post('/start', (req,res,next)=>{
+router.post('/start', async (req,res,next)=>{
     const layoutName = req.body.layoutName
     if (!layoutName){
         res.render('competition/competitionError', {
@@ -36,7 +36,8 @@ router.post('/start', (req,res,next)=>{
         })
     }
     const templateId = isNaN(req.body.templateId) ? '': req.body.templateId
-    const base_url = require('../util/utils').getIpv4LocalAddress(req) + '/competition/'
+    const address = await require('../util/utils').getLocalAddress()
+    const base_url = address + '/competition/'
     competitionController.beforeContestSchedule(options, base_url, layoutName, templateId, res);
     state = "non_Started"
     competitionController.getContest(options.contestId, info=> {
@@ -121,6 +122,7 @@ router.post('/start', (req,res,next)=>{
 })
 
 router.post('/stop', (req,res,next)=> {
+    state == "non_Started"
     competitionController.stopCompetition(options, req, res)
 })
 

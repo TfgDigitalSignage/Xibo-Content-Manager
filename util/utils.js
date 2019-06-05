@@ -3,15 +3,20 @@ exports.getBase64Token = (user, pass) =>{
 }
 
 exports.getJsonData = (url, callback) =>{
-    request.get (url, function(err, res, body){
-      if (err)
-        throw new Error (err);
-      callback && callback (body);
-    });
+  request.get (url, function(err, res, body){
+    if (err)
+      throw new Error (err);
+    callback && callback (body);
+  });
 }
 
-exports.getIpv4LocalAddress = requestObj => {
-  const addr = requestObj.connection.localAddress !== "::1" ? requestObj.connection.localAddress: "localhost"
-  const port = requestObj.connection.localPort
-  return "http://" + addr + ":" + port
+exports.getLocalAddress = () => {
+  let promise = new Promise((resolve,reject)=>{
+    require('dns').lookup(require('os').hostname(), (err, add) => {
+      const address = !err ? "http://"+add: "http://localhost";
+      const port = process.env.SERVER_PORT || 3000;
+      resolve(address+":"+port);
+    })
+  })
+  return promise
 }
