@@ -240,7 +240,7 @@ module.exports = {
     createWebPageWidgetDummy: (playlistId, uri, callback) => {
         xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
-            xiboServices.postWidgetWebContent(playlistId, token, uri, 1, 1, 10, (res, widget) => {
+            xiboServices.postWidgetWebContent(playlistId, token, uri, 3, 1, 10, (res, widget) => {
                 callback(widget)
             })
         })
