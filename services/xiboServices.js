@@ -399,7 +399,7 @@ module.exports = {
       form: {
         eventTypeId: 1,
         campaignId: idLayout,
-        displayOrder: 1,
+        displayOrder: displayGroupIds,
         isPriority: priority,
         'displayGroupIds[]': displayGroupIds,
         fromDt: fromDt,

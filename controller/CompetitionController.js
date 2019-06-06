@@ -309,7 +309,7 @@ module.exports = {
                     layoutController.createWebPageWidgetDummy(playlistId, remainingTime_uri + authSufix, body => {
                         const scoreboard_uri = base_url + 'scoreboard'
                         layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri + authSufix, body => {
-                            eventController.editEvent(layout.layoutId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
+                            eventController.editEvent(layout.campaignId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
                                 // res.render('competition/stopCompetition')
                             })
                         })
@@ -335,7 +335,7 @@ module.exports = {
                     layoutController.createWebPageWidgetDummy(playlistId, winners_uri + authSufix, body => {
                         const scoreboard_uri = base_url + 'scoreboard'
                         layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri + authSufix, body => {
-                            eventController.editEvent(layout.layoutId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
+                            eventController.editEvent(layout.campaignId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
                                 // res.render('competition/stopCompetition')
                             })
                         })

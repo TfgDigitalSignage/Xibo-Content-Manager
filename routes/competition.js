@@ -102,12 +102,12 @@ router.post('/start', async (req,res,next)=>{
                                 setInterval(()=>{
                                     const submissionGraphic_uri = base_url + 'submission-graphic'
                                     layoutController.createWebPageWidgetDummy(options.mainPlaylistId, submissionGraphic_uri, body => {
-                                        const widgetId = JSON.parse(body).widgetId
+                                        const widgetId = body.widgetId
                                         const del = setInterval(()=> {
                                             layoutController.deleteWidget({widgetId:widgetId}, ()=> {
                                                 clearInterval(del)
                                             })
-                                        }, 2000)
+                                        }, 10000)
                                     })
                                 }, 15000)
                             }
