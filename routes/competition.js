@@ -65,6 +65,7 @@ router.post('/start', async (req,res,next)=>{
     })
     competitionController.contestFeedListerner(options.contestId, event => {
        if (state == "started"){
+        let created = ""
             switch(event.type){
                 case 'submissions':
                     competitionController.getTeam(options.contestId, event.data.team_id, data => {
@@ -96,22 +97,15 @@ router.post('/start', async (req,res,next)=>{
                     
                 break;
                 case 'judgements':
-                    if (event.data.judgement_type_id === "AC"){
+                    if (event.data.judgement_type_id === "AC"  && !created){
                         competitionController.getACJudgements(options.contestId, data => {
                             const judgementCorrects = JSON.parse(data)
                             if (judgementCorrects.length > 10){
                                 //Add stadistic
-                                setInterval(()=>{
-                                    const submissionGraphic_uri = base_url + 'submission-graphic?user=' + process.env.ACCESS_USERNAME + '&pass=' + process.env.ACCESS_PASSWORD
-                                    layoutController.createWebPageWidgetDummy(options.mainPlaylistId, submissionGraphic_uri, body => {
-                                        const widgetId = body.widgetId
-                                        const del = setInterval(()=> {
-                                            layoutController.deleteWidget({widgetId:widgetId}, ()=> {
-                                                clearInterval(del)
-                                            })
-                                        }, 120000)
-                                    })
-                                }, 120000)
+                                created = "1"
+                                const submissionGraphic_uri = base_url + 'submission-graphic?user=' + process.env.ACCESS_USERNAME + '&pass=' + process.env.ACCESS_PASSWORD
+                                layoutController.createWebPageWidgetDummy(options.mainPlaylistId, submissionGraphic_uri, body => {
+                                })
                             }
                         })
                     }
