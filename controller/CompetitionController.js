@@ -262,10 +262,10 @@ module.exports = {
             const regions = layout.regions
             regions.forEach(item=>{
                 if(item.name==="StreamingRegion"){
-                    //params.hlsWidget = item.playlists[0].widgets[0].widgetId
+                    params.hlsWidget = item.playlists[0].widgets[0].widgetId
                 }
                 if(item.name==="SubmissionRegion"){
-                    //params.submissionWidget = item.playlists[0].widgets[0].widgetId
+                    params.submissionWidget = item.playlists[0].widgets[0].widgetId
                 }
             })
             callback()
