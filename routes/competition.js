@@ -100,7 +100,7 @@ router.post('/start', async (req,res,next)=>{
                     if (event.data.judgement_type_id === "AC"  && !created){
                         competitionController.getACJudgements(options.contestId, data => {
                             const judgementCorrects = JSON.parse(data)
-                            if (judgementCorrects.length > 10){
+                            if (judgementCorrects.length > 2){
                                 //Add stadistic
                                 created = "1"
                                 const submissionGraphic_uri = base_url + 'submission-graphic?user=' + process.env.ACCESS_USERNAME + '&pass=' + process.env.ACCESS_PASSWORD
