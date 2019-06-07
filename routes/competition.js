@@ -100,16 +100,16 @@ router.post('/start', async (req,res,next)=>{
                             if (judgementCorrects.length > 10){
                                 //Add stadistic
                                 setInterval(()=>{
-                                    const submissionGraphic_uri = base_url + 'submission-graphic'
+                                    const submissionGraphic_uri = base_url + 'submission-graphic?user=' + process.env.ACCESS_USERNAME + '&pass=' + process.env.ACCESS_PASSWORD
                                     layoutController.createWebPageWidgetDummy(options.mainPlaylistId, submissionGraphic_uri, body => {
                                         const widgetId = body.widgetId
                                         const del = setInterval(()=> {
                                             layoutController.deleteWidget({widgetId:widgetId}, ()=> {
                                                 clearInterval(del)
                                             })
-                                        }, 10000)
+                                        }, 120000)
                                     })
-                                }, 15000)
+                                }, 120000)
                             }
                         })
                     }
