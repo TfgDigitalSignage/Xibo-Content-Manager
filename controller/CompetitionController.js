@@ -232,22 +232,45 @@ module.exports = {
             if (minutes < 10)
                 minutes = "0" + minutes 
             const time = hours + ":" + minutes
-    
-            domJudgeServices.getTeam(competitionId, teamId, team=>{
-                const teamName = JSON.parse(team).name
-                domJudgeServices.getProblem(competitionId, dataSubmission.problem_id, problem =>{
-                    const problemName = JSON.parse(problem).name
-                    res.status(200).render('competition/submissionsTable', {
-                        'submissionId': submissionId,
-                        'time': time,
-                        'teamName': teamName,
-                        'problemName': problemName,
+            let judgement = "Waiting"
+            domJudgeServices.getJudgement(competitionId, "", judgements=>{
+                const filter = JSON.parse(judgements).find(judgment => judgment.submission_id === submissionId)
+                if (filter) judgement = filter.judgement_type_id
+                domJudgeServices.getTeam(competitionId, teamId, team=>{
+                    const teamName = JSON.parse(team).name
+                    domJudgeServices.getProblem(competitionId, dataSubmission.problem_id, problem =>{
+                        const problemName = JSON.parse(problem).name
+                        res.status(200).render('competition/submissionsTable', {
+                            'submissionId': submissionId,
+                            'time': time,
+                            'teamName': teamName,
+                            'problemName': problemName,
+                            'judgement': judgement
+                        })
                     })
                 })
             })
         })
     },
-
+    prepareSubmissionLayout: (params, layoutName, templateId, callback) => {
+        layoutController.createLayout({
+            layoutName: layoutName + "_streaming",
+            templateId: templateId
+        }, layout=>{
+            params.submissionLayout = layout.layoutId
+            params.submissionLayoutCampaing = layout.campaignId
+            const regions = layout.regions
+            regions.forEach(item=>{
+                if(item.name==="StreamingRegion"){
+                    params.hlsWidget = item.playlists[0].widgets[0].widgetId
+                }
+                if(item.name==="SubmissionRegion"){
+                    params.submissionWidget = item.playlists[0].widgets[0].widgetId
+                }
+            })
+            callback()
+        })
+    },
     beforeContestSchedule: (params, base_url, layoutName, templateId, res) => {
         //layoutController.getContestTemplate(templateId => {
             layoutController.createLayout({
@@ -260,6 +283,7 @@ module.exports = {
                     })
                 }
                 params.beforeLayoutId = layout.layoutId
+                params.beforeCampaingId = layout.campaignId
                 const playlistId = layout.regions[0].playlists[0].playlistId
                 //params.mainPlaylistId = playlistId
                 const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
@@ -302,6 +326,7 @@ module.exports = {
             }, layout => {
                 if (!layout.error){
                     params.mainLayoutId = layout.layoutId
+                    params.mainCampaignId = layout.campaignId
                     const playlistId = layout.regions[0].playlists[0].playlistId
                     params.mainPlaylistId = playlistId
                     const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
@@ -328,6 +353,7 @@ module.exports = {
             }, layout => {
                 if (!layout.error){
                     params.afterLayoutId = layout.layoutId
+                    params.afterCampaingId = layout.campaignId
                     const playlistId = layout.regions[0].playlists[0].playlistId
                     // params.mainPlaylistId = playlistId
                     const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
@@ -361,6 +387,11 @@ module.exports = {
                 if (params.mainLayoutId && params.mainLayoutId != ''){
                     layoutController.deleteLayout({layoutId:params.mainLayoutId}, body=>{
                         params.mainLayoutId = ''
+                    })
+                }
+                if (params.submissionLayout && params.submissionLayout != ''){
+                    layoutController.deleteLayout({layoutId:params.submissionLayout}, body=>{
+                        params.submissionLayout = ''
                     })
                 }
                 const i = setInterval(()=>{

@@ -13,6 +13,8 @@ let options = {
     mainLayoutId: '',
     mainPlaylistId: '',
     submissionLayout: '',
+    hlsWidget: "",
+    submissionWidget: "",
     start_time: util.todayISOFormat(),
     end_time: util.addDaysTodayISOFormat(1),
     displaysId: process.env.XIBO_DISPLAY_ID,
@@ -36,9 +38,12 @@ router.post('/start', async (req,res,next)=>{
         })
     }
     const templateId = isNaN(req.body.templateId) ? '': req.body.templateId
+    const templateStreamId = isNaN(req.body.templateStreamId) ? '': req.body.templateStreamId
     const address = await require('../util/utils').getLocalAddress()
     const base_url = address + '/competition/'
-    competitionController.beforeContestSchedule(options, base_url, layoutName, templateId, res);
+    competitionController.prepareSubmissionLayout(options, layoutName, templateStreamId, () => {
+        competitionController.beforeContestSchedule(options, base_url, layoutName, templateId, res);
+    });
     state = "non_Started"
     competitionController.getContest(options.contestId, info=> {
         const startTime = JSON.parse(info).start_time
@@ -65,22 +70,19 @@ router.post('/start', async (req,res,next)=>{
                     competitionController.getTeam(options.contestId, event.data.team_id, data => {
                         const team = JSON.parse(data)
                         const members_field = team.members.split('\r\n')
-                        const webcamIp = members_field[members_field.length-1]
+                        const webcamIp = members_field[members_field.length-1].includes('http://') ? members_field[members_field.length-1]: 'http://' + members_field[members_field.length-1]
                         videoController.startStopVideoServer(webcamIp, '/start-server', body=>{
                             if (!body || JSON.parse(body).status !== "success"){
                                 console.log("Cannot start webcam server pointed at ", webcamIp)
                             }
                             else{
-                                videoController.insertHlsWidget(webcamIp+"/live/playlist.m3u8", options.submissionLayout, data=>{
-                                    const opt = {
-                                        layoutId: options.submissionLayout,
-                                        uri: require('../util/utils').getIpv4LocalAddress(req) + '/competition/submissionFeed/' + event.data.id
-                                    }
-                                    layoutController.editSubmissionFeed(opt, body=>{
-                                        eventController.editEvent(options.submissionLayout, options.eventId, options.displaysId, options.start_time, options.end_time, options.priority, ()=>{
+                                videoController.editHlsWidget(options.hlsWidget, webcamIp+"/live/playlist.m3u8", data=>{
+                                    const uri = address + '/competition/submissionFeed/' + event.data.id + "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
+                                    layoutController.editSubmissionFeed(options.submissionWidget, uri, body=>{
+                                        eventController.editEvent(options.submissionLayoutCampaing, options.eventId, options.displaysId, options.start_time, options.end_time, options.priority, ()=>{
                                             let interval = setInterval(()=>{
                                                 videoController.startStopVideoServer(webcamIp, '/stop-server', body=>{
-                                                    eventController.editEvent(options.mainLayoutId, options.eventId, options.displaysId, options.start_time, options.end_time, options.priority, ()=>{
+                                                    eventController.editEvent(options.mainCampaignId, options.eventId, options.displaysId, options.start_time, options.end_time, options.priority, ()=>{
                                                         clearInterval(interval)
                                                     })
                                                 })

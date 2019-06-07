@@ -39,5 +39,13 @@ module.exports = {
                 })
             })
         })
+    },
+    editHlsWidget: (widgetId, sourceUrl, callback)=>{
+        xiboServices.getAccessToken((body)=>{
+            const token = body.access_token
+            xiboServices.editHlsWidget(token, widgetId, sourceUrl, 0, 0, body=> {
+                callback(body)
+            })
+        })
     }
 }
