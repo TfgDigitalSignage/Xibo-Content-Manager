@@ -169,15 +169,15 @@ module.exports = {
             callback = JSON.parse(callback)
             var aux = callback.start_time.split('T')
             var aux2 = aux[1].split('+')
-            var ini = aux[0] + ' ' + aux2[0]
+            var ini = aux2[0].split(':')[0] + ":" + aux2[0].split(':')[1]
             var auxFin = callback.end_time.split('T')
             var aux3 = auxFin[1].split('+')
-            var fin = auxFin[0] + ' ' + aux3[0]
+            var fin = aux3[0].split(':')[0] + ":" + aux3[0].split(':')[1]
             var competition = {
                 'name': callback.formal_name,
                 'ini': ini,
                 'fin': fin,
-                'duration': callback.duration
+                'duration': callback.duration.split(':')[0] + ":" + callback.duration.split(':')[1]
             }
             domJudgeServices.getAllTeams(constestId,callback =>{
                 callback = JSON.parse(callback)
