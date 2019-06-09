@@ -46,22 +46,47 @@ router.post('/start', async (req,res,next)=>{
     });
     state = "non_Started"
     competitionController.getContest(options.contestId, info=> {
-        const startTime = JSON.parse(info).start_time
-        const remainingStart = new Date(startTime).getTime() - new Date().getTime()
-        const endTime = JSON.parse(info).end_time
-        const remainingEndTime = new Date(endTime).getTime() - new Date().getTime()
+        let startTime = JSON.parse(info).start_time
+        let remainingStart = new Date(startTime).getTime() - new Date().getTime()
+        let endTime = JSON.parse(info).end_time
+        let remainingEndTime = new Date(endTime).getTime() - new Date().getTime()
+        let startInterval = {}
+        let updateStatusInterval = {}
 
-        const startInterval = setInterval(()=>{
+        startInterval = setInterval(()=>{
             clearInterval(startInterval)
             competitionController.contestSchedule(options, base_url, layoutName, templateId);
             state = "started"
         }, remainingStart)
 
-        const stopInterval = setInterval(()=>{
+        stopInterval = setInterval(()=>{
             clearInterval(stopInterval)
+            clearInterval(updateStatusInterval)
             competitionController.afterContestSchedule(options, base_url, layoutName, templateId);
             state = "ended"
         }, remainingEndTime)
+
+        updateStatusInterval = setInterval(async ()=>{
+            const status = await competitionController.checkContestStatusChange(options.contestId, startTime, endTime)
+            if (status.startChanged){
+                clearInterval(startInterval)
+                remainingStart = new Date(status.newStart).getTime() - new Date().getTime()
+                startInterval = setInterval(()=>{
+                    clearInterval(startInterval)
+                    competitionController.contestSchedule(options, base_url, layoutName, templateId);
+                    state = "started"
+                }, remainingStart)
+            }
+            if (status.endChanged){
+                clearInterval(stopInterval)
+                remainingEndTime = new Date(status.newEnd).getTime() - new Date().getTime()
+                stopInterval = setInterval(()=>{
+                    clearInterval(stopInterval)
+                    competitionController.afterContestSchedule(options, base_url, layoutName, templateId);
+                    state = "ended"
+                }, remainingEndTime)
+            }
+        }, 120000) //2 min
     })
     competitionController.contestFeedListerner(options.contestId, event => {
        if (state == "started"){

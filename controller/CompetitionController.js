@@ -432,5 +432,32 @@ module.exports = {
             })
 
         })
+    },
+
+    checkContestStatusChange: (contestId, currStart, currEnd) => {
+        let promise = new Promise((resolve,reject)=>{
+            domJudgeServices.getContest(contestId, contest=>{
+                if (contest.error)
+                    reject(contest.error)
+                const startTime = JSON.parse(contest).start_time
+                const endTime = JSON.parse(contest).end_time
+                if (startTime !== currStart || endTime !== currEnd){
+                    resolve({
+                        startChanged: (startTime !== currStart),
+                        endChanged: (endTime !== currEnd),
+                        newStart: startTime,
+                        newEnd: endTime
+                    })
+                }
+                else
+                    resolve({
+                        startChanged: false,
+                        endChanged: false,
+                        newStart: '',
+                        newEnd: ''
+                    })
+            })
+        })
+        return promise;
     }
 }

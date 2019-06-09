@@ -6,14 +6,7 @@ module.exports = {
             const token = body['access_token'];
             xiboServices.postLayout(token, params.layoutName, params.templateId, (response)=>{
                 const rb = JSON.parse(response.body)
-                if(rb.error)
-                {
-                    if (rb.error.code == 409)
-                        console.log("Error al crear el layout: nombre ya existente")
-                    else if (rb.error.code == 422)
-                        console.log("Error al crear el layout: inserta un nombre")
-                }
-                else
+                if(!rb.error)
                 {
                     //console.log("Layout creado: " + params.layoutName)
                     params.layoutId = rb.layoutId
