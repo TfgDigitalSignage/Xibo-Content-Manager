@@ -67,25 +67,32 @@ module.exports = {
 
     getScoreboard: (contestId, response) => {
         let cont = 0;
-        domJudgeServices.getScoreboard(contestId, board => {
-            const teams = []
-            const rows = JSON.parse(board).rows;
-            rows.forEach((element,index) => {
-                domJudgeServices.getTeam(contestId, element.team_id, team => {
-                    teams[index] = {
-                        'rank': element.rank, 
-                        'name': JSON.parse(team).name, 
-                        'score': element.score.num_solved, 
-                        'total': element.score.total_time
-                    }
-                    cont++;
-                    if (cont == rows.length){
-                        response.status(200).render('competition/scoreboard', {
-                            'teams': teams
-                        });
-                    }
-                })
-            });
+        let freezeTime = false
+        domJudgeServices.getContestStatus(contestId, status=> {
+            if (status)
+                freezeTime = (JSON.parse(status).frozen != null && JSON.parse(status).thawed == null)
+
+            domJudgeServices.getScoreboard(contestId, board => {
+                const teams = []
+                const rows = JSON.parse(board).rows;
+                rows.forEach((element,index) => {
+                    domJudgeServices.getTeam(contestId, element.team_id, team => {
+                        teams[index] = {
+                            'rank': element.rank, 
+                            'name': JSON.parse(team).name, 
+                            'score': element.score.num_solved, 
+                            'total': element.score.total_time
+                        }
+                        cont++;
+                        if (cont == rows.length){
+                            response.status(200).render('competition/scoreboard', {
+                                'freezeTime': freezeTime,
+                                'teams': teams
+                            });
+                        }
+                    })
+                });
+            })
         })
     },
 
@@ -405,32 +412,55 @@ module.exports = {
     },
 
     congratulationsScreen: (contestId, res) => {
-        domJudgeServices.getScoreboard(contestId,callback =>{
-            winnerInfo = JSON.parse(callback).rows[0]
-            teamId = winnerInfo.team_id
-            score = winnerInfo.score
-            problems = winnerInfo.problems
-            domJudgeServices.getTeam(contestId, teamId, team=>{
-                team = JSON.parse(team)
-                teamName = team.name
-                teamMembers = team.members
-                members_field = teamMembers.split('\r\n')
-                members = ""
-                for (let j = 0; j < members_field.length - 1; j++){
-                    members += members_field[j];
-                    if(j < members_field.length - 2)
-                        members += ", "
+        domJudgeServices.getContestStatus(contestId, state=>{
+            if (state){
+                if (JSON.parse(state).frozen != null && JSON.parse(state).thawed == null){
+                    domJudgeServices.getContest(contestId, contest => {
+                        if(contest){
+                            const freezeTime = JSON.parse(contest).end_time
+                            return res.status(200).render('competition/congratulations', {
+                                'contestWithFreeze': true,
+                                'unfreezeTime': freezeTime.split('T')[1].split(':')[0] + ":" + freezeTime.split('T')[1].split(':')[1],
+                                'teamName': '',
+                                'members': '',
+                                'score': '',
+                                'numProblems': ''
+                            })
+                        }
+                    })
                 }
-                teamNationality = team.teamNationality
-                teamOrganization = team.organization_id
-                res.status(200).render('competition/congratulations', {
-                    'teamName': teamName,
-                    'members': members,
-                    'score': score,
-                    'numProblems': problems.length
-                })
-            })
-
+                else {
+                    domJudgeServices.getScoreboard(contestId,callback =>{
+                        winnerInfo = JSON.parse(callback).rows[0]
+                        teamId = winnerInfo.team_id
+                        score = winnerInfo.score
+                        problems = winnerInfo.problems
+                        domJudgeServices.getTeam(contestId, teamId, team=>{
+                            team = JSON.parse(team)
+                            teamName = team.name
+                            teamMembers = team.members
+                            members_field = teamMembers.split('\r\n')
+                            members = ""
+                            for (let j = 0; j < members_field.length - 1; j++){
+                                members += members_field[j];
+                                if(j < members_field.length - 2)
+                                    members += ", "
+                            }
+                            teamNationality = team.teamNationality
+                            teamOrganization = team.organization_id
+                            return res.status(200).render('competition/congratulations', {
+                                'contestWithFreeze': false,
+                                'unfreezeTime': "",
+                                'teamName': teamName,
+                                'members': members,
+                                'score': score,
+                                'numProblems': problems.length
+                            })
+                        })
+        
+                    })
+                }
+            }
         })
     },
 
