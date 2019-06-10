@@ -138,7 +138,7 @@ module.exports = {
         'content-type' : 'application/x-www-form-urlencoded',
         'authorization': 'Bearer ' + token
       },
-      formData: {
+      form: {
         access_token: token,
         uri: uri,
         modeId: modeId,
@@ -181,7 +181,7 @@ module.exports = {
         Authorization: 'Bearer ' + token,
         'content-type': 'application/x-www-form-urlencoded' 
       },
-      formData: { 
+      form: { 
         uri: uri,
         useDuration: useDuration,
         duration: duration
@@ -399,7 +399,7 @@ module.exports = {
       form: {
         eventTypeId: 1,
         campaignId: idLayout,
-        displayOrder: 1,
+        displayOrder: displayGroupIds,
         isPriority: priority,
         'displayGroupIds[]': displayGroupIds,
         fromDt: fromDt,

@@ -6,14 +6,7 @@ module.exports = {
             const token = body['access_token'];
             xiboServices.postLayout(token, params.layoutName, params.templateId, (response)=>{
                 const rb = JSON.parse(response.body)
-                if(rb.error)
-                {
-                    if (rb.error.code == 409)
-                        console.log("Error al crear el layout: nombre ya existente")
-                    else if (rb.error.code == 422)
-                        console.log("Error al crear el layout: inserta un nombre")
-                }
-                else
+                if(!rb.error)
                 {
                     //console.log("Layout creado: " + params.layoutName)
                     params.layoutId = rb.layoutId
@@ -214,33 +207,20 @@ module.exports = {
             })
         })
     },
-    editSubmissionFeed: (params, callback) => {
+    editSubmissionFeed: (widgetId, url, callback) => {
         xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
-            xiboServices.getLayout(token, params.layoutId, response=>{
-                const playlistId = JSON.parse(response.body)[0].regions[1].playlists[0].playlistId
-                xiboServices.getWidgetsOfPlaylist(token, playlistId, resp=>{
-                    const widgets = JSON.parse(resp.body)
-                    if (widgets.length == 0){
-                        xiboServices.postWidgetWebContent(playlistId, token, params.uri, 1, 0, 0, body=>{
-                            callback(body)
-                        })
-                    }
-                    else {
-                        xiboServices.deleteWidget(token, widgets[0].widgetId, ()=>{
-                            xiboServices.postWidgetWebContent(playlistId, token, params.uri, 1, 1, 10, body=>{
-                                callback(body)
-                            })
-                        })
-                    }
-                })
+            xiboServices.putWidgetWebContent(widgetId, token, url, 3, 0, 0, widget=>{
+                if (widget.error)
+                    callback(widget.error)
+                callback(widget)
             })
         })
     },
     createWebPageWidgetDummy: (playlistId, uri, callback) => {
         xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
-            xiboServices.postWidgetWebContent(playlistId, token, uri, 3, 1, 10, (res, widget) => {
+            xiboServices.postWidgetWebContent(playlistId, token, uri, 3, 1, 20, (res, widget) => {
                 callback(widget)
             })
         })

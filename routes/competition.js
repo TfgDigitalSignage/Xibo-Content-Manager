@@ -13,6 +13,8 @@ let options = {
     mainLayoutId: '',
     mainPlaylistId: '',
     submissionLayout: '',
+    hlsWidget: "",
+    submissionWidget: "",
     start_time: util.todayISOFormat(),
     end_time: util.addDaysTodayISOFormat(1),
     displaysId: process.env.XIBO_DISPLAY_ID,
@@ -36,51 +38,77 @@ router.post('/start', async (req,res,next)=>{
         })
     }
     const templateId = isNaN(req.body.templateId) ? '': req.body.templateId
+    const templateStreamId = isNaN(req.body.templateStreamId) ? '': req.body.templateStreamId
     const address = await require('../util/utils').getLocalAddress()
     const base_url = address + '/competition/'
-    competitionController.beforeContestSchedule(options, base_url, layoutName, templateId, res);
+    competitionController.prepareSubmissionLayout(options, layoutName, templateStreamId, () => {
+        competitionController.beforeContestSchedule(options, base_url, layoutName, templateId, res);
+    });
     state = "non_Started"
     competitionController.getContest(options.contestId, info=> {
-        const startTime = JSON.parse(info).start_time
-        const remainingStart = new Date(startTime).getTime() - new Date().getTime()
-        const endTime = JSON.parse(info).end_time
-        const remainingEndTime = new Date(endTime).getTime() - new Date().getTime()
+        let startTime = JSON.parse(info).start_time
+        let remainingStart = new Date(startTime).getTime() - new Date().getTime()
+        let endTime = JSON.parse(info).end_time
+        let remainingEndTime = new Date(endTime).getTime() - new Date().getTime()
+        let startInterval = {}
+        let updateStatusInterval = {}
 
-        const startInterval = setInterval(()=>{
+        startInterval = setInterval(()=>{
             clearInterval(startInterval)
             competitionController.contestSchedule(options, base_url, layoutName, templateId);
             state = "started"
         }, remainingStart)
 
-        const stopInterval = setInterval(()=>{
+        stopInterval = setInterval(()=>{
             clearInterval(stopInterval)
+            clearInterval(updateStatusInterval)
             competitionController.afterContestSchedule(options, base_url, layoutName, templateId);
             state = "ended"
         }, remainingEndTime)
+
+        updateStatusInterval = setInterval(async ()=>{
+            const status = await competitionController.checkContestStatusChange(options.contestId, startTime, endTime)
+            if (status.startChanged){
+                clearInterval(startInterval)
+                remainingStart = new Date(status.newStart).getTime() - new Date().getTime()
+                startInterval = setInterval(()=>{
+                    clearInterval(startInterval)
+                    competitionController.contestSchedule(options, base_url, layoutName, templateId);
+                    state = "started"
+                }, remainingStart)
+            }
+            if (status.endChanged){
+                clearInterval(stopInterval)
+                remainingEndTime = new Date(status.newEnd).getTime() - new Date().getTime()
+                stopInterval = setInterval(()=>{
+                    clearInterval(stopInterval)
+                    competitionController.afterContestSchedule(options, base_url, layoutName, templateId);
+                    state = "ended"
+                }, remainingEndTime)
+            }
+        }, 120000) //2 min
     })
     competitionController.contestFeedListerner(options.contestId, event => {
        if (state == "started"){
+        let created = ""
             switch(event.type){
                 case 'submissions':
                     competitionController.getTeam(options.contestId, event.data.team_id, data => {
                         const team = JSON.parse(data)
                         const members_field = team.members.split('\r\n')
-                        const webcamIp = members_field[members_field.length-1]
+                        const webcamIp = members_field[members_field.length-1].includes('http://') ? members_field[members_field.length-1]: 'http://' + members_field[members_field.length-1]
                         videoController.startStopVideoServer(webcamIp, '/start-server', body=>{
                             if (!body || JSON.parse(body).status !== "success"){
                                 console.log("Cannot start webcam server pointed at ", webcamIp)
                             }
                             else{
-                                videoController.insertHlsWidget(webcamIp+"/live/playlist.m3u8", options.submissionLayout, data=>{
-                                    const opt = {
-                                        layoutId: options.submissionLayout,
-                                        uri: require('../util/utils').getIpv4LocalAddress(req) + '/competition/submissionFeed/' + event.data.id
-                                    }
-                                    layoutController.editSubmissionFeed(opt, body=>{
-                                        eventController.editEvent(options.submissionLayout, options.eventId, options.displaysId, options.start_time, options.end_time, options.priority, ()=>{
+                                videoController.editHlsWidget(options.hlsWidget, webcamIp+"/live/playlist.m3u8", data=>{
+                                    const uri = address + '/competition/submissionFeed/' + event.data.id + "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
+                                    layoutController.editSubmissionFeed(options.submissionWidget, uri, body=>{
+                                        eventController.editEvent(options.submissionLayoutCampaing, options.eventId, options.displaysId, options.start_time, options.end_time, options.priority, ()=>{
                                             let interval = setInterval(()=>{
                                                 videoController.startStopVideoServer(webcamIp, '/stop-server', body=>{
-                                                    eventController.editEvent(options.mainLayoutId, options.eventId, options.displaysId, options.start_time, options.end_time, options.priority, ()=>{
+                                                    eventController.editEvent(options.mainCampaignId, options.eventId, options.displaysId, options.start_time, options.end_time, options.priority, ()=>{
                                                         clearInterval(interval)
                                                     })
                                                 })
@@ -94,22 +122,15 @@ router.post('/start', async (req,res,next)=>{
                     
                 break;
                 case 'judgements':
-                    if (event.data.judgement_type_id === "AC"){
+                    if (event.data.judgement_type_id === "AC"  && !created){
                         competitionController.getACJudgements(options.contestId, data => {
                             const judgementCorrects = JSON.parse(data)
-                            if (judgementCorrects.length > 10){
+                            if (judgementCorrects.length > 2){
                                 //Add stadistic
-                                setInterval(()=>{
-                                    const submissionGraphic_uri = base_url + 'submission-graphic'
-                                    layoutController.createWebPageWidgetDummy(options.mainPlaylistId, submissionGraphic_uri, body => {
-                                        const widgetId = JSON.parse(body).widgetId
-                                        const del = setInterval(()=> {
-                                            layoutController.deleteWidget({widgetId:widgetId}, ()=> {
-                                                clearInterval(del)
-                                            })
-                                        }, 2000)
-                                    })
-                                }, 15000)
+                                created = "1"
+                                const submissionGraphic_uri = base_url + 'submission-graphic?user=' + process.env.ACCESS_USERNAME + '&pass=' + process.env.ACCESS_PASSWORD
+                                layoutController.createWebPageWidgetDummy(options.mainPlaylistId, submissionGraphic_uri, body => {
+                                })
                             }
                         })
                     }

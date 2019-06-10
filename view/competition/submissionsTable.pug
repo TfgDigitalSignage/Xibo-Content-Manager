@@ -34,7 +34,7 @@ html
 						td(data-th="Hora",id="time")=time
 						td(data-th="Equipo",id="team")=teamName
 						td(data-th="Problema",id="problem")=problemName
-						td(data-th="Resultado",id="judgement") Waiting
+						td(data-th="Resultado",id="judgement")=judgement
 					
 						
 
@@ -86,22 +86,22 @@ script.
 		div1.appendChild(tbl); // appends <table> into <div1>
 	}*/
 
-	function getJudgementChange(){
-		$.ajax({
-			type: "GET",
-			url: "judgement-type/" + "#{submissionId}",
-			success: (res, status, xhr) => {
-				if (res.data !== "waiting"){
-					$('#judgement').html(res.data);
-					if (res.data == "AC")
-						$('#judgement').addClass('right')
-					else	
-						$('#judgement').addClass('wrong')
-					clearInterval(interval);
-				}
-			}
-		})
-	}
+	//- function getJudgementChange(){
+	//- 	$.ajax({
+	//- 		type: "GET",
+	//- 		url: "/competition/judgement-type/" + "#{submissionId}" + "?user=admin&pass=1234",
+	//- 		success: (res, status, xhr) => {
+	//- 			if (res.data !== "waiting"){
+	//- 				$('#judgement').html(res.data);
+	//- 				if (res.data == "AC")
+	//- 					$('#judgement').addClass('right')
+	//- 				else	
+	//- 					$('#judgement').addClass('wrong')
+	//- 				clearInterval(interval);
+	//- 			}
+	//- 		}
+	//- 	})
+	//- }
 
-	//window.onload=drawTable(#{submissionCounter}); 
-	var interval = window.setInterval(getJudgementChange, 5000);
+	//- //window.onload=drawTable(#{submissionCounter}); 
+	//- var interval = window.setInterval(getJudgementChange, 5000);

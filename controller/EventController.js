@@ -16,7 +16,6 @@ module.exports = {
         xiboServices.getAccessToken((body)=>{
             const token = body['access_token'];
             xiboServices.putSchedule(token, idLayout,idEvent,displayGroupIds,fromDt, toDt,priority, (body)=>{
-                console.log('Schedule modified: ' + body)
                 callback(body)
             })
         })

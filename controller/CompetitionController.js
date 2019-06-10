@@ -67,25 +67,32 @@ module.exports = {
 
     getScoreboard: (contestId, response) => {
         let cont = 0;
-        domJudgeServices.getScoreboard(contestId, board => {
-            const teams = []
-            const rows = JSON.parse(board).rows;
-            rows.forEach((element,index) => {
-                domJudgeServices.getTeam(contestId, element.team_id, team => {
-                    teams[index] = {
-                        'rank': element.rank, 
-                        'name': JSON.parse(team).name, 
-                        'score': element.score.num_solved, 
-                        'total': element.score.total_time
-                    }
-                    cont++;
-                    if (cont == rows.length){
-                        response.status(200).render('competition/scoreboard', {
-                            'teams': teams
-                        });
-                    }
-                })
-            });
+        let freezeTime = false
+        domJudgeServices.getContestStatus(contestId, status=> {
+            if (status)
+                freezeTime = (JSON.parse(status).frozen != null && JSON.parse(status).thawed == null)
+
+            domJudgeServices.getScoreboard(contestId, board => {
+                const teams = []
+                const rows = JSON.parse(board).rows;
+                rows.forEach((element,index) => {
+                    domJudgeServices.getTeam(contestId, element.team_id, team => {
+                        teams[index] = {
+                            'rank': element.rank, 
+                            'name': JSON.parse(team).name, 
+                            'score': element.score.num_solved, 
+                            'total': element.score.total_time
+                        }
+                        cont++;
+                        if (cont == rows.length){
+                            response.status(200).render('competition/scoreboard', {
+                                'freezeTime': freezeTime,
+                                'teams': teams
+                            });
+                        }
+                    })
+                });
+            })
         })
     },
 
@@ -169,15 +176,15 @@ module.exports = {
             callback = JSON.parse(callback)
             var aux = callback.start_time.split('T')
             var aux2 = aux[1].split('+')
-            var ini = aux[0] + ' ' + aux2[0]
+            var ini = aux2[0].split(':')[0] + ":" + aux2[0].split(':')[1]
             var auxFin = callback.end_time.split('T')
             var aux3 = auxFin[1].split('+')
-            var fin = auxFin[0] + ' ' + aux3[0]
+            var fin = aux3[0].split(':')[0] + ":" + aux3[0].split(':')[1]
             var competition = {
                 'name': callback.formal_name,
                 'ini': ini,
                 'fin': fin,
-                'duration': callback.duration
+                'duration': callback.duration.split(':')[0] + ":" + callback.duration.split(':')[1]
             }
             domJudgeServices.getAllTeams(constestId,callback =>{
                 callback = JSON.parse(callback)
@@ -232,22 +239,45 @@ module.exports = {
             if (minutes < 10)
                 minutes = "0" + minutes 
             const time = hours + ":" + minutes
-    
-            domJudgeServices.getTeam(competitionId, teamId, team=>{
-                const teamName = JSON.parse(team).name
-                domJudgeServices.getProblem(competitionId, dataSubmission.problem_id, problem =>{
-                    const problemName = JSON.parse(problem).name
-                    res.status(200).render('competition/submissionsTable', {
-                        'submissionId': submissionId,
-                        'time': time,
-                        'teamName': teamName,
-                        'problemName': problemName,
+            let judgement = "Waiting"
+            domJudgeServices.getJudgement(competitionId, "", judgements=>{
+                const filter = JSON.parse(judgements).find(judgment => judgment.submission_id === submissionId)
+                if (filter) judgement = filter.judgement_type_id
+                domJudgeServices.getTeam(competitionId, teamId, team=>{
+                    const teamName = JSON.parse(team).name
+                    domJudgeServices.getProblem(competitionId, dataSubmission.problem_id, problem =>{
+                        const problemName = JSON.parse(problem).name
+                        res.status(200).render('competition/submissionsTable', {
+                            'submissionId': submissionId,
+                            'time': time,
+                            'teamName': teamName,
+                            'problemName': problemName,
+                            'judgement': judgement
+                        })
                     })
                 })
             })
         })
     },
-
+    prepareSubmissionLayout: (params, layoutName, templateId, callback) => {
+        layoutController.createLayout({
+            layoutName: layoutName + "_streaming",
+            templateId: templateId
+        }, layout=>{
+            params.submissionLayout = layout.layoutId
+            params.submissionLayoutCampaing = layout.campaignId
+            const regions = layout.regions
+            regions.forEach(item=>{
+                if(item.name==="StreamingRegion"){
+                    params.hlsWidget = item.playlists[0].widgets[0].widgetId
+                }
+                if(item.name==="SubmissionRegion"){
+                    params.submissionWidget = item.playlists[0].widgets[0].widgetId
+                }
+            })
+            callback()
+        })
+    },
     beforeContestSchedule: (params, base_url, layoutName, templateId, res) => {
         //layoutController.getContestTemplate(templateId => {
             layoutController.createLayout({
@@ -260,6 +290,7 @@ module.exports = {
                     })
                 }
                 params.beforeLayoutId = layout.layoutId
+                params.beforeCampaingId = layout.campaignId
                 const playlistId = layout.regions[0].playlists[0].playlistId
                 //params.mainPlaylistId = playlistId
                 const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
@@ -302,6 +333,7 @@ module.exports = {
             }, layout => {
                 if (!layout.error){
                     params.mainLayoutId = layout.layoutId
+                    params.mainCampaignId = layout.campaignId
                     const playlistId = layout.regions[0].playlists[0].playlistId
                     params.mainPlaylistId = playlistId
                     const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
@@ -309,7 +341,7 @@ module.exports = {
                     layoutController.createWebPageWidgetDummy(playlistId, remainingTime_uri + authSufix, body => {
                         const scoreboard_uri = base_url + 'scoreboard'
                         layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri + authSufix, body => {
-                            eventController.editEvent(layout.layoutId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
+                            eventController.editEvent(layout.campaignId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
                                 // res.render('competition/stopCompetition')
                             })
                         })
@@ -328,6 +360,7 @@ module.exports = {
             }, layout => {
                 if (!layout.error){
                     params.afterLayoutId = layout.layoutId
+                    params.afterCampaingId = layout.campaignId
                     const playlistId = layout.regions[0].playlists[0].playlistId
                     // params.mainPlaylistId = playlistId
                     const authSufix = "?user=" + process.env.ACCESS_USERNAME + "&pass=" + process.env.ACCESS_PASSWORD
@@ -335,7 +368,7 @@ module.exports = {
                     layoutController.createWebPageWidgetDummy(playlistId, winners_uri + authSufix, body => {
                         const scoreboard_uri = base_url + 'scoreboard'
                         layoutController.createWebPageWidgetDummy(playlistId, scoreboard_uri + authSufix, body => {
-                            eventController.editEvent(layout.layoutId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
+                            eventController.editEvent(layout.campaignId, params.eventId, params.displaysId, params.start_time, params.end_time, params.priority, body=>{
                                 // res.render('competition/stopCompetition')
                             })
                         })
@@ -363,6 +396,11 @@ module.exports = {
                         params.mainLayoutId = ''
                     })
                 }
+                if (params.submissionLayout && params.submissionLayout != ''){
+                    layoutController.deleteLayout({layoutId:params.submissionLayout}, body=>{
+                        params.submissionLayout = ''
+                    })
+                }
                 const i = setInterval(()=>{
                     clearInterval(i)
                     return response.redirect('/')
@@ -374,32 +412,82 @@ module.exports = {
     },
 
     congratulationsScreen: (contestId, res) => {
-        domJudgeServices.getScoreboard(contestId,callback =>{
-            winnerInfo = JSON.parse(callback).rows[0]
-            teamId = winnerInfo.team_id
-            score = winnerInfo.score
-            problems = winnerInfo.problems
-            domJudgeServices.getTeam(contestId, teamId, team=>{
-                team = JSON.parse(team)
-                teamName = team.name
-                teamMembers = team.members
-                members_field = teamMembers.split('\r\n')
-                members = ""
-                for (let j = 0; j < members_field.length - 1; j++){
-                    members += members_field[j];
-                    if(j < members_field.length - 2)
-                        members += ", "
+        domJudgeServices.getContestStatus(contestId, state=>{
+            if (state){
+                if (JSON.parse(state).frozen != null && JSON.parse(state).thawed == null){
+                    domJudgeServices.getContest(contestId, contest => {
+                        if(contest){
+                            const freezeTime = JSON.parse(contest).end_time
+                            return res.status(200).render('competition/congratulations', {
+                                'contestWithFreeze': true,
+                                'unfreezeTime': freezeTime.split('T')[1].split(':')[0] + ":" + freezeTime.split('T')[1].split(':')[1],
+                                'teamName': '',
+                                'members': '',
+                                'score': '',
+                                'numProblems': ''
+                            })
+                        }
+                    })
                 }
-                teamNationality = team.teamNationality
-                teamOrganization = team.organization_id
-                res.status(200).render('competition/congratulations', {
-                    'teamName': teamName,
-                    'members': members,
-                    'score': score,
-                    'numProblems': problems.length
-                })
-            })
-
+                else {
+                    domJudgeServices.getScoreboard(contestId,callback =>{
+                        winnerInfo = JSON.parse(callback).rows[0]
+                        teamId = winnerInfo.team_id
+                        score = winnerInfo.score
+                        problems = winnerInfo.problems
+                        domJudgeServices.getTeam(contestId, teamId, team=>{
+                            team = JSON.parse(team)
+                            teamName = team.name
+                            teamMembers = team.members
+                            members_field = teamMembers.split('\r\n')
+                            members = ""
+                            for (let j = 0; j < members_field.length - 1; j++){
+                                members += members_field[j];
+                                if(j < members_field.length - 2)
+                                    members += ", "
+                            }
+                            teamNationality = team.teamNationality
+                            teamOrganization = team.organization_id
+                            return res.status(200).render('competition/congratulations', {
+                                'contestWithFreeze': false,
+                                'unfreezeTime': "",
+                                'teamName': teamName,
+                                'members': members,
+                                'score': score,
+                                'numProblems': problems.length
+                            })
+                        })
+        
+                    })
+                }
+            }
         })
+    },
+
+    checkContestStatusChange: (contestId, currStart, currEnd) => {
+        let promise = new Promise((resolve,reject)=>{
+            domJudgeServices.getContest(contestId, contest=>{
+                if (contest.error)
+                    reject(contest.error)
+                const startTime = JSON.parse(contest).start_time
+                const endTime = JSON.parse(contest).end_time
+                if (startTime !== currStart || endTime !== currEnd){
+                    resolve({
+                        startChanged: (startTime !== currStart),
+                        endChanged: (endTime !== currEnd),
+                        newStart: startTime,
+                        newEnd: endTime
+                    })
+                }
+                else
+                    resolve({
+                        startChanged: false,
+                        endChanged: false,
+                        newStart: '',
+                        newEnd: ''
+                    })
+            })
+        })
+        return promise;
     }
 }
